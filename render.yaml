@@ -8,7 +8,8 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     region: virginia          # La más cercana a Neon (sa-east-1, São Paulo)
-    plan: starter             # Siempre activo (el plan free se duerme a los 15 min)
+    plan: free                # Gratis. Se duerme tras 15 min sin visitas (1ª carga ~30-60s).
+                              # Para "siempre activo" cambiar a: plan: starter ($7/mes)
     healthCheckPath: /
     autoDeploy: true          # Redeploy automático en cada push a la rama
 
