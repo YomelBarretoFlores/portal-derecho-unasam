@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Models\Estadistica;
+use App\Services\EstadisticaService;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EstadisticaController extends Controller
 {
-    public function show(string $tipo): View
+    public function show(string $tipo, EstadisticaService $estadisticas): View
     {
-        $tipos = MockData::tiposEstadistica();
+        $tipos = Estadistica::TIPOS;
 
         if (! array_key_exists($tipo, $tipos)) {
             throw new NotFoundHttpException("Estadística desconocida: {$tipo}");
@@ -20,7 +21,7 @@ class EstadisticaController extends Controller
             'tipo' => $tipo,
             'titulo' => $tipos[$tipo],
             'tipos' => $tipos,
-            'serie' => MockData::estadisticas($tipo),
+            'serie' => $estadisticas->serie($tipo),
         ]);
     }
 }

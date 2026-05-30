@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Services\BlogService;
+use App\Services\EstadisticaService;
+use App\Services\RevistaService;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
     /**
-     * Página de inicio con todas sus secciones.
-     *
-     * Fase UI: los datos vienen de MockData. Al conectar el CMS, se reemplaza
-     * MockData por los Services/Repositories sin tocar las vistas.
+     * Página de inicio con todas sus secciones, alimentada desde el CMS.
      */
-    public function index(): View
-    {
+    public function index(
+        RevistaService $revista,
+        BlogService $blog,
+        EstadisticaService $estadisticas,
+    ): View {
         return view('home', [
-            'revista' => MockData::revistaArticulos()->take(4),
-            'posts' => MockData::blogPosts()->take(4),
-            'matriculados' => MockData::estadisticas('matriculados'),
+            'revista' => $revista->listadoPublico()->take(4),
+            'posts' => $blog->listadoPublico()->take(4),
+            'matriculados' => $estadisticas->serie('matriculados'),
         ]);
     }
 }

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Services\RevistaService;
 use Illuminate\View\View;
 
 class RevistaController extends Controller
 {
-    public function index(): View
+    public function index(RevistaService $revista): View
     {
         return view('revista.index', [
-            'articulos' => MockData::revistaArticulos(),
-            'categorias' => MockData::categorias(),
+            'articulos' => $revista->listadoPublico(),
+            'categorias' => $revista->categorias(),
         ]);
     }
 }

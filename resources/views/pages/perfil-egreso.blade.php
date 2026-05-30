@@ -9,22 +9,8 @@
     <section class="mx-auto max-w-4xl px-6 py-20">
         @php
             $planes = [
-                [
-                    'titulo' => 'Perfil de Egreso 2023',
-                    'destacado' => true,
-                    'parrafos' => [
-                        'El egresado de la carrera de Derecho es un profesional con formación jurídica sólida, capaz de asesorar y emitir opiniones legales con responsabilidad y ética, aplicando con criterio las fuentes del Derecho en la resolución de conflictos y en el patrocinio de intereses individuales y colectivos ante diversas instancias.',
-                        'Cuenta con competencias en investigación jurídica, comunicación efectiva, trabajo en equipo y pensamiento crítico, actuando con liderazgo, compromiso social y respeto por la diversidad cultural. Su desempeño profesional se orienta a la calidad, la transparencia y la mejora continua, contribuyendo al desarrollo de una sociedad más justa y democrática.',
-                    ],
-                ],
-                [
-                    'titulo' => 'Perfil de Egreso 2019',
-                    'destacado' => false,
-                    'parrafos' => [
-                        'El egresado de la carrera de Derecho es un profesional con sólida formación jurídica, ética y humanista, capaz de asesorar, defender y tomar decisiones fundamentadas en el marco del Estado Constitucional de Derecho.',
-                        'Posee habilidades de comunicación, investigación, argumentación y resolución de conflictos jurídicos, actuando con responsabilidad, liderazgo y compromiso social. Valora la diversidad cultural, promueve la justicia y contribuye al bien común con una visión crítica, innovadora y orientada a la calidad.',
-                    ],
-                ],
+                ['titulo' => 'Perfil de Egreso 2023', 'destacado' => true, 'cuerpo' => $egreso2023],
+                ['titulo' => 'Perfil de Egreso 2019', 'destacado' => false, 'cuerpo' => $egreso2019],
             ];
         @endphp
 
@@ -40,8 +26,8 @@
                             @endif
                         </div>
                         <div class="mt-5 space-y-4 font-sans text-[17px] leading-relaxed text-stone-600">
-                            @foreach ($plan['parrafos'] as $p)
-                                <p>{{ $p }}</p>
+                            @foreach (preg_split('/\R{2,}/', trim((string) $plan['cuerpo'])) as $parrafo)
+                                <p>{{ $parrafo }}</p>
                             @endforeach
                         </div>
                     </div>

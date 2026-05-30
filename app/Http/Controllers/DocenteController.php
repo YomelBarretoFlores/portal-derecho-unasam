@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Services\DocenteService;
 use Illuminate\View\View;
 
 class DocenteController extends Controller
 {
-    public function index(): View
+    public function index(DocenteService $docentes): View
     {
         return view('docentes.index', [
-            'docentes' => MockData::docentes(),
+            'docentes' => $docentes->listadoPublico(),
         ]);
     }
 }

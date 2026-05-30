@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Services\ComunicadoService;
 use Illuminate\View\View;
 
 class ComunicadoController extends Controller
 {
-    public function index(): View
+    public function index(ComunicadoService $comunicados): View
     {
         return view('comunicados.index', [
-            'comunicados' => MockData::comunicados(),
+            'comunicados' => $comunicados->listadoPublico(),
         ]);
     }
 }

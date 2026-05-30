@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\MockData;
+use App\Services\BlogService;
 use Illuminate\View\View;
 
 class BlogController extends Controller
 {
-    public function index(): View
+    public function index(BlogService $blog): View
     {
         return view('blog.index', [
-            'posts' => MockData::blogPosts(),
+            'posts' => $blog->listadoPublico(),
         ]);
     }
 }

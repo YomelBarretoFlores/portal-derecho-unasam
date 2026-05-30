@@ -26,6 +26,14 @@ class Comunicado extends Model implements HasMedia
     ];
 
     /**
+     * Alias `fecha` para las vistas (mapea a fecha_publicacion).
+     */
+    public function getFechaAttribute(): ?\Illuminate\Support\Carbon
+    {
+        return $this->fecha_publicacion;
+    }
+
+    /**
      * Colección de medios: una sola imagen destacada por comunicado.
      */
     public function registerMediaCollections(): void

@@ -8,31 +8,17 @@
 
     <section class="mx-auto max-w-5xl px-6 py-20">
         @php
-            // Datos de ejemplo. Al conectar el CMS, cada documento será un registro
-            // administrable (título, categoría, fecha, archivo PDF) con la misma forma.
-            $documentos = [
-                ['titulo' => 'Plan de Estudios 2023', 'categoria' => 'Planes de Estudio', 'fecha' => '2023-03-01', 'url' => 'https://sga.unasam.edu.pe/res/mallas_firmadas/DERECHO%20Y%20CIENCIAS%20POL%C3%8DTICAS.pdf'],
-                ['titulo' => 'Plan de Estudios 2019', 'categoria' => 'Planes de Estudio', 'fecha' => '2019-03-01', 'url' => '#'],
-                ['titulo' => 'Reglamento de Grados y Títulos', 'categoria' => 'Reglamentos', 'fecha' => '2022-08-15', 'url' => '#'],
-                ['titulo' => 'Reglamento de Prácticas Preprofesionales', 'categoria' => 'Reglamentos', 'fecha' => '2022-08-15', 'url' => '#'],
-                ['titulo' => 'R. de A.U. N.º 007-2018-UNASAM', 'categoria' => 'Resoluciones', 'fecha' => '2018-09-12', 'url' => '#'],
-                ['titulo' => 'R. N.º 001-2015-AU-UNASAM', 'categoria' => 'Resoluciones', 'fecha' => '2015-01-22', 'url' => '#'],
-            ];
-            $categorias = collect($documentos)->pluck('categoria')->unique()->values();
+            // Documentos administrables desde el panel (título, categoría, fecha, PDF).
+            $categorias = $documentos->pluck('categoria')->unique()->values();
             // Estructura serializada para el filtro reactivo de Alpine.
-            $items = collect($documentos)->map(fn ($d) => [
-                'titulo' => $d['titulo'],
-                'categoria' => $d['categoria'],
-                'fecha' => \Illuminate\Support\Carbon::parse($d['fecha'])->translatedFormat('d M Y'),
-                'busqueda' => \Illuminate\Support\Str::lower($d['titulo'].' '.$d['categoria']),
-                'url' => $d['url'],
+            $items = $documentos->map(fn ($d) => [
+                'titulo' => $d->titulo,
+                'categoria' => $d->categoria,
+                'fecha' => optional($d->fecha)->translatedFormat('d M Y') ?? '',
+                'busqueda' => \Illuminate\Support\Str::lower($d->titulo.' '.$d->categoria),
+                'url' => $d->enlace ?: '#',
             ])->values();
         @endphp
-
-        <p class="reveal mb-8 rounded-xl bg-stone-50 px-4 py-3 font-sans text-sm text-navy-700">
-            Esta sección es administrable: al conectar el CMS, el personal del programa podrá subir,
-            editar y organizar los documentos directamente, sin tocar código.
-        </p>
 
         <div class="reveal" x-data="{ q: '', cat: 'all', items: @js($items) }">
             {{-- Controles: buscador + filtro por categoría --}}

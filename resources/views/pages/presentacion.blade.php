@@ -26,14 +26,7 @@
                 <div class="rounded-2xl border border-stone-200 bg-paper p-7">
                     <h3 class="text-lg font-semibold text-navy-900">Datos del programa</h3>
                     <dl class="mt-5 space-y-4 font-sans text-sm">
-                        @foreach ([
-                            ['Facultad', 'Derecho y Ciencias Políticas'],
-                            ['Grado académico', 'Bachiller en Derecho'],
-                            ['Título profesional', 'Abogado(a)'],
-                            ['Duración', '5 años (10 ciclos)'],
-                            ['Modalidad', 'Presencial'],
-                            ['Sede', 'Huaraz, Áncash'],
-                        ] as [$k, $v])
+                        @foreach ($datos as [$k, $v])
                             <div class="flex justify-between gap-4 border-b border-stone-200 pb-3">
                                 <dt class="text-stone-500">{{ $k }}</dt>
                                 <dd class="text-right font-medium text-navy-900">{{ $v }}</dd>
