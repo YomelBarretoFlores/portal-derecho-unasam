@@ -122,6 +122,19 @@ class MockData
     }
 
     /**
+     * Comunicados oficiales del programa.
+     */
+    public static function comunicados(): Collection
+    {
+        return collect([
+            ['id' => 1, 'titulo' => 'Cronograma de matrícula 2026-I', 'resumen' => 'Se comunica a los estudiantes el cronograma oficial de matrícula para el semestre 2026-I, según su situación académica.', 'fecha' => '2026-05-20'],
+            ['id' => 2, 'titulo' => 'Convocatoria a prácticas preprofesionales', 'resumen' => 'Abierta la convocatoria para prácticas preprofesionales en convenio con la Corte Superior de Justicia de Áncash.', 'fecha' => '2026-05-12'],
+            ['id' => 3, 'titulo' => 'Suspensión de actividades académicas', 'resumen' => 'Por actividades institucionales, se suspenden las clases el día viernes. Las sesiones serán reprogramadas.', 'fecha' => '2026-05-03'],
+            ['id' => 4, 'titulo' => 'Proceso de sustentación de tesis', 'resumen' => 'Se publica el calendario de sustentaciones de tesis para optar el título profesional de abogado.', 'fecha' => '2026-04-22'],
+        ])->map(fn ($c) => (object) [...$c, 'fecha' => Carbon::parse($c['fecha'])]);
+    }
+
+    /**
      * Personal docente.
      */
     public static function docentes(): Collection
@@ -150,15 +163,16 @@ class MockData
      */
     public static function estadisticas(string $tipo): Collection
     {
+        // Datos reales del portal oficial (años 2020–2024).
         $series = [
-            'matriculados' => [412, 438, 465, 502, 528, 551],
-            'egresados' => [68, 72, 78, 85, 91, 94],
-            'graduados' => [54, 61, 66, 70, 79, 88],
-            'titulados' => [41, 47, 52, 58, 64, 73],
+            'matriculados' => [766, 835, 906, 480, 1049],
+            'egresados' => [57, 54, 72, 11, 38],
+            'graduados' => [6, 86, 37, 85, 29],
+            'titulados' => [13, 10, 55, 23, 68],
         ];
 
         $valores = $series[$tipo] ?? $series['matriculados'];
-        $anios = ['2020', '2021', '2022', '2023', '2024', '2025'];
+        $anios = ['2020', '2021', '2022', '2023', '2024'];
 
         return collect($valores)->map(fn ($total, $i) => (object) [
             'anio' => $anios[$i],

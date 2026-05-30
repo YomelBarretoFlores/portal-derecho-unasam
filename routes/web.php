@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ComunicadoController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\EstadisticaController;
 use App\Http\Controllers\HomeController;
@@ -12,6 +13,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // --- Programa ---
 Route::get('/presentacion', [PageController::class, 'presentacion'])->name('presentacion');
+Route::get('/resumen', [PageController::class, 'resumen'])->name('resumen');
 Route::get('/historia', [PageController::class, 'historia'])->name('historia');
 Route::get('/mision', [PageController::class, 'mision'])->name('mision');
 Route::get('/campo-laboral', [PageController::class, 'campoLaboral'])->name('campo-laboral');
@@ -30,6 +32,7 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 
 // --- Más ---
 Route::get('/docentes', [DocenteController::class, 'index'])->name('docentes');
+Route::get('/comunicados', [ComunicadoController::class, 'index'])->name('comunicados');
 Route::get('/estadisticas/{tipo}', [EstadisticaController::class, 'show'])
     ->where('tipo', 'matriculados|egresados|graduados|titulados')
     ->name('estadisticas');

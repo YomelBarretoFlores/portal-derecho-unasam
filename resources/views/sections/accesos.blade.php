@@ -1,5 +1,5 @@
 {{-- Sección Accesos directos --}}
-<section class="bg-gray-50 py-24">
+<section class="border-y border-stone-200 bg-paper py-24">
     <div class="mx-auto max-w-7xl px-6">
         <x-section-header eyebrow="Accesos directos" title="Explora el programa" class="mb-12" />
 

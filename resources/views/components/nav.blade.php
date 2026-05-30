@@ -1,6 +1,7 @@
 @php
     $programa = [
         ['Presentación', route('presentacion')],
+        ['Resumen', route('resumen')],
         ['Historia', route('historia')],
         ['Misión y Visión', route('mision')],
         ['Objetivos', route('objetivos')],
@@ -15,6 +16,7 @@
     $mas = [
         ['Estadísticas', route('estadisticas', 'matriculados')],
         ['Personal Docente', route('docentes')],
+        ['Comunicados', route('comunicados')],
         ['Documentos', route('documentos')],
     ];
 @endphp
@@ -22,8 +24,8 @@
 <header
     x-data="{ scrolled: false, mobile: false }"
     @scroll.window="scrolled = window.scrollY > 20"
-    :class="scrolled ? 'bg-white/85 shadow-sm backdrop-blur' : 'bg-white'"
-    class="sticky top-0 z-50 border-b border-gray-100 transition-all duration-300"
+    :class="scrolled ? 'bg-white/80 shadow-card backdrop-blur-md' : 'bg-white'"
+    class="sticky top-0 z-50 border-b border-stone-200 transition-all duration-300"
 >
     <nav class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 transition-all duration-300"
          :class="scrolled ? 'py-2' : 'py-4'">
@@ -69,19 +71,19 @@
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-2"
          x-transition:enter-end="opacity-100 translate-y-0"
-         class="border-t border-gray-100 bg-white lg:hidden">
+         class="border-t border-stone-200 bg-white lg:hidden">
         <div class="space-y-1 px-6 py-4">
             <a href="{{ route('home') }}" wire:navigate class="block py-2 font-medium text-navy-900">Inicio</a>
 
             @foreach (['Programa' => $programa, 'Académico' => $academico, 'Más' => $mas] as $label => $items)
-                <div x-data="{ open: false }" class="border-t border-gray-50 pt-1">
+                <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
                     <button @click="open = !open" class="flex w-full items-center justify-between py-2 font-medium text-navy-900">
                         {{ $label }}
                         <svg class="h-4 w-4 transition" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
                     <div x-show="open" x-cloak class="pl-3">
                         @foreach ($items as [$texto, $url])
-                            <a href="{{ $url }}" wire:navigate class="block py-1.5 text-sm text-gray-600 hover:text-gold-600">{{ $texto }}</a>
+                            <a href="{{ $url }}" wire:navigate class="block py-1.5 text-sm text-stone-600 hover:text-navy-900">{{ $texto }}</a>
                         @endforeach
                     </div>
                 </div>

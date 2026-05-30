@@ -1,22 +1,14 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
     plugins: [
+        // La tipografía Outfit se carga vía Bunny Fonts (<link> en layouts/app.blade.php),
+        // por lo que no se gestiona desde aquí.
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
-            fonts: [
-                bunny('Outfit', {
-                    weights: [300, 400, 500, 600, 700, 800],
-                }),
-                bunny('Cormorant Garamond', {
-                    weights: [500, 600, 700],
-                    styles: ['normal', 'italic'],
-                }),
-            ],
         }),
         tailwindcss(),
     ],

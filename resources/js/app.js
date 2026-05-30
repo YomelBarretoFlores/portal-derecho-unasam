@@ -34,26 +34,35 @@ function initCounters() {
     const els = document.querySelectorAll('[data-count]');
     if (!els.length) return;
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const animate = (el) => {
         if (el.dataset.counted) return; // evita doble animación
         el.dataset.counted = '1';
 
         const target = parseFloat(el.dataset.count);
         const suffix = el.dataset.countSuffix || '';
-        const duration = 1500;
-        const increment = target / (duration / 16);
-        let current = 0;
 
-        const tick = () => {
-            current += increment;
-            if (current >= target) {
-                el.textContent = target + suffix;
-            } else {
-                el.textContent = Math.floor(current) + suffix;
-                requestAnimationFrame(tick);
-            }
+        // Sin movimiento: mostrar el valor final directamente
+        if (reduceMotion) {
+            el.textContent = target + suffix;
+            return;
+        }
+
+        const duration = 1400;
+        let startTime = null;
+        // Ease-out (sensación Framer): rápido al inicio, desacelera al final
+        const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+        const tick = (now) => {
+            if (startTime === null) startTime = now;
+            const progress = Math.min((now - startTime) / duration, 1);
+            const value = Math.round(target * easeOut(progress));
+            el.textContent = value + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target + suffix;
         };
-        tick();
+        requestAnimationFrame(tick);
     };
 
     const observer = new IntersectionObserver(

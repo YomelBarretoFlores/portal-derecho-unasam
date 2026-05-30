@@ -20,20 +20,20 @@
             {{-- Sidebar filtros --}}
             <aside class="lg:sticky lg:top-24 lg:self-start">
                 <label class="block">
-                    <span class="font-sans text-xs font-bold uppercase tracking-wide text-gray-400">Buscar</span>
+                    <span class="font-sans text-xs font-bold uppercase tracking-wide text-stone-400">Buscar</span>
                     <input x-model="q" type="search" placeholder="Título o autor…"
-                           class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-2.5 font-sans text-sm focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/10">
+                           class="mt-2 w-full rounded-xl border border-stone-300 px-4 py-2.5 font-sans text-sm focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/10">
                 </label>
 
                 <div class="mt-6">
-                    <span class="font-sans text-xs font-bold uppercase tracking-wide text-gray-400">Categorías</span>
+                    <span class="font-sans text-xs font-bold uppercase tracking-wide text-stone-400">Categorías</span>
                     <div class="mt-3 flex flex-col gap-1">
                         <button @click="cat = 'all'"
-                                :class="cat === 'all' ? 'bg-navy-900 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                                :class="cat === 'all' ? 'bg-navy-900 text-white' : 'text-stone-600 hover:bg-stone-100'"
                                 class="rounded-lg px-3 py-2 text-left font-sans text-sm transition">Todas</button>
                         @foreach ($categorias as $c)
                             <button @click="cat = @js($c)"
-                                    :class="cat === @js($c) ? 'bg-navy-900 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                                    :class="cat === @js($c) ? 'bg-navy-900 text-white' : 'text-stone-600 hover:bg-stone-100'"
                                     class="rounded-lg px-3 py-2 text-left font-sans text-sm transition">{{ $c }}</button>
                         @endforeach
                     </div>
@@ -42,7 +42,7 @@
 
             {{-- Grid de artículos --}}
             <div>
-                <p class="mb-6 font-sans text-sm text-gray-400" x-text="visibles + ' artículo(s)'"></p>
+                <p class="mb-6 font-sans text-sm text-stone-400" x-text="visibles + ' artículo(s)'"></p>
                 <div x-ref="grid" class="grid gap-6 sm:grid-cols-2">
                     @foreach ($articulos as $art)
                         <div data-art

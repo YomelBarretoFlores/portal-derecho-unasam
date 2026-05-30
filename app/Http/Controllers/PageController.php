@@ -35,6 +35,11 @@ class PageController extends Controller
         return view('pages.objetivos');
     }
 
+    public function resumen(): View
+    {
+        return view('pages.resumen');
+    }
+
     public function competencias(): View
     {
         return view('pages.competencias');
@@ -67,7 +72,7 @@ class PageController extends Controller
 
     public function documentos(): View
     {
-        return $this->generica('Documentos Normativos', 'Institucional');
+        return view('pages.documentos');
     }
 
     /**

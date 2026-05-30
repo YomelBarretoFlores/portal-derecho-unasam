@@ -8,12 +8,12 @@
 
     <section class="mx-auto max-w-7xl px-6 py-20">
         <div class="grid gap-8 lg:grid-cols-2">
-            {{-- Misión (dark) --}}
+            {{-- Misión (oscura) --}}
             <x-reveal>
                 <div class="flex h-full flex-col rounded-3xl bg-navy-900 p-10 text-white">
-                    <span class="font-sans text-xs font-bold uppercase tracking-[0.12em] text-gold-400">Misión</span>
-                    <div class="mt-4 h-0.5 w-10 bg-gold-500"></div>
-                    <p class="mt-6 font-serif text-2xl leading-relaxed">
+                    <span class="text-xs font-semibold uppercase tracking-[0.14em] text-white/50">Misión</span>
+                    <div class="accent-line mt-4"></div>
+                    <p class="mt-6 text-2xl leading-relaxed text-white/90">
                         Formar abogados líderes, con sólida formación científica, humanística, jurídica,
                         ética e inclusiva, comprometidos con la investigación, la defensa de los derechos
                         humanos, la justicia y el desarrollo sostenible, capaces de responder con
@@ -23,12 +23,12 @@
                 </div>
             </x-reveal>
 
-            {{-- Visión (light) --}}
+            {{-- Visión (clara) --}}
             <x-reveal :delay="0.12">
-                <div class="flex h-full flex-col rounded-3xl border border-gray-200 bg-gray-50 p-10">
-                    <span class="font-sans text-xs font-bold uppercase tracking-[0.12em] text-gold-600">Visión</span>
-                    <div class="mt-4 h-0.5 w-10 bg-gold-500"></div>
-                    <p class="mt-6 font-serif text-2xl leading-relaxed text-navy-900">
+                <div class="flex h-full flex-col rounded-3xl border border-stone-200 bg-paper p-10">
+                    <span class="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visión</span>
+                    <div class="accent-line mt-4"></div>
+                    <p class="mt-6 text-2xl leading-relaxed text-navy-900">
                         Consolidarse como un programa de estudios acreditado y de referencia nacional e
                         internacional en la formación de abogados íntegros, con sólida preparación
                         científica, humanística y orientada a la investigación, comprometidos con la

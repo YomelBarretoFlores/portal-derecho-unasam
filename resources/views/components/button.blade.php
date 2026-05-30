@@ -4,8 +4,8 @@
     $classes = trim('btn '
         . ($size === 'sm' ? 'btn-sm ' : '')
         . match ($variant) {
-            'gold' => 'btn-gold',
             'ghost' => 'btn-ghost',
+            'light' => 'btn-light',
             'ghost-light' => 'btn-ghost-light',
             default => 'btn-primary',
         });

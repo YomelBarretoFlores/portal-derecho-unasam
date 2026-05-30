@@ -11,7 +11,7 @@
         <div class="flex flex-wrap gap-2">
             @foreach ($tipos as $key => $label)
                 <a href="{{ route('estadisticas', $key) }}" wire:navigate
-                   class="rounded-full px-5 py-2 font-sans text-sm font-medium transition {{ $key === $tipo ? 'bg-navy-900 text-white' : 'border border-gray-300 text-gray-600 hover:border-navy-900' }}">
+                   class="rounded-full px-5 py-2 font-sans text-sm font-medium transition {{ $key === $tipo ? 'bg-navy-900 text-white' : 'border border-stone-300 text-stone-600 hover:border-navy-900' }}">
                     {{ $label }}
                 </a>
             @endforeach
@@ -24,7 +24,7 @@
                 <h2 class="text-xl font-semibold text-navy-900">{{ $titulo }} por año</h2>
                 <table class="mt-5 w-full font-sans text-sm">
                     <thead>
-                        <tr class="border-b-2 border-gray-200 text-left text-gray-400">
+                        <tr class="border-b-2 border-stone-200 text-left text-stone-400">
                             <th class="pb-3 font-semibold">Año</th>
                             <th class="pb-3 font-semibold">Total</th>
                             <th class="pb-3 text-right font-semibold">Variación</th>
@@ -33,14 +33,14 @@
                     <tbody>
                         @foreach ($serie as $i => $punto)
                             @php $prev = $i > 0 ? $serie[$i - 1]->total : null; $var = $prev ? round(($punto->total - $prev) / $prev * 100, 1) : null; @endphp
-                            <tr class="border-b border-gray-100">
+                            <tr class="border-b border-stone-100">
                                 <td class="py-3 font-medium text-navy-900">{{ $punto->anio }}</td>
-                                <td class="py-3 text-gray-600">{{ $punto->total }}</td>
+                                <td class="py-3 text-stone-600">{{ $punto->total }}</td>
                                 <td class="py-3 text-right">
                                     @if ($var !== null)
                                         <span class="font-medium {{ $var >= 0 ? 'text-emerald-600' : 'text-red-500' }}">{{ $var >= 0 ? '+' : '' }}{{ $var }}%</span>
                                     @else
-                                        <span class="text-gray-300">—</span>
+                                        <span class="text-stone-300">—</span>
                                     @endif
                                 </td>
                             </tr>
@@ -56,9 +56,9 @@
                     @foreach ($serie as $punto)
                         <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
                             <span class="font-sans text-xs font-semibold text-navy-700">{{ $punto->total }}</span>
-                            <div class="w-full rounded-t-md bg-gradient-to-t from-navy-900 to-navy-500"
+                            <div class="w-full rounded-t-md bg-navy-800"
                                  style="height: {{ round($punto->total / $max * 100) }}%"></div>
-                            <span class="font-sans text-xs text-gray-400">{{ $punto->anio }}</span>
+                            <span class="font-sans text-xs text-stone-400">{{ $punto->anio }}</span>
                         </div>
                     @endforeach
                 </div>
