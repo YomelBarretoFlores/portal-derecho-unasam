@@ -1,0 +1,62 @@
+# Blueprint de Render — Portal Derecho y Ciencias Políticas UNASAM
+# Desplegar con: Render Dashboard → New → Blueprint → apuntar a este repo.
+# Las variables con "sync: false" se rellenan en el panel (son secretas/propias del entorno).
+
+services:
+  - type: web
+    name: portal-derecho
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: virginia          # La más cercana a Neon (sa-east-1, São Paulo)
+    plan: starter             # Siempre activo (el plan free se duerme a los 15 min)
+    healthCheckPath: /
+    autoDeploy: true          # Redeploy automático en cada push a la rama
+
+    envVars:
+      # --- App ---
+      - key: APP_NAME
+        value: "Derecho UNASAM"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false           # pegar: salida de `php artisan key:generate --show`
+      - key: APP_URL
+        sync: false           # poner la URL pública de Render tras el 1er deploy
+      - key: APP_LOCALE
+        value: es
+      - key: APP_FALLBACK_LOCALE
+        value: es
+
+      # --- Logs (a stderr para que Render los capture) ---
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+
+      # --- Base de datos (Neon) ---
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_HOST
+        sync: false           # endpoint -pooler de Neon
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+      # --- Sesión, caché y colas (local, sin tocar la BD en cada request) ---
+      - key: SESSION_DRIVER
+        value: file
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync

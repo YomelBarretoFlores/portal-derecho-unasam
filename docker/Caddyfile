@@ -1,0 +1,20 @@
+{
+	# Render termina el TLS por nosotros; servimos HTTP plano en $PORT.
+	auto_https off
+	admin off
+	# Confiar en el proxy de Render para IPs y esquema (https en APP_URL)
+	servers {
+		trusted_proxies static 0.0.0.0/0 ::/0
+	}
+}
+
+# Escucha en el puerto que provee Render (con 8080 como valor por defecto)
+:{$PORT:8080} {
+	root * /app/public
+	encode zstd gzip
+
+	# Sirve archivos estáticos y enruta todo lo demás al front controller de Laravel
+	php_server {
+		index index.php
+	}
+}
