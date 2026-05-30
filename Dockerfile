@@ -48,6 +48,12 @@ COPY --from=assets /app/public/build ./public/build
 RUN composer dump-autoload --optimize \
     && php artisan package:discover --ansi
 
+# Quitar las file-capabilities del binario de FrankenPHP.
+# Render ejecuta como no-root y recorta el bounding set de capabilities, lo que
+# impediría ejecutar un binario con cap_net_bind_service (exec: Operation not
+# permitted). No las necesitamos: escuchamos en $PORT (puerto alto), no en 80/443.
+RUN setcap -r /usr/local/bin/frankenphp || true
+
 # Permisos de escritura para storage y caché
 RUN chmod -R ug+rw storage bootstrap/cache
 
