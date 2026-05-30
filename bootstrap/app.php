@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Render (y cualquier proxy con TLS) reenvía la petición como HTTP con
+        // X-Forwarded-Proto: https. Confiar en el proxy para que Laravel detecte
+        // HTTPS y genere URLs https:// (assets, Livewire) sin contenido mixto.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
