@@ -15,10 +15,10 @@ class DocenteRepository extends BaseRepository implements DocenteRepositoryInter
 
     public function activos(): Collection
     {
-        return $this->model
+        return $this->remember('docentes.activos', fn () => $this->model
             ->where('activo', true)
             ->orderBy('orden')
             ->orderBy('name')
-            ->get();
+            ->get());
     }
 }

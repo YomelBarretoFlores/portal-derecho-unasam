@@ -15,9 +15,9 @@ class EstadisticaRepository extends BaseRepository implements EstadisticaReposit
 
     public function serie(string $tipo): Collection
     {
-        return $this->model
+        return $this->remember("estadisticas.serie.{$tipo}", fn () => $this->model
             ->where('tipo', $tipo)
             ->orderBy('anio')
-            ->get();
+            ->get());
     }
 }

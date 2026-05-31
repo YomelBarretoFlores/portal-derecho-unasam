@@ -15,20 +15,20 @@ class ArticuloRepository extends BaseRepository implements ArticuloRepositoryInt
 
     public function publicados(): Collection
     {
-        return $this->model
+        return $this->remember('articulos.publicados', fn () => $this->model
             ->where('publicado', true)
             ->orderByDesc('fecha')
-            ->get();
+            ->get());
     }
 
     public function categorias(): array
     {
-        return $this->model
+        return $this->remember('articulos.categorias', fn () => $this->model
             ->where('publicado', true)
             ->whereNotNull('categoria')
             ->distinct()
             ->orderBy('categoria')
             ->pluck('categoria')
-            ->all();
+            ->all());
     }
 }

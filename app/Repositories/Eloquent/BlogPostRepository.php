@@ -15,9 +15,9 @@ class BlogPostRepository extends BaseRepository implements BlogPostRepositoryInt
 
     public function publicados(): Collection
     {
-        return $this->model
+        return $this->remember('blogposts.publicados', fn () => $this->model
             ->where('publicado', true)
             ->orderByDesc('fecha')
-            ->get();
+            ->get());
     }
 }

@@ -15,6 +15,6 @@ class CursoRepository extends BaseRepository implements CursoRepositoryInterface
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('ciclo')->orderBy('orden')->orderBy('nombre')->get();
+        return $this->remember('cursos.ordenados', fn () => $this->model->orderBy('ciclo')->orderBy('orden')->orderBy('nombre')->get());
     }
 }

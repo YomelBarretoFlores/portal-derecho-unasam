@@ -15,9 +15,9 @@ class ComunicadoRepository extends BaseRepository implements ComunicadoRepositor
 
     public function publicados(): Collection
     {
-        return $this->model
+        return $this->remember('comunicados.publicados', fn () => $this->model
             ->where('publicado', true)
             ->orderByDesc('fecha_publicacion')
-            ->get();
+            ->get());
     }
 }
