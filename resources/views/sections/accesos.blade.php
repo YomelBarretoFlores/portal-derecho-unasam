@@ -1,7 +1,7 @@
 {{-- Sección Accesos directos --}}
 <section class="border-y border-stone-200 bg-paper py-24">
     <div class="mx-auto max-w-7xl px-6">
-        <x-section-header eyebrow="Accesos directos" title="Explora el programa" class="mb-12" />
+        <x-section-header :eyebrow="$home['home_accesos_eyebrow']" :title="$home['home_accesos_titulo']" class="mb-12" />
 
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ([

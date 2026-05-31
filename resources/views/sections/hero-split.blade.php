@@ -13,17 +13,16 @@
         <div class="flex max-w-2xl items-center py-20 lg:min-h-[580px] lg:py-28">
             <div class="w-full">
                 <h1 class="reveal text-5xl font-semibold leading-[1.05] tracking-tight text-white md:text-6xl">
-                    Derecho y Ciencias Políticas
+                    {{ $home['home_hero_titulo'] }}
                 </h1>
 
                 <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-white/70" data-reveal-delay="0.08">
-                    Formación jurídica de excelencia con responsabilidad social, al servicio de Áncash
-                    y el país desde 1986.
+                    {{ $home['home_hero_subtitulo'] }}
                 </p>
 
                 <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.16">
-                    <x-button :href="route('presentacion')" variant="light">Conoce el programa</x-button>
-                    <x-button :href="route('plan-2023')" variant="ghost-light">Plan de Estudios</x-button>
+                    <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
+                    <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
                 </div>
 
                 {{-- Estadísticas: etiqueta arriba + cifra "hueca", separadas por divisores --}}

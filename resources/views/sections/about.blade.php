@@ -4,21 +4,14 @@
 
         {{-- Texto --}}
         <div class="reveal">
-            <span class="eyebrow">El programa</span>
+            <span class="eyebrow">{{ $home['home_about_eyebrow'] }}</span>
             <h2 class="mt-3 max-w-xl text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">
-                Formando profesionales del derecho desde 1986
+                {{ $home['home_about_titulo'] }}
             </h2>
             <div class="mt-6 space-y-4 text-[17px] leading-relaxed text-stone-600">
-                <p>
-                    El Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM forma abogados
-                    con sólida base jurídica, sentido ético y compromiso con el desarrollo de la región
-                    Áncash y del país.
-                </p>
-                <p>
-                    Nuestro plan de estudios combina la formación teórica con la práctica profesional,
-                    la investigación jurídica y la responsabilidad social, preparando a los estudiantes
-                    para los desafíos del ejercicio del derecho en el siglo XXI.
-                </p>
+                @foreach (preg_split('/\R{2,}/', trim((string) $home['home_about_cuerpo'])) as $parrafo)
+                    <p>{{ $parrafo }}</p>
+                @endforeach
             </div>
             <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
                 @foreach ([['Presentación', route('presentacion')], ['Historia', route('historia')], ['Campo Laboral', route('campo-laboral')]] as [$texto, $url])
@@ -35,7 +28,7 @@
             <div class="rounded-2xl bg-navy-900 p-7 text-white">
                 <div class="accent-line"></div>
                 <p class="mt-4 text-xl italic leading-relaxed text-white/90">
-                    Del esfuerzo de sus hijos, depende el progreso de los pueblos.
+                    {{ $home['home_about_cita'] }}
                 </p>
             </div>
             @foreach ([['Misión y Visión', 'Nuestro propósito y horizonte', route('mision')], ['Plan de Estudios 2023', 'Malla curricular vigente', route('plan-2023')], ['Objetivos Educacionales', 'Lo que buscamos lograr', route('objetivos')]] as [$titulo, $desc, $url])

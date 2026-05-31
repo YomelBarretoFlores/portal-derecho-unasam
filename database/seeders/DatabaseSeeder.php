@@ -7,13 +7,14 @@ use App\Models\Articulo;
 use App\Models\BlogPost;
 use App\Models\Competencia;
 use App\Models\Comunicado;
+use App\Models\Curso;
 use App\Models\Docente;
 use App\Models\Documento;
 use App\Models\Estadistica;
 use App\Models\Hito;
 use App\Models\Objetivo;
+use App\Models\Organigrama;
 use App\Models\PerfilIngresoArea;
-use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -70,9 +71,17 @@ class DatabaseSeeder extends Seeder
             $this->call(DocumentoSeeder::class);
         }
 
-        if (Setting::count() === 0) {
-            $this->call(SettingSeeder::class);
+        // --- Fase 3: malla y organigrama ---
+        if (Curso::count() === 0) {
+            $this->call(CursoSeeder::class);
         }
+
+        if (Organigrama::count() === 0) {
+            $this->call(OrganigramaSeeder::class);
+        }
+
+        // Settings: idempotente por clave (solo crea las faltantes, no pisa ediciones).
+        $this->call(SettingSeeder::class);
 
         // --- Usuario administrador ---
         $this->call(AdminUserSeeder::class);

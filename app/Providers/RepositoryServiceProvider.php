@@ -7,6 +7,7 @@ use App\Repositories\Contracts\ArticuloRepositoryInterface;
 use App\Repositories\Contracts\BlogPostRepositoryInterface;
 use App\Repositories\Contracts\ComunicadoRepositoryInterface;
 use App\Repositories\Contracts\CompetenciaRepositoryInterface;
+use App\Repositories\Contracts\CursoRepositoryInterface;
 use App\Repositories\Contracts\DocenteRepositoryInterface;
 use App\Repositories\Contracts\DocumentoRepositoryInterface;
 use App\Repositories\Contracts\EstadisticaRepositoryInterface;
@@ -18,6 +19,7 @@ use App\Repositories\Eloquent\ArticuloRepository;
 use App\Repositories\Eloquent\BlogPostRepository;
 use App\Repositories\Eloquent\ComunicadoRepository;
 use App\Repositories\Eloquent\CompetenciaRepository;
+use App\Repositories\Eloquent\CursoRepository;
 use App\Repositories\Eloquent\DocenteRepository;
 use App\Repositories\Eloquent\DocumentoRepository;
 use App\Repositories\Eloquent\EstadisticaRepository;
@@ -55,5 +57,8 @@ class RepositoryServiceProvider extends ServiceProvider
         AreaLaboralRepositoryInterface::class => AreaLaboralRepository::class,
         PerfilIngresoAreaRepositoryInterface::class => PerfilIngresoAreaRepository::class,
         DocumentoRepositoryInterface::class => DocumentoRepository::class,
+
+        // Fase 3 — malla curricular
+        CursoRepositoryInterface::class => CursoRepository::class,
     ];
 }

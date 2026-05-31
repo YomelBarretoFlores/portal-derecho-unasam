@@ -3,8 +3,8 @@
 <section class="mx-auto max-w-7xl px-6 py-24">
     <div class="reveal flex flex-wrap items-end justify-between gap-4">
         <div>
-            <span class="eyebrow">Actualidad</span>
-            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">Noticias, opiniones y eventos</h2>
+            <span class="eyebrow">{{ $home['home_blog_eyebrow'] }}</span>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_blog_titulo'] }}</h2>
         </div>
         <a href="{{ route('blog') }}" wire:navigate class="group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">
             Ver todo el blog

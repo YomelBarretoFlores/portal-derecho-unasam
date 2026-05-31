@@ -64,14 +64,22 @@ class PageController extends Controller
         ]);
     }
 
-    public function planEstudios2023(): View
+    public function planEstudios2023(\App\Services\CursoService $cursos): View
     {
-        return view('pages.plan-2023');
+        return view('pages.plan-2023', [
+            'grado' => Setting::get('plan_grado', 'Bachiller en Derecho'),
+            'tituloProf' => Setting::get('plan_titulo_prof', 'Abogado(a)'),
+            'modalidad' => Setting::get('plan_modalidad', 'Presencial'),
+            'pdfUrl' => Setting::get('plan_pdf_url'),
+            'sgaUrl' => Setting::get('plan_sga_url'),
+            'intro' => Setting::get('plan_intro'),
+            'ciclos' => $cursos->porCiclo(),
+        ]);
     }
 
     public function planEstudios2019(): View
     {
-        return view('pages.generica', ['titulo' => 'Plan de Estudios 2019', 'seccion' => 'Académico']);
+        return view('pages.generic', ['titulo' => 'Plan de Estudios 2019', 'seccion' => 'Académico']);
     }
 
     public function competencias(CompetenciaService $competencias): View
@@ -99,7 +107,13 @@ class PageController extends Controller
 
     public function organigrama(): View
     {
-        return view('pages.generica', ['titulo' => 'Organigrama', 'seccion' => 'Institucional']);
+        $organigrama = \App\Models\Organigrama::with('media')->first();
+
+        return view('pages.organigrama', [
+            'titulo' => $organigrama?->titulo,
+            'descripcion' => $organigrama?->descripcion,
+            'imagen' => $organigrama?->imagen_url,
+        ]);
     }
 
     public function documentos(DocumentoService $documentos): View

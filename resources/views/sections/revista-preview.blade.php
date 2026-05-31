@@ -4,11 +4,11 @@
     <div class="mx-auto max-w-7xl px-6">
         <div class="reveal flex flex-wrap items-end justify-between gap-4">
             <div>
-                <span class="eyebrow">Revista Jurídica UNASAM</span>
-                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">Investigación jurídica original</h2>
+                <span class="eyebrow">{{ $home['home_revista_eyebrow'] }}</span>
+                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_revista_titulo'] }}</h2>
             </div>
             <span class="rounded-full bg-navy-900 px-4 py-1.5 text-xs font-medium text-white">
-                Vol. 1 · Núm. 1 — Marzo 2026
+                {{ $home['home_revista_badge'] }}
             </span>
         </div>
 

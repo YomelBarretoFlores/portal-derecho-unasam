@@ -5,15 +5,12 @@
 
         {{-- Narrativa --}}
         <div class="reveal">
-            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-white/45">El programa en cifras</span>
+            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-white/45">{{ $home['home_stats_eyebrow'] }}</span>
             <h2 class="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">
-                Una comunidad académica en crecimiento
+                {{ $home['home_stats_titulo'] }}
             </h2>
             <p class="mt-6 text-lg leading-relaxed text-white/65">
-                En 2024 alcanzamos <span class="font-semibold text-white">1049 matriculados</span>
-                y <span class="font-semibold text-white">68 titulados</span>, con más de
-                <span class="font-semibold text-white">40 años</span> formando abogados en
-                <span class="font-semibold text-white">8 áreas</span> del derecho.
+                {{ $home['home_stats_narrativa'] }}
             </p>
 
             <div class="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
