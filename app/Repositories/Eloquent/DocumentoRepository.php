@@ -15,6 +15,6 @@ class DocumentoRepository extends BaseRepository implements DocumentoRepositoryI
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->orderByDesc('fecha')->get();
+        return $this->remember('documentos.ordenados', fn () => $this->model->with('media')->orderBy('orden')->orderByDesc('fecha')->get());
     }
 }

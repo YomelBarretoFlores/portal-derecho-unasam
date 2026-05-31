@@ -15,6 +15,6 @@ class ObjetivoRepository extends BaseRepository implements ObjetivoRepositoryInt
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->get();
+        return $this->remember('objetivos.ordenados', fn () => $this->model->orderBy('orden')->get());
     }
 }

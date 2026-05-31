@@ -15,6 +15,6 @@ class CompetenciaRepository extends BaseRepository implements CompetenciaReposit
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->get();
+        return $this->remember('competencias.ordenados', fn () => $this->model->orderBy('orden')->get());
     }
 }

@@ -15,6 +15,6 @@ class HitoRepository extends BaseRepository implements HitoRepositoryInterface
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->orderBy('anio')->get();
+        return $this->remember('hitos.ordenados', fn () => $this->model->orderBy('orden')->orderBy('anio')->get());
     }
 }

@@ -15,6 +15,6 @@ class AreaLaboralRepository extends BaseRepository implements AreaLaboralReposit
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->get();
+        return $this->remember('areas_laborales.ordenados', fn () => $this->model->orderBy('orden')->get());
     }
 }

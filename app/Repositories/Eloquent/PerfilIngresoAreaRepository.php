@@ -15,6 +15,6 @@ class PerfilIngresoAreaRepository extends BaseRepository implements PerfilIngres
 
     public function ordenados(): Collection
     {
-        return $this->model->orderBy('orden')->get();
+        return $this->remember('perfil_ingreso.ordenados', fn () => $this->model->orderBy('orden')->get());
     }
 }
