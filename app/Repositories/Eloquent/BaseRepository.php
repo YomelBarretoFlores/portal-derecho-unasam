@@ -62,7 +62,40 @@ abstract class BaseRepository implements RepositoryInterface
     protected function remember(string $key, \Closure $callback): mixed
     {
         $version = Cache::get('content.version', 1);
+        $cacheKey = "repo:{$key}:v{$version}";
 
-        return Cache::remember("repo:{$key}:v{$version}", 600, $callback);
+        $cached = Cache::get($cacheKey);
+
+        // Autosanable: si la entrada se deserializó corrupta (p. ej.
+        // __PHP_Incomplete_Class tras un despliegue) o falta, recomputa desde
+        // la BD y reescribe la caché. Evita 500 por cachés obsoletas.
+        if ($cached !== null && $this->cacheEsValida($cached)) {
+            return $cached;
+        }
+
+        $fresh = $callback();
+        Cache::put($cacheKey, $fresh, 600);
+
+        return $fresh;
+    }
+
+    /**
+     * ¿El valor recuperado de caché es utilizable (no un objeto incompleto)?
+     */
+    private function cacheEsValida(mixed $valor): bool
+    {
+        if ($valor instanceof \__PHP_Incomplete_Class) {
+            return false;
+        }
+
+        if (is_iterable($valor)) {
+            foreach ($valor as $item) {
+                if ($item instanceof \__PHP_Incomplete_Class) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
