@@ -30,19 +30,19 @@
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-[0.14em] text-white/40">Programa</h4>
                     <ul class="mt-4 space-y-2.5 text-sm text-white/60">
-                        <li><a href="{{ route('presentacion') }}" wire:navigate class="transition hover:text-white">Presentación</a></li>
-                        <li><a href="{{ route('historia') }}" wire:navigate class="transition hover:text-white">Historia</a></li>
-                        <li><a href="{{ route('mision') }}" wire:navigate class="transition hover:text-white">Misión y Visión</a></li>
-                        <li><a href="{{ route('campo-laboral') }}" wire:navigate class="transition hover:text-white">Campo Laboral</a></li>
+                        <li><a href="{{ route('presentacion') }}" wire:navigate.hover class="transition hover:text-white">Presentación</a></li>
+                        <li><a href="{{ route('historia') }}" wire:navigate.hover class="transition hover:text-white">Historia</a></li>
+                        <li><a href="{{ route('mision') }}" wire:navigate.hover class="transition hover:text-white">Misión y Visión</a></li>
+                        <li><a href="{{ route('campo-laboral') }}" wire:navigate.hover class="transition hover:text-white">Campo Laboral</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-[0.14em] text-white/40">Académico</h4>
                     <ul class="mt-4 space-y-2.5 text-sm text-white/60">
-                        <li><a href="{{ route('plan-2023') }}" wire:navigate class="transition hover:text-white">Plan de Estudios 2023</a></li>
-                        <li><a href="{{ route('competencias') }}" wire:navigate class="transition hover:text-white">Competencias</a></li>
-                        <li><a href="{{ route('revista') }}" wire:navigate class="transition hover:text-white">Revista Jurídica</a></li>
-                        <li><a href="{{ route('docentes') }}" wire:navigate class="transition hover:text-white">Personal Docente</a></li>
+                        <li><a href="{{ route('plan-2023') }}" wire:navigate.hover class="transition hover:text-white">Plan de Estudios 2023</a></li>
+                        <li><a href="{{ route('competencias') }}" wire:navigate.hover class="transition hover:text-white">Competencias</a></li>
+                        <li><a href="{{ route('revista') }}" wire:navigate.hover class="transition hover:text-white">Revista Jurídica</a></li>
+                        <li><a href="{{ route('docentes') }}" wire:navigate.hover class="transition hover:text-white">Personal Docente</a></li>
                     </ul>
                 </div>
             </div>

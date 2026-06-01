@@ -8,13 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Implementación Eloquent del contrato base.
- *
- * ESTA es la ÚNICA capa que toca la base de datos directamente.
- * Cualquier repositorio concreto (ComunicadoRepository, DocenteRepository...)
- * extiende esta clase y solo agrega sus consultas específicas.
- */
 abstract class BaseRepository implements RepositoryInterface
 {
     protected const CACHE_TTL = 600;
@@ -52,12 +45,6 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * Cachea una consulta de lectura del sitio público. La clave incluye la
-     * "versión de contenido": cualquier guardado/borrado en el panel la
-     * incrementa (ver AppServiceProvider), invalidando todo de inmediato.
-     * Así el sitio no consulta Neon en cada navegación, pero los cambios del
-     * CMS se ven al instante.
-     *
      * @template T
      * @param  \Closure():T  $callback
      * @return T
@@ -69,37 +56,40 @@ abstract class BaseRepository implements RepositoryInterface
 
         $cached = Cache::get($cacheKey);
 
-        if ($cached !== null) {
-            if ($this->cacheEsValida($cached)) {
-                return $cached;
-            }
+        if (is_array($cached) && isset($cached['_type'])) {
+            return $cached['_type'] === 'collection'
+                ? $this->hydrate($cached['_data'])
+                : $cached['_data'];
+        }
 
+        if ($cached !== null) {
             Log::warning("Caché corrupta [{$cacheKey}], recomputando desde BD.");
         }
 
         $fresh = $callback();
-        Cache::put($cacheKey, $fresh, static::CACHE_TTL);
+
+        Cache::put($cacheKey, [
+            '_type' => $fresh instanceof Collection ? 'collection' : 'raw',
+            '_data' => $fresh instanceof Collection
+                ? $fresh->map(fn (Model $m) => $this->serializeModel($m))->values()->all()
+                : $fresh,
+        ], static::CACHE_TTL);
 
         return $fresh;
     }
 
-    /**
-     * ¿El valor recuperado de caché es utilizable (no un objeto incompleto)?
-     */
-    private function cacheEsValida(mixed $valor): bool
+    protected function serializeModel(Model $model): array
     {
-        if ($valor instanceof \__PHP_Incomplete_Class) {
-            return false;
-        }
+        return $model->getAttributes();
+    }
 
-        if (is_iterable($valor)) {
-            foreach ($valor as $item) {
-                if ($item instanceof \__PHP_Incomplete_Class) {
-                    return false;
-                }
-            }
-        }
+    private function hydrate(array $rows): Collection
+    {
+        return new Collection(array_map(function (array $row) {
+            $instance = $this->model->newInstance([], exists: true);
+            $instance->setRawAttributes($row, true);
 
-        return true;
+            return $instance;
+        }, $rows));
     }
 }

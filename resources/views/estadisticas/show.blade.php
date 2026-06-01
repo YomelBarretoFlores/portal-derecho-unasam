@@ -10,7 +10,7 @@
         {{-- Pestañas --}}
         <div class="flex flex-wrap gap-2">
             @foreach ($tipos as $key => $label)
-                <a href="{{ route('estadisticas', $key) }}" wire:navigate
+                <a href="{{ route('estadisticas', $key) }}" wire:navigate.hover
                    class="rounded-full px-5 py-2 font-sans text-sm font-medium transition {{ $key === $tipo ? 'bg-navy-900 text-white' : 'border border-stone-300 text-stone-600 hover:border-navy-900' }}">
                     {{ $label }}
                 </a>

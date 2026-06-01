@@ -11,6 +11,7 @@ use App\Services\ObjetivoService;
 use App\Services\CursoService;
 use App\Services\PerfilIngresoService;
 use App\Models\Organigrama;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -110,13 +111,18 @@ class PageController extends Controller
 
     public function organigrama(): View
     {
-        $organigrama = Organigrama::with('media')->first();
+        $version = Cache::get('content.version', 1);
+        $data = Cache::remember("organigrama.data:v{$version}", 600, function () {
+            $org = Organigrama::with('media')->first();
 
-        return view('pages.organigrama', [
-            'titulo' => $organigrama?->titulo,
-            'descripcion' => $organigrama?->descripcion,
-            'imagen' => $organigrama?->imagen_url,
-        ]);
+            return [
+                'titulo' => $org?->titulo,
+                'descripcion' => $org?->descripcion,
+                'imagen' => $org?->imagen_url,
+            ];
+        });
+
+        return view('pages.organigrama', $data);
     }
 
     public function documentos(DocumentoService $documentos): View

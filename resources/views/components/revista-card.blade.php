@@ -12,9 +12,10 @@
         <p class="mt-1">pp. {{ $articulo->paginas }} · {{ $articulo->descargas }} descargas · DOI: {{ $articulo->doi }}</p>
     </div>
 
-    @if ($articulo->getFirstMediaUrl('pdf'))
+    @php $pdfUrl = $articulo->_pdf_url ?: ($articulo->relationLoaded('media') ? $articulo->getFirstMediaUrl('pdf') : ''); @endphp
+    @if ($pdfUrl)
         <div class="mt-5 flex gap-2">
-            <a href="{{ $articulo->getFirstMediaUrl('pdf') }}" target="_blank" rel="noopener"
+            <a href="{{ $pdfUrl }}" target="_blank" rel="noopener"
                class="rounded-lg border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
         </div>
     @endif

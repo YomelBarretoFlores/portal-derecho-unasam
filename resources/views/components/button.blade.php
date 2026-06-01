@@ -13,7 +13,7 @@
 
 @if ($href)
     {{-- wire:navigate solo en enlaces internos (no externos ni descargas) --}}
-    <a href="{{ $href }}" @if (! Str::startsWith($href, ['http', 'mailto', 'tel', '#'])) wire:navigate @endif {{ $attributes->class($classes) }}>{{ $slot }}</a>
+    <a href="{{ $href }}" @if (! Str::startsWith($href, ['http', 'mailto', 'tel', '#'])) wire:navigate.hover @endif {{ $attributes->class($classes) }}>{{ $slot }}</a>
 @else
     <button {{ $attributes->class($classes) }}>{{ $slot }}</button>
 @endif

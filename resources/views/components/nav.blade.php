@@ -31,7 +31,7 @@
          :class="scrolled ? 'py-2' : 'py-4'">
 
         {{-- Branding --}}
-        <a href="{{ route('home') }}" wire:navigate class="flex shrink-0 items-center gap-3">
+        <a href="{{ route('home') }}" wire:navigate.hover class="flex shrink-0 items-center gap-3">
             <img src="{{ asset('img/escudo-unasam.png') }}" alt="Escudo UNASAM" class="h-11 w-auto">
             <span class="text-sm font-semibold leading-tight text-navy-900">
                 Derecho y Ciencias Políticas
@@ -73,7 +73,7 @@
          x-transition:enter-end="opacity-100 translate-y-0"
          class="border-t border-stone-200 bg-white lg:hidden">
         <div class="space-y-1 px-6 py-4">
-            <a href="{{ route('home') }}" wire:navigate class="block py-2 font-medium text-navy-900">Inicio</a>
+            <a href="{{ route('home') }}" wire:navigate.hover class="block py-2 font-medium text-navy-900">Inicio</a>
 
             @foreach (['Programa' => $programa, 'Académico' => $academico, 'Más' => $mas] as $label => $items)
                 <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
@@ -83,7 +83,7 @@
                     </button>
                     <div x-show="open" x-cloak class="pl-3">
                         @foreach ($items as [$texto, $url])
-                            <a href="{{ $url }}" wire:navigate class="block py-1.5 text-sm text-stone-600 hover:text-navy-900">{{ $texto }}</a>
+                            <a href="{{ $url }}" wire:navigate.hover class="block py-1.5 text-sm text-stone-600 hover:text-navy-900">{{ $texto }}</a>
                         @endforeach
                     </div>
                 </div>
