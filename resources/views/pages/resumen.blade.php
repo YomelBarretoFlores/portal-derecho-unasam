@@ -9,7 +9,7 @@
     <section class="mx-auto max-w-4xl px-6 py-20">
         <div class="reveal max-w-3xl">
             <div class="accent-line"></div>
-            <h2 class="mt-5 text-3xl font-semibold text-navy-900">Currículo flexible y por competencias</h2>
+            <h2 class="mt-5 text-3xl font-semibold text-navy-900">{{ $titulo ?: 'Currículo flexible y por competencias' }}</h2>
 
             <div class="mt-6 space-y-4 font-sans text-[17px] leading-relaxed text-stone-600">
                 @foreach (preg_split('/\R{2,}/', trim((string) $cuerpo)) as $parrafo)

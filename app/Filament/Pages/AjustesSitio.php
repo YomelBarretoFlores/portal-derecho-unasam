@@ -36,6 +36,7 @@ class AjustesSitio extends Page
     public string $vision = '';
     public string $historia_trayectoria_titulo = '';
     public string $historia_trayectoria_cuerpo = '';
+    public string $resumen_titulo = '';
     public string $resumen_cuerpo = '';
     public string $resumen_cita1 = '';
     public string $resumen_cita2 = '';
@@ -94,7 +95,7 @@ class AjustesSitio extends Page
             'presentacion_titulo', 'presentacion_cuerpo', 'datos_programa',
             'mision', 'vision',
             'historia_trayectoria_titulo', 'historia_trayectoria_cuerpo',
-            'resumen_cuerpo', 'resumen_cita1', 'resumen_cita2', 'resumen_cierre',
+            'resumen_titulo', 'resumen_cuerpo', 'resumen_cita1', 'resumen_cita2', 'resumen_cierre',
             'perfil_ingreso_especifico', 'perfil_egreso_2023', 'perfil_egreso_2019',
             // Inicio
             'home_hero_titulo', 'home_hero_subtitulo', 'home_hero_cta1', 'home_hero_cta2',

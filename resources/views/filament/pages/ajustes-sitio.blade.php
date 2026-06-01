@@ -63,6 +63,10 @@
             <h2 class="text-base font-semibold text-gray-900 dark:text-white">Resumen del Programa</h2>
             <div class="mt-4 space-y-4">
                 <div>
+                    <label class="{{ $label }}">Título</label>
+                    <input type="text" wire:model="resumen_titulo" class="{{ $field }}">
+                </div>
+                <div>
                     <label class="{{ $label }}">Cuerpo principal</label>
                     <textarea wire:model="resumen_cuerpo" rows="5" class="{{ $field }}"></textarea>
                 </div>

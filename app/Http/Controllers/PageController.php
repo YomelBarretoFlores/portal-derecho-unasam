@@ -28,6 +28,7 @@ class PageController extends Controller
     public function resumen(): View
     {
         return view('pages.resumen', [
+            'titulo' => Setting::get('resumen_titulo'),
             'cuerpo' => Setting::get('resumen_cuerpo'),
             'cita1' => Setting::get('resumen_cita1'),
             'cita2' => Setting::get('resumen_cita2'),
