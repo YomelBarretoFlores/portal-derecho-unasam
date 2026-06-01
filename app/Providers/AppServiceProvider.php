@@ -82,6 +82,7 @@ class AppServiceProvider extends ServiceProvider
             'footer_cta_texto' => 'Portal UNASAM',
             'footer_cta_url' => 'https://unasam.edu.pe',
             'lema' => 'Orabunt Causas Melius',
+            'home_marquee' => 'Derecho Civil · Derecho Penal · Derecho Constitucional · Derecho Laboral · Derecho Administrativo · Derecho Procesal · Derecho Internacional · Derecho Comercial',
         ];
 
         try {

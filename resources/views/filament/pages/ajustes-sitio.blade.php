@@ -198,6 +198,13 @@
                     <input type="text" wire:model="home_blog_titulo" class="{{ $field }}">
                 </div>
             </div>
+
+            <h3 class="mt-6 text-sm font-semibold text-gray-700 dark:text-gray-200">Banda animada (marquee)</h3>
+            <div class="mt-2">
+                <label class="{{ $label }}">Términos de la banda</label>
+                <input type="text" wire:model="home_marquee" class="{{ $field }}">
+                <p class="mt-1 text-xs text-gray-500">Separa cada término con <code>·</code> (punto medio). Ej.: <code>Derecho Civil · Derecho Penal · Derecho Constitucional</code></p>
+            </div>
         </section>
 
         {{-- Plan de Estudios --}}

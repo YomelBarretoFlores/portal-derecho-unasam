@@ -7,12 +7,18 @@
         subtitle="Nuestra plana docente, especialistas en las distintas ramas del derecho." />
 
     <section class="mx-auto max-w-7xl px-6 py-16">
-        <div class="grid gap-5 md:grid-cols-2">
-            @foreach ($docentes as $i => $docente)
-                <x-reveal :delay="($i % 2) * 0.06">
-                    <x-docente-card :docente="$docente" />
-                </x-reveal>
-            @endforeach
-        </div>
+        @if ($docentes->isEmpty())
+            <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-16 text-center">
+                <p class="font-sans text-stone-500">Aún no hay docentes publicados.</p>
+            </div>
+        @else
+            <div class="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($docentes as $docente)
+                    <div class="reveal">
+                        <x-docente-card :docente="$docente" />
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </section>
 @endsection

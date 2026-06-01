@@ -64,6 +64,7 @@ class AjustesSitio extends Page
     public string $home_revista_badge = '';
     public string $home_blog_eyebrow = '';
     public string $home_blog_titulo = '';
+    public string $home_marquee = '';
 
     // --- Footer / contacto / SEO (Fase 3) ---
     public string $footer_marca = '';
@@ -104,6 +105,7 @@ class AjustesSitio extends Page
             'home_stats_eyebrow', 'home_stats_titulo', 'home_stats_narrativa',
             'home_revista_eyebrow', 'home_revista_titulo', 'home_revista_badge',
             'home_blog_eyebrow', 'home_blog_titulo',
+            'home_marquee',
             // Footer / SEO
             'footer_marca', 'footer_descripcion', 'contacto_direccion', 'contacto_telefono',
             'contacto_email', 'footer_cta_texto', 'footer_cta_url', 'lema',

@@ -23,12 +23,14 @@
 </head>
 <body class="flex min-h-screen flex-col bg-white text-stone-600 antialiased">
 
+    <x-contact-topbar :ajustes="$ajustes" />
     <x-nav />
 
     <main class="flex-1">
         @yield('content')
     </main>
 
+    @include('sections.marquee')
     <x-footer />
 
     @livewireScripts
