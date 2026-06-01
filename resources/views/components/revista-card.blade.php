@@ -12,9 +12,10 @@
         <p class="mt-1">pp. {{ $articulo->paginas }} · {{ $articulo->descargas }} descargas · DOI: {{ $articulo->doi }}</p>
     </div>
 
-    <div class="mt-5 flex gap-2">
-        <a href="#" class="rounded-lg border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
-        <a href="#" class="rounded-lg border border-stone-300 px-4 py-1.5 text-xs font-semibold text-stone-600 transition hover:border-navy-900 hover:text-navy-900">HTML</a>
-        <a href="#" class="rounded-lg border border-stone-300 px-4 py-1.5 text-xs font-semibold text-stone-600 transition hover:border-navy-900 hover:text-navy-900">EPUB</a>
-    </div>
+    @if ($articulo->getFirstMediaUrl('pdf'))
+        <div class="mt-5 flex gap-2">
+            <a href="{{ $articulo->getFirstMediaUrl('pdf') }}" target="_blank" rel="noopener"
+               class="rounded-lg border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
+        </div>
+    @endif
 </article>

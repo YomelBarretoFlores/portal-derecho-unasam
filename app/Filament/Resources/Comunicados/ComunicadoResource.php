@@ -11,14 +11,13 @@ use App\Models\Comunicado;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ComunicadoResource extends Resource
 {
     protected static ?string $model = Comunicado::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMegaphone;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';
 
     protected static ?string $recordTitleAttribute = 'titulo';
 

@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', $ajustes['seo_title'] ?? 'Derecho y Ciencias Políticas — UNASAM')</title>
     <meta name="description" content="@yield('description', $ajustes['seo_description'] ?? 'Programa de Estudios de Derecho y Ciencias Políticas de la Universidad Nacional Santiago Antúnez de Mayolo — Huaraz, Áncash, Perú.')">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('title', $ajustes['seo_title'] ?? 'Derecho y Ciencias Políticas — UNASAM')">
+    <meta property="og:description" content="@yield('description', $ajustes['seo_description'] ?? 'Programa de Estudios de Derecho y Ciencias Políticas de la Universidad Nacional Santiago Antúnez de Mayolo — Huaraz, Áncash, Perú.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="@yield('og_image', asset('img/escudo-unasam.png'))">
     <link rel="icon" href="{{ asset('img/escudo-unasam.png') }}">
 
     {{-- Tipografía Outfit (Bunny Fonts — sin rastreo, amigable con privacidad) --}}

@@ -55,7 +55,7 @@ class HomeController extends Controller
             'home_blog_titulo' => 'Noticias, opiniones y eventos',
         ];
 
-        $guardados = Setting::query()->pluck('valor', 'clave')->all();
+        $guardados = Setting::map();
 
         $out = [];
         foreach ($defaults as $clave => $default) {

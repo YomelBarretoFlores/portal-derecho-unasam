@@ -6,6 +6,7 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Implementación Eloquent del contrato base.
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Cache;
  */
 abstract class BaseRepository implements RepositoryInterface
 {
+    protected const CACHE_TTL = 600;
+
     public function __construct(protected Model $model)
     {
     }
@@ -66,15 +69,16 @@ abstract class BaseRepository implements RepositoryInterface
 
         $cached = Cache::get($cacheKey);
 
-        // Autosanable: si la entrada se deserializó corrupta (p. ej.
-        // __PHP_Incomplete_Class tras un despliegue) o falta, recomputa desde
-        // la BD y reescribe la caché. Evita 500 por cachés obsoletas.
-        if ($cached !== null && $this->cacheEsValida($cached)) {
-            return $cached;
+        if ($cached !== null) {
+            if ($this->cacheEsValida($cached)) {
+                return $cached;
+            }
+
+            Log::warning("Caché corrupta [{$cacheKey}], recomputando desde BD.");
         }
 
         $fresh = $callback();
-        Cache::put($cacheKey, $fresh, 600);
+        Cache::put($cacheKey, $fresh, static::CACHE_TTL);
 
         return $fresh;
     }

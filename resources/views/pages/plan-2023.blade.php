@@ -29,6 +29,8 @@
                     @foreach ($ciclos as $numCiclo => $cursos)
                         <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white">
                             <button type="button" @click="abierto = (abierto === {{ $numCiclo }} ? null : {{ $numCiclo }})"
+                                    :aria-expanded="(abierto === {{ $numCiclo }}).toString()"
+                                    aria-controls="ciclo-{{ $numCiclo }}"
                                     class="flex w-full items-center justify-between px-5 py-4 text-left">
                                 <span class="flex items-center gap-3">
                                     <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-900 text-xs font-semibold text-white">{{ $cursos->first()->ciclo_romano }}</span>
@@ -37,7 +39,8 @@
                                 </span>
                                 <svg class="h-5 w-5 text-stone-400 transition" :class="abierto === {{ $numCiclo }} && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
                             </button>
-                            <div x-show="abierto === {{ $numCiclo }}" x-cloak>
+                            <div x-show="abierto === {{ $numCiclo }}" x-cloak
+                                 id="ciclo-{{ $numCiclo }}" role="region">
                                 <table class="w-full border-t border-stone-100 font-sans text-sm">
                                     <tbody class="divide-y divide-stone-100">
                                         @foreach ($cursos as $curso)

@@ -8,7 +8,9 @@ use App\Services\CompetenciaService;
 use App\Services\DocumentoService;
 use App\Services\HitoService;
 use App\Services\ObjetivoService;
+use App\Services\CursoService;
 use App\Services\PerfilIngresoService;
+use App\Models\Organigrama;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -64,7 +66,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function planEstudios2023(\App\Services\CursoService $cursos): View
+    public function planEstudios2023(CursoService $cursos): View
     {
         return view('pages.plan-2023', [
             'grado' => Setting::get('plan_grado', 'Bachiller en Derecho'),
@@ -107,7 +109,7 @@ class PageController extends Controller
 
     public function organigrama(): View
     {
-        $organigrama = \App\Models\Organigrama::with('media')->first();
+        $organigrama = Organigrama::with('media')->first();
 
         return view('pages.organigrama', [
             'titulo' => $organigrama?->titulo,
@@ -134,7 +136,7 @@ class PageController extends Controller
             return [];
         }
 
-        return collect(preg_split('/\R/', trim($raw)))
+        return collect(preg_split('/\R/', trim($raw)) ?: [])
             ->map(fn ($linea) => array_map('trim', explode('|', $linea, 2)))
             ->filter(fn ($par) => count($par) === 2 && $par[0] !== '')
             ->values()
