@@ -1,5 +1,5 @@
 {{-- Sección About --}}
-<section class="mx-auto max-w-7xl px-6 py-24">
+<section class="mx-auto max-w-7xl px-6 py-28">
     <div class="grid gap-16 lg:grid-cols-[1fr_420px]">
 
         {{-- Texto --}}
@@ -15,7 +15,7 @@
             </div>
             <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
                 @foreach ([['Presentación', route('presentacion')], ['Historia', route('historia')], ['Campo Laboral', route('campo-laboral')]] as [$texto, $url])
-                    <a href="{{ $url }}" wire:navigate class="group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">
+                    <a href="{{ $url }}" wire:navigate.hover class="link-arrow group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">
                         {{ $texto }}
                         <svg class="h-4 w-4 transition group-hover:translate-x-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </a>
@@ -24,15 +24,15 @@
         </div>
 
         {{-- Sidebar --}}
-        <div class="reveal space-y-4" data-reveal-delay="0.12">
-            <div class="rounded-2xl bg-navy-900 p-7 text-white">
+        <div class="stagger-children space-y-4">
+            <div class="reveal rounded-2xl bg-navy-900 p-7 text-white">
                 <div class="accent-line"></div>
                 <p class="mt-4 text-xl italic leading-relaxed text-white/90">
                     {{ $home['home_about_cita'] }}
                 </p>
             </div>
             @foreach ([['Misión y Visión', 'Nuestro propósito y horizonte', route('mision')], ['Plan de Estudios 2023', 'Malla curricular vigente', route('plan-2023')], ['Objetivos Educacionales', 'Lo que buscamos lograr', route('objetivos')]] as [$titulo, $desc, $url])
-                <a href="{{ $url }}" wire:navigate class="card-hover flex items-center justify-between rounded-2xl border border-stone-200 bg-white p-5">
+                <a href="{{ $url }}" wire:navigate.hover class="reveal card-hover flex items-center justify-between rounded-2xl border border-stone-200 bg-white p-5">
                     <div>
                         <h3 class="text-base font-semibold text-navy-900">{{ $titulo }}</h3>
                         <p class="text-sm text-stone-500">{{ $desc }}</p>

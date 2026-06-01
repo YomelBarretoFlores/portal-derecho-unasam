@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="view-transition" content="same-origin">
     <title>@yield('title', $ajustes['seo_title'] ?? 'Derecho y Ciencias Políticas — UNASAM')</title>
     <meta name="description" content="@yield('description', $ajustes['seo_description'] ?? 'Programa de Estudios de Derecho y Ciencias Políticas de la Universidad Nacional Santiago Antúnez de Mayolo — Huaraz, Áncash, Perú.')">
     <link rel="canonical" href="{{ url()->current() }}">

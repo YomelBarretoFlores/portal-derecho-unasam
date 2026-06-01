@@ -51,7 +51,12 @@
         @apply bg-white text-stone-600;
         font-family: var(--font-sans);
     }
-    h1, h2, h3, h4 {
+    h1, h2 {
+        font-family: var(--font-sans);
+        @apply font-bold text-navy-900;
+        letter-spacing: -0.025em;
+    }
+    h3, h4 {
         font-family: var(--font-sans);
         @apply font-semibold text-navy-900;
         letter-spacing: -0.02em;
@@ -61,34 +66,88 @@
 @layer components {
     /* ---- Botones ---- */
     .btn {
-        @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-[15px] font-medium transition;
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-[15px] font-medium transition-all;
         transition-timing-function: var(--ease-smooth);
+        transition-duration: 0.3s;
     }
     .btn-sm {
         @apply rounded-lg px-4 py-2 text-[13px];
     }
     .btn-primary {
-        @apply bg-navy-900 text-white shadow-card hover:-translate-y-px hover:bg-navy-800;
+        @apply bg-navy-900 text-white shadow-card hover:bg-navy-800;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-card-lg);
+    }
+    .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: var(--shadow-card);
     }
     .btn-ghost {
-        @apply border border-stone-300 bg-white text-navy-900 hover:-translate-y-px hover:border-navy-300 hover:bg-stone-50;
+        @apply border border-stone-300 bg-white text-navy-900 hover:border-navy-300 hover:bg-stone-50;
+    }
+    .btn-ghost:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-card-lg);
+    }
+    .btn-ghost:active {
+        transform: translateY(0);
+        box-shadow: none;
     }
     /* Variantes para fondos oscuros */
     .btn-light {
-        @apply bg-white text-navy-900 hover:-translate-y-px hover:bg-stone-100;
+        @apply bg-white text-navy-900 hover:bg-stone-100;
+    }
+    .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-card-lg);
+    }
+    .btn-light:active {
+        transform: translateY(0);
     }
     .btn-ghost-light {
         @apply border border-white/25 bg-transparent text-white hover:bg-white/10;
     }
+    .btn-ghost-light:hover {
+        transform: translateY(-2px);
+    }
+    .btn-ghost-light:active {
+        transform: translateY(0);
+    }
 
-    /* ---- Tarjetas: hover por elevación neutra ---- */
+    /* ---- Tarjetas: hover con scale + elevación ---- */
     .card-hover {
-        @apply transition;
+        @apply transition-all;
         transition-timing-function: var(--ease-smooth);
+        transition-duration: 0.35s;
     }
     .card-hover:hover {
-        @apply -translate-y-0.5 border-stone-300;
+        transform: translateY(-3px) scale(1.015);
+        box-shadow: var(--shadow-card-xl);
+        border-color: var(--color-stone-300);
+    }
+    .card-hover:active {
+        transform: translateY(-1px) scale(1.005);
         box-shadow: var(--shadow-card-lg);
+    }
+
+    /* ---- Links con flecha: underline animado ---- */
+    .link-arrow {
+        position: relative;
+    }
+    .link-arrow::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: currentColor;
+        transition: width 0.3s var(--ease-smooth);
+    }
+    .link-arrow:hover::after {
+        width: 100%;
     }
 
     /* ---- Eyebrow / antetítulo: neutro y discreto ---- */
@@ -100,12 +159,40 @@
     .rule {
         @apply h-px w-10 bg-stone-300;
     }
-    /* Acento dorado mínimo (trazo fino) — uso puntual */
     .accent-line {
         @apply h-0.5 w-8 rounded-full bg-gold-400;
     }
+    .section-divider {
+        @apply mx-auto h-px w-16 bg-stone-200;
+    }
 
-    /* Cifras "huecas" (outline) para destacar estadísticas sobre fondo oscuro */
+    /* ---- Hero title: dramático y tight ---- */
+    .hero-title {
+        letter-spacing: -0.035em;
+        line-height: 1.02;
+    }
+
+    /* ---- Nav link con underline animado ---- */
+    .nav-link {
+        position: relative;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 1.5px;
+        background: var(--color-navy-700);
+        border-radius: 1px;
+        transition: width 0.25s var(--ease-smooth), left 0.25s var(--ease-smooth);
+    }
+    .nav-link:hover::after {
+        width: 60%;
+        left: 20%;
+    }
+
+    /* ---- Cifras "huecas" (outline) para fondo oscuro ---- */
     .stat-outline {
         color: transparent;
         -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.72);
@@ -128,6 +215,28 @@
     transform: none;
 }
 
+/* ---- Stagger automático para hijos reveal ---- */
+.stagger-children > .reveal:nth-child(1) { transition-delay: 0s; }
+.stagger-children > .reveal:nth-child(2) { transition-delay: 0.07s; }
+.stagger-children > .reveal:nth-child(3) { transition-delay: 0.14s; }
+.stagger-children > .reveal:nth-child(4) { transition-delay: 0.21s; }
+.stagger-children > .reveal:nth-child(5) { transition-delay: 0.28s; }
+.stagger-children > .reveal:nth-child(6) { transition-delay: 0.35s; }
+
+/* ---- Barras animadas del chart ---- */
+.bar-grow {
+    transform-origin: bottom;
+    animation: barGrow 0.8s var(--ease-smooth) both;
+    animation-play-state: paused;
+}
+.bar-grow.is-visible {
+    animation-play-state: running;
+}
+@keyframes barGrow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+}
+
 /* ---- Dropdown de navegación ---- */
 @keyframes dropIn {
     from { opacity: 0; transform: translateY(-4px); }
@@ -135,6 +244,20 @@
 }
 .animate-drop-in {
     animation: dropIn 0.2s var(--ease-smooth);
+}
+
+/* ---- View Transitions (Livewire wire:navigate) ---- */
+::view-transition-old(root) {
+    animation: 0.2s var(--ease-smooth) both vt-fade-out;
+}
+::view-transition-new(root) {
+    animation: 0.25s var(--ease-smooth) both vt-fade-in;
+}
+@keyframes vt-fade-out {
+    to { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes vt-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
 }
 
 /* ---- Respeto a usuarios que prefieren menos movimiento ---- */
@@ -145,10 +268,20 @@
         transition: none !important;
     }
     .card-hover:hover,
-    .btn:hover {
+    .btn:hover,
+    .btn:active,
+    .card-hover:active {
+        transform: none !important;
+    }
+    .bar-grow {
+        animation: none !important;
         transform: none !important;
     }
     html {
         scroll-behavior: auto !important;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none !important;
     }
 }

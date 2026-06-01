@@ -25,11 +25,11 @@
         <div class="reveal" data-reveal-delay="0.12">
             <p class="mb-6 text-sm text-white/55">Estudiantes matriculados por año</p>
             <div class="flex items-end justify-between gap-3" style="height:240px">
-                @foreach ($matriculados as $punto)
+                @foreach ($matriculados as $i => $punto)
                     <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                        <span class="text-xs font-semibold text-white/80">{{ $punto->total }}</span>
-                        <div class="w-full rounded-t-md bg-gold-400/90"
-                             style="height: {{ round($punto->total / $max * 100) }}%"></div>
+                        <span class="text-xs font-semibold text-white/80" data-count="{{ $punto->total }}">0</span>
+                        <div class="bar-grow w-full rounded-t-md bg-gold-400/90"
+                             style="height: {{ round($punto->total / $max * 100) }}%; animation-delay: {{ $i * 0.06 }}s"></div>
                         <span class="text-xs text-white/45">{{ $punto->anio }}</span>
                     </div>
                 @endforeach

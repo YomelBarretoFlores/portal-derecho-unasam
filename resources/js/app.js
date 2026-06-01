@@ -1,11 +1,10 @@
 // Alpine.js viene incluido con Livewire (cargado por @livewireScripts en el layout),
 // que también provee la navegación SPA con wire:navigate. Por eso NO importamos
 // Alpine por separado: tendríamos dos instancias y Livewire lanzaría un error.
-//
-// Aquí solo va el scroll-reveal y los contadores, reinicializados en cada
-// navegación SPA (wire:navigate dispara el evento 'livewire:navigated').
 
-// ---- Scroll reveal: replica el componente Reveal de animations.jsx ----
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---- Scroll reveal ----
 function initReveal() {
     const els = document.querySelectorAll('.reveal:not(.is-visible)');
     if (!els.length) return;
@@ -29,21 +28,18 @@ function initReveal() {
     });
 }
 
-// ---- Contadores animados: replica AnimatedNumber (1500ms) ----
+// ---- Contadores animados ----
 function initCounters() {
     const els = document.querySelectorAll('[data-count]');
     if (!els.length) return;
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     const animate = (el) => {
-        if (el.dataset.counted) return; // evita doble animación
+        if (el.dataset.counted) return;
         el.dataset.counted = '1';
 
         const target = parseFloat(el.dataset.count);
         const suffix = el.dataset.countSuffix || '';
 
-        // Sin movimiento: mostrar el valor final directamente
         if (reduceMotion) {
             el.textContent = target + suffix;
             return;
@@ -51,7 +47,6 @@ function initCounters() {
 
         const duration = 1400;
         let startTime = null;
-        // Ease-out (sensación Framer): rápido al inicio, desacelera al final
         const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
         const tick = (now) => {
@@ -80,15 +75,59 @@ function initCounters() {
     els.forEach((el) => observer.observe(el));
 }
 
+// ---- Barras del chart: animar crecimiento al entrar en viewport ----
+function initBars() {
+    const bars = document.querySelectorAll('.bar-grow');
+    if (!bars.length || reduceMotion) {
+        bars.forEach((b) => b.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.3 }
+    );
+
+    bars.forEach((el) => observer.observe(el));
+}
+
+// ---- Parallax sutil en la imagen del hero ----
+function initParallax() {
+    const el = document.querySelector('[data-parallax]');
+    if (!el || reduceMotion) return;
+
+    let ticking = false;
+    const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            const y = window.scrollY;
+            if (y < 800) {
+                el.style.transform = `translateY(${y * 0.12}px)`;
+            }
+            ticking = false;
+        });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+}
+
 function initAnimations() {
     initReveal();
     initCounters();
+    initBars();
+    initParallax();
 }
 
-// 'livewire:navigated' se dispara en la carga inicial Y tras cada navegación SPA.
 document.addEventListener('livewire:navigated', initAnimations);
 
-// Fallback por si Livewire no estuviera disponible (las guardas evitan duplicados).
 document.addEventListener('DOMContentLoaded', () => {
     if (!window.Livewire) initAnimations();
 });
