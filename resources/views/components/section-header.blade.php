@@ -4,7 +4,7 @@
     @if ($eyebrow)
         <span class="eyebrow">{{ $eyebrow }}</span>
     @endif
-    <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $title }}</h2>
+    <h2 class="mt-3 font-serif text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $title }}</h2>
     @if ($subtitle)
         <p class="mt-3 text-lg leading-relaxed text-stone-500">{{ $subtitle }}</p>
     @endif

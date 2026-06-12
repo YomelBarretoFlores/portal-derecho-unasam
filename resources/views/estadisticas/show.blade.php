@@ -11,7 +11,8 @@
         <div class="flex flex-wrap gap-2">
             @foreach ($tipos as $key => $label)
                 <a href="{{ route('estadisticas', $key) }}" wire:navigate.hover
-                   class="rounded-full px-5 py-2 font-sans text-sm font-medium transition {{ $key === $tipo ? 'bg-navy-900 text-white' : 'border border-stone-300 text-stone-600 hover:border-navy-900' }}">
+                   @if ($key === $tipo) aria-current="page" @endif
+                   class="rounded-none px-5 py-2 font-sans text-sm font-medium transition {{ $key === $tipo ? 'bg-navy-900 text-white' : 'border border-stone-300 text-stone-600 hover:border-navy-900' }}">
                     {{ $label }}
                 </a>
             @endforeach
@@ -22,7 +23,9 @@
             {{-- Tabla --}}
             <div class="reveal">
                 <h2 class="text-xl font-semibold text-navy-900">{{ $titulo }} por año</h2>
-                <table class="mt-5 w-full font-sans text-sm">
+                <div class="mt-5 overflow-x-auto">
+                <table class="w-full min-w-[20rem] font-sans text-sm">
+                    <caption class="sr-only">{{ $titulo }} por año.</caption>
                     <thead>
                         <tr class="border-b-2 border-stone-200 text-left text-stone-400">
                             <th class="pb-3 font-semibold">Año</th>
@@ -47,6 +50,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
 
             {{-- Gráfico --}}

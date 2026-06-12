@@ -5,19 +5,17 @@
 
         {{-- Narrativa --}}
         <div class="reveal">
-            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-white/45">{{ $home['home_stats_eyebrow'] }}</span>
+            <span class="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">{{ $home['home_stats_eyebrow'] }}</span>
             <h2 class="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">
                 {{ $home['home_stats_titulo'] }}
             </h2>
-            <p class="mt-6 text-lg leading-relaxed text-white/65">
+            <p class="mt-6 text-lg leading-relaxed text-white/80">
                 {{ $home['home_stats_narrativa'] }}
             </p>
 
-            <div class="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
+            <div class="mt-10 grid max-w-md grid-cols-2 gap-8">
                 <x-stat value="1049" label="Matriculados (2024)" />
                 <x-stat value="68" label="Titulados (2024)" />
-                <x-stat value="40" suffix="+" label="Años" />
-                <x-stat value="8" label="Áreas" />
             </div>
         </div>
 
@@ -28,9 +26,9 @@
                 @foreach ($matriculados as $i => $punto)
                     <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
                         <span class="text-xs font-semibold text-white/80" data-count="{{ $punto->total }}">0</span>
-                        <div class="bar-grow w-full rounded-t-md bg-gold-400/90"
+                        <div class="bar-grow w-full bg-gold-300"
                              style="height: {{ round($punto->total / $max * 100) }}%; animation-delay: {{ $i * 0.06 }}s"></div>
-                        <span class="text-xs text-white/45">{{ $punto->anio }}</span>
+                        <span class="text-xs text-white/60">{{ $punto->anio }}</span>
                     </div>
                 @endforeach
             </div>

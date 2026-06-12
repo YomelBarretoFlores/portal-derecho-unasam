@@ -28,11 +28,11 @@
                 <div class="mt-6">
                     <span class="font-sans text-xs font-bold uppercase tracking-wide text-stone-400">Categorías</span>
                     <div class="mt-3 flex flex-col gap-1">
-                        <button @click="cat = 'all'"
+                        <button @click="cat = 'all'" :aria-pressed="cat === 'all'"
                                 :class="cat === 'all' ? 'bg-navy-900 text-white' : 'text-stone-600 hover:bg-stone-100'"
                                 class="rounded-lg px-3 py-2 text-left font-sans text-sm transition">Todas</button>
                         @foreach ($categorias as $c)
-                            <button @click="cat = @js($c)"
+                            <button @click="cat = @js($c)" :aria-pressed="cat === @js($c)"
                                     :class="cat === @js($c) ? 'bg-navy-900 text-white' : 'text-stone-600 hover:bg-stone-100'"
                                     class="rounded-lg px-3 py-2 text-left font-sans text-sm transition">{{ $c }}</button>
                         @endforeach
@@ -42,7 +42,8 @@
 
             {{-- Grid de artículos --}}
             <div>
-                <p class="mb-6 font-sans text-sm text-stone-400" x-text="visibles + ' artículo(s)'"></p>
+                <p class="mb-6 font-sans text-sm text-stone-400" aria-live="polite"
+                   x-text="visibles + (visibles === 1 ? ' artículo' : ' artículos')"></p>
                 <div x-ref="grid" class="grid gap-6 sm:grid-cols-2">
                     @foreach ($articulos as $art)
                         <div data-art
@@ -53,6 +54,12 @@
                         </div>
                     @endforeach
                 </div>
+
+                {{-- Sin resultados --}}
+                <p x-show="visibles === 0" x-cloak
+                   class="rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-12 text-center font-sans text-sm text-stone-500">
+                    No se encontraron artículos con esos criterios. Prueba con otra categoría o término.
+                </p>
             </div>
         </div>
     </section>

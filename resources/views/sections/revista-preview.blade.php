@@ -1,21 +1,20 @@
 {{-- Sección Revista (preview) --}}
 @php $featured = $revista->first(); $resto = $revista->slice(1)->take(3); @endphp
-<section class="border-y border-stone-200 bg-paper py-28">
+<section class="border-y border-stone-200 bg-paper py-24">
     <div class="mx-auto max-w-7xl px-6">
         <div class="reveal flex flex-wrap items-end justify-between gap-4">
             <div>
-                <span class="eyebrow">{{ $home['home_revista_eyebrow'] }}</span>
-                <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_revista_titulo'] }}</h2>
+                <h2 class="text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_revista_titulo'] }}</h2>
             </div>
-            <span class="rounded-full bg-navy-900 px-4 py-1.5 text-xs font-medium text-white">
+            <span class="rounded-none bg-navy-900 px-4 py-1.5 text-xs font-medium text-white">
                 {{ $home['home_revista_badge'] }}
             </span>
         </div>
 
-        <div class="mt-12 grid gap-8 lg:grid-cols-[1.2fr_1fr]">
+        <div class="mt-12 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start">
             {{-- Featured --}}
             <article class="reveal card-hover flex flex-col rounded-2xl border border-stone-200 bg-white p-8">
-                <span class="w-fit rounded-full bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">{{ $featured->categoria }}</span>
+                <span class="w-fit rounded-none bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">{{ $featured->categoria }}</span>
                 <h3 class="mt-4 text-2xl font-semibold leading-snug text-navy-900">{{ $featured->titulo }}</h3>
                 <p class="mt-3 grow text-[15px] leading-relaxed text-stone-500">{{ Str::limit($featured->resumen, 240) }}</p>
                 <p class="mt-4 text-sm text-stone-600">{{ implode(' · ', $featured->autores) }} — pp. {{ $featured->paginas }}</p>

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Documentos Normativos — Derecho UNASAM')
+@section('description', 'Reglamentos, planes y resoluciones del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
     <x-page-hero seccion="Transparencia" title="Documentos Normativos"
@@ -25,10 +26,10 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div class="relative sm:w-72">
                     <svg class="pointer-events-none absolute left-3 top-2.5 h-5 w-5 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input x-model="q" type="search" placeholder="Buscar documento…"
+                    <input x-model="q" type="search" placeholder="Buscar documento…" aria-label="Buscar documento"
                            class="w-full rounded-xl border border-stone-300 py-2.5 pl-10 pr-4 font-sans text-sm focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/10">
                 </div>
-                <select x-model="cat"
+                <select x-model="cat" aria-label="Filtrar por categoría"
                         class="rounded-xl border border-stone-300 px-4 py-2.5 font-sans text-sm text-stone-700 focus:border-navy-700 focus:outline-none">
                     <option value="all">Todas las categorías</option>
                     @foreach ($categorias as $c)
@@ -40,6 +41,7 @@
             {{-- Tabla --}}
             <div class="mt-6 overflow-hidden rounded-2xl border border-stone-200">
                 <table class="w-full font-sans text-sm">
+                    <caption class="sr-only">Documentos normativos del Programa de Derecho y Ciencias Políticas: nombre, categoría, fecha y archivo descargable.</caption>
                     <thead class="bg-navy-900 text-left text-white">
                         <tr>
                             <th class="px-5 py-3.5 font-semibold">Documento</th>
@@ -58,7 +60,7 @@
                                     </div>
                                 </td>
                                 <td class="hidden px-5 py-4 sm:table-cell">
-                                    <span class="rounded-full bg-navy-50 px-2.5 py-1 text-[11px] font-semibold text-navy-700" x-text="doc.categoria"></span>
+                                    <span class="rounded-none bg-navy-50 px-2.5 py-1 text-[11px] font-semibold text-navy-700" x-text="doc.categoria"></span>
                                 </td>
                                 <td class="hidden px-5 py-4 text-stone-500 md:table-cell" x-text="doc.fecha"></td>
                                 <td class="px-5 py-4 text-right">
@@ -70,7 +72,7 @@
                                         </a>
                                     </template>
                                     <template x-if="doc.url === '#'">
-                                        <span class="rounded-full bg-stone-100 px-2.5 py-1 text-[11px] font-medium text-stone-400">Próximamente</span>
+                                        <span class="rounded-none bg-stone-100 px-2.5 py-1 text-[11px] font-medium text-stone-400">Próximamente</span>
                                     </template>
                                 </td>
                             </tr>
@@ -81,7 +83,8 @@
 
             {{-- Estado vacío --}}
             <p x-show="items.filter(d => (cat === 'all' || d.categoria === cat) && d.busqueda.includes(q.toLowerCase())).length === 0"
-               x-cloak class="mt-6 rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-12 text-center font-sans text-sm text-stone-500">
+               x-cloak role="status" aria-live="polite"
+               class="mt-6 rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-12 text-center font-sans text-sm text-stone-500">
                 No se encontraron documentos con ese criterio.
             </p>
         </div>

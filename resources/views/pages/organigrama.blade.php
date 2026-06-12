@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Organigrama — Derecho UNASAM')
+@section('description', 'Estructura organizativa del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
     <x-page-hero seccion="Institucional" title="{{ $titulo ?: 'Organigrama' }}"

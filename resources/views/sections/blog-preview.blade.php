@@ -1,10 +1,9 @@
 {{-- Sección Blog (preview, variante Featured) --}}
 @php $main = $posts->first(); $lista = $posts->slice(1)->take(3); @endphp
-<section class="mx-auto max-w-7xl px-6 py-28">
+<section class="mx-auto max-w-7xl px-6 py-20">
     <div class="reveal flex flex-wrap items-end justify-between gap-4">
         <div>
-            <span class="eyebrow">{{ $home['home_blog_eyebrow'] }}</span>
-            <h2 class="mt-3 text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_blog_titulo'] }}</h2>
+            <h2 class="text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_blog_titulo'] }}</h2>
         </div>
         <a href="{{ route('blog') }}" wire:navigate.hover class="link-arrow group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">
             Ver todo el blog
@@ -12,10 +11,10 @@
         </a>
     </div>
 
-    <div class="mt-12 grid gap-8 lg:grid-cols-2">
+    <div class="mt-12 grid gap-8 lg:grid-cols-2 lg:items-start">
         {{-- Destacado --}}
         <x-reveal>
-            <x-blog-card :post="$main" class="!p-8" />
+            <x-blog-card :post="$main" :featured="true" />
         </x-reveal>
 
         {{-- Lista --}}

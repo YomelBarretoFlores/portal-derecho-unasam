@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Perfil de Egreso — Derecho UNASAM')
+@section('description', 'Perfil de egreso del Programa de Derecho de la UNASAM: el profesional que forma el Programa de Estudios de Derecho y Ciencias Políticas.')
 
 @section('content')
     <x-page-hero seccion="Académico" title="Perfil de Egreso"
@@ -22,7 +23,7 @@
                             <div class="accent-line"></div>
                             <h2 class="text-2xl font-semibold text-navy-900">{{ $plan['titulo'] }}</h2>
                             @if ($plan['destacado'])
-                                <span class="rounded-full bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
+                                <span class="rounded-none bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
                             @endif
                         </div>
                         <div class="mt-5 space-y-4 font-sans text-[17px] leading-relaxed text-stone-600">

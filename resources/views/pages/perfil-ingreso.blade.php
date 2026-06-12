@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Perfil de Ingreso — Derecho UNASAM')
+@section('description', 'Perfil de ingreso del Programa de Derecho de la UNASAM: competencias que se esperan del estudiante que inicia el programa (planes 2019 y 2023).')
 
 @section('content')
     <x-page-hero seccion="Académico" title="Perfil de Ingreso"

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Competencias — Derecho UNASAM')
+@section('description', 'Competencias generales y específicas que desarrolla el Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
     <x-page-hero seccion="Académico" title="Competencias"
@@ -21,7 +22,7 @@
                                 <div class="flex items-center gap-3">
                                     <h3 class="text-lg font-semibold text-navy-700">{{ $plan['titulo'] }}</h3>
                                     @if ($plan['destacado'])
-                                        <span class="rounded-full bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
+                                        <span class="rounded-none bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
                                     @endif
                                 </div>
 

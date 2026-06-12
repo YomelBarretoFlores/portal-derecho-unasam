@@ -1,17 +1,30 @@
 @props(['label', 'items' => []])
 
-<div class="group relative">
-    <button aria-haspopup="true" class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[15px] font-medium text-navy-800 transition hover:bg-stone-100 hover:text-navy-900">
+{{-- Dropdown accesible: abre por hover y por teclado (focus/click), cierra con Escape --}}
+<div x-data="{ open: false }"
+     @mouseenter="open = true" @mouseleave="open = false"
+     @focusin="open = true" @focusout="open = false"
+     @keydown.escape.stop="open = false; $refs.trigger.focus()"
+     class="relative">
+    <button x-ref="trigger" type="button" @click="open = !open"
+            aria-haspopup="true" :aria-expanded="open"
+            class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[15px] font-medium text-navy-800 transition hover:bg-stone-100 hover:text-navy-900">
         {{ $label }}
-        <svg class="h-3.5 w-3.5 transition group-hover:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        <svg class="h-3.5 w-3.5 transition" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
     </button>
 
-    <div class="invisible absolute left-0 top-full z-50 min-w-56 translate-y-1 pt-2 opacity-0 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div role="menu" class="overflow-hidden rounded-xl border border-stone-200 bg-white py-2 shadow-card-lg">
-            @foreach ($items as $i => [$texto, $url])
-                <a href="{{ $url }}" wire:navigate.hover role="menuitem"
-                   style="transition-delay: {{ $i * 30 }}ms"
-                   class="block px-4 py-2.5 text-sm text-stone-600 opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-stone-100 hover:text-navy-900">
+    <div x-show="open" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-1"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-1"
+         class="absolute left-0 top-full z-50 min-w-56 pt-2">
+        <div role="menu" aria-label="{{ $label }}" class="overflow-hidden rounded-none border border-stone-200 bg-white py-2 shadow-card-lg">
+            @foreach ($items as [$texto, $url])
+                <a href="{{ $url }}" wire:navigate.hover role="menuitem" @click="open = false"
+                   class="block px-4 py-2.5 text-sm text-stone-600 transition-colors duration-150 hover:bg-stone-50 hover:text-navy-900">
                     {{ $texto }}
                 </a>
             @endforeach

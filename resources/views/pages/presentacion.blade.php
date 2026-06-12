@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Presentación — Derecho UNASAM')
+@section('description', 'Conoce el Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM, en Huaraz, Áncash.')
 
 @section('content')
     <x-page-hero

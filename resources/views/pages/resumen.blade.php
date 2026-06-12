@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Resumen del Programa — Derecho UNASAM')
+@section('description', 'Resumen del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM: currículo flexible y por competencias.')
 
 @section('content')
     <x-page-hero seccion="Programa" title="Resumen del Programa de Estudios"

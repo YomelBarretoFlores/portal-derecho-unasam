@@ -1,5 +1,5 @@
 {{-- Sección About --}}
-<section class="mx-auto max-w-7xl px-6 py-28">
+<section class="mx-auto max-w-7xl px-6 py-20">
     <div class="grid gap-16 lg:grid-cols-[1fr_420px]">
 
         {{-- Texto --}}

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', $titulo . ' — Derecho UNASAM')
+{{-- Página marcador "en preparación": no debe indexarse hasta tener contenido real --}}
+@section('robots', 'noindex, follow')
 
 @section('content')
     <x-page-hero :seccion="$seccion" :title="$titulo" />

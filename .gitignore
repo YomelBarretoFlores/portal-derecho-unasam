@@ -1,3 +1,9 @@
+# Asistente de IA y skills (no versionar)
+/.claude/
+/.agents/
+/.impeccable/
+CLAUDE.md
+
 *.log
 .DS_Store
 .env

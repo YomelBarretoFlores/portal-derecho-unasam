@@ -4,7 +4,7 @@
     $foto = $docente->_foto_url ?: ($docente->relationLoaded('media') ? $docente->getFirstMediaUrl('foto', 'thumb') : '');
 @endphp
 
-<article class="card-hover flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
+<article class="card-hover flex h-full flex-col overflow-hidden rounded-none border border-stone-200 bg-white">
     {{-- Foto / fallback iniciales --}}
     <div class="aspect-square overflow-hidden">
         @if ($foto)
