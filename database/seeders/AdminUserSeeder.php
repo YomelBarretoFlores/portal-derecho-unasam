@@ -12,7 +12,12 @@ class AdminUserSeeder extends Seeder
     {
         $email = 'barretofloresyomeljair@gmail.com';
 
-        if (User::where('email', $email)->exists()) {
+        if ($user = User::where('email', $email)->first()) {
+            // Asegura el flag de administrador aunque la fila ya existiera.
+            if (! $user->is_admin) {
+                $user->forceFill(['is_admin' => true])->save();
+            }
+
             $this->command?->info("El usuario admin ya existe: {$email}");
 
             return;
@@ -24,6 +29,7 @@ class AdminUserSeeder extends Seeder
             'name' => 'Yomel Barreto',
             'email' => $email,
             'password' => $password, // el cast 'hashed' del modelo lo encripta
+            'is_admin' => true,
         ]);
 
         $this->command?->warn('================ USUARIO ADMIN CREADO ================');

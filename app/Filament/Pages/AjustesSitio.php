@@ -4,15 +4,21 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use BackedEnum;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 /**
  * Página de «Ajustes del sitio»: edita todos los textos sueltos (prosa) del sitio,
  * guardados como pares clave-valor en la tabla settings.
  *
- * Implementada con Livewire plano (propiedades + vista) para no depender de la
- * API de formularios de Filament, que varía entre versiones.
+ * Usa el sistema de formularios nativo de Filament (Schema + componentes), de modo
+ * que hereda los estilos del panel y es responsive sin CSS propio.
+ *
+ * @property-read Schema $form
  */
 class AjustesSitio extends Page
 {
@@ -28,71 +34,22 @@ class AjustesSitio extends Page
 
     protected string $view = 'filament.pages.ajustes-sitio';
 
-    // --- Páginas institucionales (Fase 2) ---
-    public string $presentacion_titulo = '';
-    public string $presentacion_cuerpo = '';
-    public string $datos_programa = '';
-    public string $mision = '';
-    public string $vision = '';
-    public string $historia_trayectoria_titulo = '';
-    public string $historia_trayectoria_cuerpo = '';
-    public string $resumen_titulo = '';
-    public string $resumen_cuerpo = '';
-    public string $resumen_cita1 = '';
-    public string $resumen_cita2 = '';
-    public string $resumen_cierre = '';
-    public string $perfil_ingreso_especifico = '';
-    public string $perfil_egreso_2023 = '';
-    public string $perfil_egreso_2019 = '';
-
-    // --- Inicio (Fase 3) ---
-    public string $home_hero_titulo = '';
-    public string $home_hero_subtitulo = '';
-    public string $home_hero_cta1 = '';
-    public string $home_hero_cta2 = '';
-    public string $home_about_eyebrow = '';
-    public string $home_about_titulo = '';
-    public string $home_about_cuerpo = '';
-    public string $home_about_cita = '';
-    public string $home_accesos_eyebrow = '';
-    public string $home_accesos_titulo = '';
-    public string $home_stats_eyebrow = '';
-    public string $home_stats_titulo = '';
-    public string $home_stats_narrativa = '';
-    public string $home_revista_eyebrow = '';
-    public string $home_revista_titulo = '';
-    public string $home_revista_badge = '';
-    public string $home_blog_eyebrow = '';
-    public string $home_blog_titulo = '';
-    public string $home_marquee = '';
-
-    // --- Footer / contacto / SEO (Fase 3) ---
-    public string $footer_marca = '';
-    public string $footer_descripcion = '';
-    public string $contacto_direccion = '';
-    public string $contacto_telefono = '';
-    public string $contacto_email = '';
-    public string $footer_cta_texto = '';
-    public string $footer_cta_url = '';
-    public string $lema = '';
-    public string $seo_title = '';
-    public string $seo_description = '';
-
-    // --- Plan de Estudios (Fase 3) ---
-    public string $plan_grado = '';
-    public string $plan_titulo_prof = '';
-    public string $plan_modalidad = '';
-    public string $plan_pdf_url = '';
-    public string $plan_sga_url = '';
-    public string $plan_intro = '';
+    /**
+     * Estado del formulario (clave => valor).
+     *
+     * @var array<string, mixed>
+     */
+    public ?array $data = [];
 
     /**
+     * Claves persistidas en la tabla settings.
+     *
      * @return array<int, string>
      */
     protected function claves(): array
     {
         return [
-            // Fase 2
+            // Páginas institucionales
             'presentacion_titulo', 'presentacion_cuerpo', 'datos_programa',
             'mision', 'vision',
             'historia_trayectoria_titulo', 'historia_trayectoria_cuerpo',
@@ -100,6 +57,8 @@ class AjustesSitio extends Page
             'perfil_ingreso_especifico', 'perfil_egreso_2023', 'perfil_egreso_2019',
             // Inicio
             'home_hero_titulo', 'home_hero_subtitulo', 'home_hero_cta1', 'home_hero_cta2',
+            'home_hero_stat1_label', 'home_hero_stat1_valor', 'home_hero_stat1_sufijo',
+            'home_hero_stat2_label', 'home_hero_stat2_valor', 'home_hero_stat2_sufijo',
             'home_about_eyebrow', 'home_about_titulo', 'home_about_cuerpo', 'home_about_cita',
             'home_accesos_eyebrow', 'home_accesos_titulo',
             'home_stats_eyebrow', 'home_stats_titulo', 'home_stats_narrativa',
@@ -118,15 +77,141 @@ class AjustesSitio extends Page
 
     public function mount(): void
     {
+        $valores = [];
+
         foreach ($this->claves() as $clave) {
-            $this->{$clave} = (string) Setting::get($clave, '');
+            $valores[$clave] = (string) Setting::get($clave, '');
         }
+
+        $this->form->fill($valores);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data')
+            ->components([
+                Section::make('Presentación')
+                    ->schema([
+                        TextInput::make('presentacion_titulo')->label('Título'),
+                        Textarea::make('presentacion_cuerpo')->label('Cuerpo (puedes usar varios párrafos)')->rows(6),
+                        Textarea::make('datos_programa')->label('Datos del programa')->rows(6)
+                            ->placeholder('Una línea por dato. Ej.: Duración | 5 años (10 ciclos)')
+                            ->helperText('Una línea por dato, con el formato «Etiqueta | Valor».'),
+                    ]),
+
+                Section::make('Misión y Visión')
+                    ->columns(2)
+                    ->schema([
+                        Textarea::make('mision')->label('Misión')->rows(6),
+                        Textarea::make('vision')->label('Visión')->rows(6),
+                    ]),
+
+                Section::make('Historia — reseña «Nuestra trayectoria»')
+                    ->description('Los hitos de la línea de tiempo se editan en «Historia (hitos)».')
+                    ->schema([
+                        TextInput::make('historia_trayectoria_titulo')->label('Título'),
+                        Textarea::make('historia_trayectoria_cuerpo')->label('Cuerpo')->rows(8),
+                    ]),
+
+                Section::make('Resumen del Programa')
+                    ->schema([
+                        TextInput::make('resumen_titulo')->label('Título'),
+                        Textarea::make('resumen_cuerpo')->label('Cuerpo principal')->rows(5),
+                        Textarea::make('resumen_cita1')->label('Cita legal 1 (Art. 40 — Ley 30220)')->rows(4),
+                        Textarea::make('resumen_cita2')->label('Cita legal 2 (Art. 79 — 2015)')->rows(4),
+                        Textarea::make('resumen_cierre')->label('Párrafo de cierre')->rows(3),
+                    ]),
+
+                Section::make('Perfiles')
+                    ->description('Las áreas del perfil de ingreso se editan en «Perfil de ingreso».')
+                    ->schema([
+                        Textarea::make('perfil_ingreso_especifico')->label('Perfil de ingreso específico')->rows(3),
+                        Textarea::make('perfil_egreso_2023')->label('Perfil de egreso 2023 (vigente)')->rows(6),
+                        Textarea::make('perfil_egreso_2019')->label('Perfil de egreso 2019')->rows(6),
+                    ]),
+
+                Section::make('Inicio — Hero')
+                    ->description('El bloque principal de la portada (lo primero que se ve).')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('home_hero_titulo')->label('Título')->columnSpanFull(),
+                        Textarea::make('home_hero_subtitulo')->label('Subtítulo')->rows(2)->columnSpanFull(),
+                        TextInput::make('home_hero_cta1')->label('Botón 1'),
+                        TextInput::make('home_hero_cta2')->label('Botón 2'),
+                        TextInput::make('home_hero_stat1_label')->label('Cifra 1 — etiqueta'),
+                        TextInput::make('home_hero_stat1_valor')->label('Cifra 1 — valor')
+                            ->helperText('Debe ser un número; se anima al cargar.'),
+                        TextInput::make('home_hero_stat1_sufijo')->label('Cifra 1 — sufijo')
+                            ->helperText('Opcional, p. ej. «+».'),
+                        TextInput::make('home_hero_stat2_label')->label('Cifra 2 — etiqueta'),
+                        TextInput::make('home_hero_stat2_valor')->label('Cifra 2 — valor'),
+                        TextInput::make('home_hero_stat2_sufijo')->label('Cifra 2 — sufijo'),
+                    ]),
+
+                Section::make('Inicio — Sección «El programa»')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('home_about_eyebrow')->label('Antetítulo'),
+                        TextInput::make('home_about_titulo')->label('Título'),
+                        Textarea::make('home_about_cuerpo')->label('Cuerpo (varios párrafos)')->rows(5)->columnSpanFull(),
+                        Textarea::make('home_about_cita')->label('Cita / frase destacada')->rows(2)->columnSpanFull(),
+                    ]),
+
+                Section::make('Inicio — Encabezados de secciones')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('home_accesos_eyebrow')->label('Accesos — antetítulo'),
+                        TextInput::make('home_accesos_titulo')->label('Accesos — título'),
+                        TextInput::make('home_stats_eyebrow')->label('Cifras — antetítulo'),
+                        TextInput::make('home_stats_titulo')->label('Cifras — título'),
+                        Textarea::make('home_stats_narrativa')->label('Cifras — narrativa')->rows(2)->columnSpanFull(),
+                        TextInput::make('home_revista_eyebrow')->label('Revista — antetítulo'),
+                        TextInput::make('home_revista_titulo')->label('Revista — título'),
+                        TextInput::make('home_revista_badge')->label('Revista — etiqueta (volumen)'),
+                        TextInput::make('home_blog_eyebrow')->label('Blog — antetítulo'),
+                        TextInput::make('home_blog_titulo')->label('Blog — título'),
+                    ]),
+
+                Section::make('Inicio — Banda animada (marquee)')
+                    ->schema([
+                        TextInput::make('home_marquee')->label('Términos de la banda')
+                            ->helperText('Separa cada término con « · » (punto medio). Ej.: Derecho Civil · Derecho Penal'),
+                    ]),
+
+                Section::make('Plan de Estudios')
+                    ->description('Los cursos por ciclo (malla) se editan en «Plan de Estudios (cursos)».')
+                    ->columns(3)
+                    ->schema([
+                        TextInput::make('plan_grado')->label('Grado académico'),
+                        TextInput::make('plan_titulo_prof')->label('Título profesional'),
+                        TextInput::make('plan_modalidad')->label('Modalidad'),
+                        Textarea::make('plan_intro')->label('Introducción de la malla (opcional)')->rows(2)->columnSpanFull(),
+                        TextInput::make('plan_pdf_url')->label('Enlace al PDF de la malla')->columnSpanFull(),
+                        TextInput::make('plan_sga_url')->label('Enlace al plan en línea (SGA)')->columnSpanFull(),
+                    ]),
+
+                Section::make('Footer, contacto y SEO')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('footer_marca')->label('Marca (nombre)'),
+                        TextInput::make('lema')->label('Lema'),
+                        Textarea::make('footer_descripcion')->label('Descripción')->rows(2)->columnSpanFull(),
+                        TextInput::make('contacto_direccion')->label('Dirección'),
+                        TextInput::make('contacto_telefono')->label('Teléfono'),
+                        TextInput::make('contacto_email')->label('Email'),
+                        TextInput::make('footer_cta_texto')->label('Botón CTA — texto'),
+                        TextInput::make('footer_cta_url')->label('Botón CTA — URL'),
+                        TextInput::make('seo_title')->label('SEO — título de la pestaña')->columnSpanFull(),
+                        Textarea::make('seo_description')->label('SEO — descripción (meta)')->rows(2)->columnSpanFull(),
+                    ]),
+            ]);
     }
 
     public function guardar(): void
     {
-        foreach ($this->claves() as $clave) {
-            Setting::set($clave, $this->{$clave});
+        foreach ($this->form->getState() as $clave => $valor) {
+            Setting::set($clave, (string) $valor);
         }
 
         Notification::make()

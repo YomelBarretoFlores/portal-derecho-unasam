@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'is_admin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -23,12 +23,14 @@ class User extends Authenticatable implements FilamentUser
      * Autoriza el acceso al panel Filament.
      *
      * Filament, fuera del entorno local, exige este método; de lo contrario
-     * devuelve 403. Todo usuario registrado (creados solo desde el panel/seeder,
-     * sin registro público) puede entrar.
+     * devuelve 403. El control principal es el flag is_admin (gestionable desde
+     * el panel); la lista blanca config('admin.emails') queda como respaldo
+     * "break-glass" para que el dueño nunca quede bloqueado.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return (bool) $this->is_admin
+            || in_array($this->email, config('admin.emails', []), true);
     }
 
     /**
@@ -41,6 +43,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 }

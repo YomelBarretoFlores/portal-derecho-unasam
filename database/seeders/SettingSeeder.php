@@ -33,6 +33,7 @@ class SettingSeeder extends Seeder
                 'Su misión ha sido preparar profesionales capaces de afrontar los retos de la modernidad, adaptándose a las cambiantes demandas del entorno jurídico y social, promoviendo soluciones innovadoras a los problemas contemporáneos. Además, se ha centrado en cerrar las brechas de justicia, fomentando en sus egresados un fuerte sentido de responsabilidad social para contribuir a la equidad y al acceso a la justicia para todos los sectores de la sociedad.',
                 'Actualmente se vienen implementando la biblioteca automatizada, el centro de conciliación y arbitraje, el consultorio jurídico gratuito y otros escenarios educativos que promueven el aprendizaje significativo. A la fecha, el programa cuenta con dos planes curriculares: el Plan 2019 vigente —en actualización durante 2024— y el Plan 2023, basado en un enfoque por competencias.',
             ]),
+            'resumen_titulo' => 'Currículo flexible y por competencias',
             'resumen_cuerpo' => implode("\n\n", [
                 'El Plan de Estudios, como parte del currículo universitario, se caracteriza por ser flexible: nos permite modificaciones en función de la diversidad humana y social, y de las particularidades, necesidades e intereses de los estudiantes de acuerdo a su contexto en particular.',
                 'El modelo curricular que orienta la actualización está basado en el enfoque por competencias —generales y específicas— con asignaturas generales, específicas y de especialidad. Asimismo, se ha considerado la flexibilidad curricular mediante cursos electivos.',
@@ -55,6 +56,12 @@ class SettingSeeder extends Seeder
             'home_hero_subtitulo' => 'Formación jurídica de excelencia con responsabilidad social, al servicio de Áncash y el país desde 1986.',
             'home_hero_cta1' => 'Conoce el programa',
             'home_hero_cta2' => 'Plan de Estudios',
+            'home_hero_stat1_label' => 'Años de trayectoria',
+            'home_hero_stat1_valor' => '40',
+            'home_hero_stat1_sufijo' => '+',
+            'home_hero_stat2_label' => 'Áreas del Derecho',
+            'home_hero_stat2_valor' => '8',
+            'home_hero_stat2_sufijo' => '',
             'home_about_eyebrow' => 'El programa',
             'home_about_titulo' => 'Formando profesionales del derecho desde 1986',
             'home_about_cuerpo' => implode("\n\n", [
@@ -72,6 +79,7 @@ class SettingSeeder extends Seeder
             'home_revista_badge' => 'Vol. 1 · Núm. 1 — Marzo 2026',
             'home_blog_eyebrow' => 'Actualidad',
             'home_blog_titulo' => 'Noticias, opiniones y eventos',
+            'home_marquee' => 'Derecho Civil · Derecho Penal · Derecho Constitucional · Derecho Laboral · Derecho Administrativo · Derecho Procesal · Derecho Internacional · Derecho Comercial',
 
             // --- Fase 3: Footer / contacto / SEO ---
             'footer_marca' => 'Derecho y Ciencias Políticas',

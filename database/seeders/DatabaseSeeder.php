@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Acceso;
 use App\Models\AreaLaboral;
 use App\Models\Articulo;
 use App\Models\BlogPost;
@@ -78,6 +79,10 @@ class DatabaseSeeder extends Seeder
 
         if (Organigrama::count() === 0) {
             $this->call(OrganigramaSeeder::class);
+        }
+
+        if (Acceso::count() === 0) {
+            $this->call(AccesoSeeder::class);
         }
 
         // Settings: idempotente por clave (solo crea las faltantes, no pisa ediciones).

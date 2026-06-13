@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\AccesoRepositoryInterface;
 use App\Repositories\Contracts\AreaLaboralRepositoryInterface;
 use App\Repositories\Contracts\ArticuloRepositoryInterface;
 use App\Repositories\Contracts\BlogPostRepositoryInterface;
@@ -14,6 +15,7 @@ use App\Repositories\Contracts\EstadisticaRepositoryInterface;
 use App\Repositories\Contracts\HitoRepositoryInterface;
 use App\Repositories\Contracts\ObjetivoRepositoryInterface;
 use App\Repositories\Contracts\PerfilIngresoAreaRepositoryInterface;
+use App\Repositories\Eloquent\AccesoRepository;
 use App\Repositories\Eloquent\AreaLaboralRepository;
 use App\Repositories\Eloquent\ArticuloRepository;
 use App\Repositories\Eloquent\BlogPostRepository;
@@ -60,5 +62,8 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // Fase 3 — malla curricular
         CursoRepositoryInterface::class => CursoRepository::class,
+
+        // Accesos directos del Inicio
+        AccesoRepositoryInterface::class => AccesoRepository::class,
     ];
 }

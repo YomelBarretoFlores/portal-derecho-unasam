@@ -32,12 +32,12 @@
                 {{-- Cifras de alcance/trayectoria (las de matrícula viven en la sección Estadísticas) --}}
                 <div class="reveal mt-14 grid max-w-md grid-cols-2 divide-x divide-white/15 border-t border-white/10 pt-8" data-reveal-delay="0.4">
                     <div class="px-3 text-center first:pl-0 sm:px-6">
-                        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">Años de trayectoria</div>
-                        <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="40" data-count-suffix="+">0+</div>
+                        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat1_label'] }}</div>
+                        <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat1_valor'] }}" data-count-suffix="{{ $home['home_hero_stat1_sufijo'] }}">0{{ $home['home_hero_stat1_sufijo'] }}</div>
                     </div>
                     <div class="px-3 text-center sm:px-6">
-                        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">Áreas del Derecho</div>
-                        <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="8">0</div>
+                        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat2_label'] }}</div>
+                        <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat2_valor'] }}" data-count-suffix="{{ $home['home_hero_stat2_sufijo'] }}">0{{ $home['home_hero_stat2_sufijo'] }}</div>
                     </div>
                 </div>
             </div>

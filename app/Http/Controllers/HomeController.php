@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Services\AccesoService;
 use App\Services\BlogService;
 use App\Services\EstadisticaService;
 use App\Services\RevistaService;
@@ -17,11 +18,13 @@ class HomeController extends Controller
         RevistaService $revista,
         BlogService $blog,
         EstadisticaService $estadisticas,
+        AccesoService $accesos,
     ): View {
         return view('home', [
             'revista' => $revista->listadoPublico()->take(4),
             'posts' => $blog->listadoPublico()->take(4),
             'matriculados' => $estadisticas->serie('matriculados'),
+            'accesos' => $accesos->listadoPublico(),
             // Textos editables del Inicio (con valores por defecto).
             'home' => $this->textosInicio(),
         ]);
@@ -39,6 +42,12 @@ class HomeController extends Controller
             'home_hero_subtitulo' => 'Formación jurídica de excelencia con responsabilidad social, al servicio de Áncash y el país desde 1986.',
             'home_hero_cta1' => 'Conoce el programa',
             'home_hero_cta2' => 'Plan de Estudios',
+            'home_hero_stat1_label' => 'Años de trayectoria',
+            'home_hero_stat1_valor' => '40',
+            'home_hero_stat1_sufijo' => '+',
+            'home_hero_stat2_label' => 'Áreas del Derecho',
+            'home_hero_stat2_valor' => '8',
+            'home_hero_stat2_sufijo' => '',
             'home_about_eyebrow' => 'El programa',
             'home_about_titulo' => 'Formando profesionales del derecho desde 1986',
             'home_about_cuerpo' => "El Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM forma abogados con sólida base jurídica, sentido ético y compromiso con el desarrollo de la región Áncash y del país.\n\nNuestro plan de estudios combina la formación teórica con la práctica profesional, la investigación jurídica y la responsabilidad social, preparando a los estudiantes para los desafíos del ejercicio del derecho en el siglo XXI.",

@@ -80,7 +80,27 @@
         <div class="space-y-1 px-6 py-4">
             <a href="{{ route('home') }}" wire:navigate.hover @click="mobile = false" class="block py-2 font-medium text-navy-900">Inicio</a>
 
-            @foreach (['Programa' => $programa, 'Académico' => $academico, 'Más' => $mas] as $label => $items)
+            {{-- Desplegables Programa y Académico --}}
+            @foreach (['Programa' => $programa, 'Académico' => $academico] as $label => $items)
+                <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
+                    <button @click="open = !open" :aria-expanded="open" class="flex w-full items-center justify-between py-2 font-medium text-navy-900">
+                        {{ $label }}
+                        <svg class="h-4 w-4 transition" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div x-show="open" x-cloak class="pl-3">
+                        @foreach ($items as [$texto, $url])
+                            <a href="{{ $url }}" wire:navigate.hover @click="mobile = false" class="block py-1.5 text-sm text-stone-600 hover:text-navy-900">{{ $texto }}</a>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
+            {{-- Enlaces directos (igual que en desktop): Revista y Blog --}}
+            <a href="{{ route('revista') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Revista</a>
+            <a href="{{ route('blog') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Blog</a>
+
+            {{-- Desplegable Más --}}
+            @foreach (['Más' => $mas] as $label => $items)
                 <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
                     <button @click="open = !open" :aria-expanded="open" class="flex w-full items-center justify-between py-2 font-medium text-navy-900">
                         {{ $label }}

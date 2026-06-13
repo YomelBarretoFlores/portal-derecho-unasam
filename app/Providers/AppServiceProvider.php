@@ -17,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array<int, class-string<Model>>
      */
     private const CONTENT_MODELS = [
+        \App\Models\Acceso::class,
         \App\Models\BlogPost::class,
         \App\Models\Articulo::class,
         \App\Models\Docente::class,
