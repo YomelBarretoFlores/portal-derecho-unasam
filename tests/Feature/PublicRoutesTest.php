@@ -53,4 +53,25 @@ class PublicRoutesTest extends TestCase
             Vite::useHotFile(public_path('hot'));
         }
     }
+
+    public function test_https_app_url_generates_https_assets_behind_an_untrusted_proxy(): void
+    {
+        $productionHotFile = storage_path('framework/testing/vite-production');
+        Vite::useHotFile($productionHotFile);
+        config()->set('app.url', 'https://portal-derecho.onrender.com');
+        app('url')->forceScheme('https');
+
+        try {
+            $response = $this->get('http://portal-derecho.onrender.com/');
+
+            $response->assertOk()
+                ->assertSee('href="https://portal-derecho.onrender.com/build/assets/', false)
+                ->assertSee('src="https://portal-derecho.onrender.com/build/assets/', false)
+                ->assertSee('src="https://portal-derecho.onrender.com/livewire-', false)
+                ->assertDontSee('http://portal-derecho.onrender.com/build/assets/', false);
+        } finally {
+            Vite::useHotFile(public_path('hot'));
+            app('url')->forceScheme(null);
+        }
+    }
 }
