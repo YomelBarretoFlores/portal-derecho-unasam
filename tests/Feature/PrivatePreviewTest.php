@@ -26,6 +26,7 @@ class PrivatePreviewTest extends TestCase
         $user = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
         $signedUrl = PreviewUrl::for($post);
 
+        $this->assertStringStartsWith('/preview/blog/', $signedUrl);
         $this->get($signedUrl)->assertRedirect('/admin/login');
         $this->actingAs($user)->get(route('preview.blog', $post))->assertForbidden();
         $this->actingAs($user)->get($signedUrl)

@@ -21,6 +21,7 @@ use App\Filament\Resources\Cursos\Pages\CreateCurso;
 use App\Filament\Resources\Cursos\Pages\EditCurso;
 use App\Filament\Resources\Docentes\Pages\CreateDocente;
 use App\Filament\Resources\Docentes\Pages\EditDocente;
+use App\Filament\Resources\Docentes\Pages\ListDocentes;
 use App\Filament\Resources\Documentos\Pages\CreateDocumento;
 use App\Filament\Resources\Documentos\Pages\EditDocumento;
 use App\Filament\Resources\Estadisticas\Pages\CreateEstadistica;
@@ -233,6 +234,32 @@ class AdminFormsTest extends TestCase
             ['name' => 'Docente QA editado', 'slug' => 'docente-qa-editado'],
             ['name' => 'Docente QA editado', 'slug' => 'docente-qa-editado'],
         );
+    }
+
+    public function test_docente_table_uses_the_persistent_portrait_and_initials_fallback(): void
+    {
+        Docente::query()->create([
+            'name' => 'Fabel Bernabé Robles Espinoza',
+            'slug' => 'fabel-bernabe-robles-espinoza',
+            'grado' => 'Doctor en Derecho',
+            'categoria' => 'Docente auxiliar',
+            'dedicacion' => 'Tiempo completo',
+            'resena' => 'Reseña académica documentada.',
+            'estado_editorial' => 'draft',
+        ]);
+        Docente::query()->create([
+            'name' => 'Ursula Rosalia Aniceto Norabuena',
+            'slug' => 'ursula-rosalia-aniceto-norabuena',
+            'grado' => 'Magíster en Derecho',
+            'categoria' => 'Docente auxiliar',
+            'dedicacion' => 'Tiempo completo',
+            'resena' => 'Reseña académica documentada.',
+            'estado_editorial' => 'draft',
+        ]);
+
+        Livewire::test(ListDocentes::class)
+            ->assertSee('img/docentes/fabel-bernabe-robles-espinoza.webp', escape: false)
+            ->assertSee('UN');
     }
 
     public function test_magazine_forms_create_and_edit_the_complete_relationship_chain(): void

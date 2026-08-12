@@ -9,8 +9,8 @@ use App\Models\Docente;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -20,10 +20,9 @@ class DocentesTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('foto')
+                ViewColumn::make('foto')
                     ->label('Foto')
-                    ->collection('foto')
-                    ->circular(),
+                    ->view('filament.tables.columns.docente-avatar'),
                 TextColumn::make('name')
                     ->label('Nombre')
                     ->description(fn (Docente $record): ?string => $record->grado)

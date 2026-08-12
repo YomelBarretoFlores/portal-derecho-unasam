@@ -26,7 +26,15 @@ class PreviewUrl
             default => throw new InvalidArgumentException('Este contenido no admite vista previa.'),
         };
 
-        return URL::temporarySignedRoute($route, now()->addMinutes(15), [$parameter => $record]);
+        // Las vistas previas siempre se abren en el mismo sitio que el panel.
+        // Firmar solo la ruta evita que el esquema/host reescrito por el proxy de
+        // Render invalide el enlace al pasar de HTTP interno a HTTPS público.
+        return URL::temporarySignedRoute(
+            $route,
+            now()->addMinutes(15),
+            [$parameter => $record],
+            absolute: false,
+        );
     }
 
     public static function available(Model $record): bool

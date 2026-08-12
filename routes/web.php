@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::middleware(['auth', 'signed'])->prefix('preview')->name('preview.')->group(function (): void {
+Route::middleware(['auth', 'signed:relative'])->prefix('preview')->name('preview.')->group(function (): void {
     Route::get('/blog/{post}', [PreviewController::class, 'blog'])->name('blog');
     Route::get('/comunicados/{comunicado}', [PreviewController::class, 'comunicado'])->name('comunicado');
     Route::get('/docentes/{docente}', [PreviewController::class, 'docente'])->name('docente');
