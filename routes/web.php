@@ -6,10 +6,21 @@ use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\EstadisticaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PreviewController;
 use App\Http\Controllers\RevistaController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::middleware(['auth', 'signed'])->prefix('preview')->name('preview.')->group(function (): void {
+    Route::get('/blog/{post}', [PreviewController::class, 'blog'])->name('blog');
+    Route::get('/comunicados/{comunicado}', [PreviewController::class, 'comunicado'])->name('comunicado');
+    Route::get('/docentes/{docente}', [PreviewController::class, 'docente'])->name('docente');
+    Route::get('/revista/{revista}', [PreviewController::class, 'revista'])->name('revista');
+    Route::get('/revista-numeros/{numero}', [PreviewController::class, 'numero'])->name('revista-numero');
+    Route::get('/articulos/{articulo}', [PreviewController::class, 'articulo'])->name('articulo');
+});
 
 // --- Programa ---
 Route::get('/presentacion', [PageController::class, 'presentacion'])->name('presentacion');
@@ -28,13 +39,21 @@ Route::get('/perfil-egreso', [PageController::class, 'perfilEgreso'])->name('per
 
 // --- Publicaciones ---
 Route::get('/revista', [RevistaController::class, 'index'])->name('revista');
+Route::get('/revista/equipo-editorial', [RevistaController::class, 'equipo'])->name('revista.equipo');
+Route::get('/revista/normas-para-autores', [RevistaController::class, 'normas'])->name('revista.normas');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/revista/{numero:slug}', [RevistaController::class, 'numero'])->name('revista.numero');
+Route::get('/revista/{numero:slug}/{articulo:slug}', [RevistaController::class, 'articulo'])->name('revista.articulo');
 
 // --- Más ---
 Route::get('/docentes', [DocenteController::class, 'index'])->name('docentes');
+Route::get('/docentes/{docente:slug}', [DocenteController::class, 'show'])->name('docentes.show');
 Route::get('/comunicados', [ComunicadoController::class, 'index'])->name('comunicados');
+Route::get('/comunicados/{comunicado:slug}', [ComunicadoController::class, 'show'])->name('comunicados.show');
 Route::get('/estadisticas/{tipo}', [EstadisticaController::class, 'show'])
     ->where('tipo', 'matriculados|egresados|graduados|titulados')
     ->name('estadisticas');
 Route::get('/organigrama', [PageController::class, 'organigrama'])->name('organigrama');
 Route::get('/documentos', [PageController::class, 'documentos'])->name('documentos');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');

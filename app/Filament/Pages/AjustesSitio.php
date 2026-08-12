@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Rules\SafeUrl;
 use BackedEnum;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -41,6 +42,11 @@ class AjustesSitio extends Page
      */
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->canAccessPanel(filament()->getCurrentPanel()) ?? false;
+    }
+
     /**
      * Claves persistidas en la tabla settings.
      *
@@ -62,7 +68,7 @@ class AjustesSitio extends Page
             'home_about_eyebrow', 'home_about_titulo', 'home_about_cuerpo', 'home_about_cita',
             'home_accesos_eyebrow', 'home_accesos_titulo',
             'home_stats_eyebrow', 'home_stats_titulo', 'home_stats_narrativa',
-            'home_revista_eyebrow', 'home_revista_titulo', 'home_revista_badge',
+            'home_revista_eyebrow', 'home_revista_titulo',
             'home_blog_eyebrow', 'home_blog_titulo',
             'home_marquee',
             // Footer / SEO
@@ -168,7 +174,6 @@ class AjustesSitio extends Page
                         Textarea::make('home_stats_narrativa')->label('Cifras — narrativa')->rows(2)->columnSpanFull(),
                         TextInput::make('home_revista_eyebrow')->label('Revista — antetítulo'),
                         TextInput::make('home_revista_titulo')->label('Revista — título'),
-                        TextInput::make('home_revista_badge')->label('Revista — etiqueta (volumen)'),
                         TextInput::make('home_blog_eyebrow')->label('Blog — antetítulo'),
                         TextInput::make('home_blog_titulo')->label('Blog — título'),
                     ]),
@@ -187,8 +192,8 @@ class AjustesSitio extends Page
                         TextInput::make('plan_titulo_prof')->label('Título profesional'),
                         TextInput::make('plan_modalidad')->label('Modalidad'),
                         Textarea::make('plan_intro')->label('Introducción de la malla (opcional)')->rows(2)->columnSpanFull(),
-                        TextInput::make('plan_pdf_url')->label('Enlace al PDF de la malla')->columnSpanFull(),
-                        TextInput::make('plan_sga_url')->label('Enlace al plan en línea (SGA)')->columnSpanFull(),
+                        TextInput::make('plan_pdf_url')->label('Enlace al PDF de la malla')->rule(new SafeUrl)->columnSpanFull(),
+                        TextInput::make('plan_sga_url')->label('Enlace al plan en línea (SGA)')->rule(new SafeUrl)->columnSpanFull(),
                     ]),
 
                 Section::make('Footer, contacto y SEO')
@@ -201,7 +206,7 @@ class AjustesSitio extends Page
                         TextInput::make('contacto_telefono')->label('Teléfono'),
                         TextInput::make('contacto_email')->label('Email'),
                         TextInput::make('footer_cta_texto')->label('Botón CTA — texto'),
-                        TextInput::make('footer_cta_url')->label('Botón CTA — URL'),
+                        TextInput::make('footer_cta_url')->label('Botón CTA — URL')->rule(new SafeUrl),
                         TextInput::make('seo_title')->label('SEO — título de la pestaña')->columnSpanFull(),
                         Textarea::make('seo_description')->label('SEO — descripción (meta)')->rows(2)->columnSpanFull(),
                     ]),

@@ -1,5 +1,5 @@
 {{-- Sección Blog (preview, variante Featured) --}}
-@php $main = $posts->first(); $lista = $posts->slice(1)->take(3); @endphp
+@php $main = $posts->first(); $lista = $posts->slice(1)->take(3); $totalPosts = $posts->count(); @endphp
 <section class="mx-auto max-w-7xl px-6 py-20">
     <div class="reveal flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -11,7 +11,13 @@
         </a>
     </div>
 
-    <div class="mt-12 grid gap-8 lg:grid-cols-2 lg:items-start">
+    @if ($main)
+    @if ($totalPosts === 1)
+        <div class="mt-10">
+            <x-reveal><x-blog-card :post="$main" :horizontal="true" /></x-reveal>
+        </div>
+    @else
+    <div class="mt-12 grid gap-8 {{ $totalPosts === 2 ? 'lg:grid-cols-[1.2fr_0.8fr]' : 'lg:grid-cols-2' }} lg:items-start">
         {{-- Destacado --}}
         <x-reveal>
             <x-blog-card :post="$main" :featured="true" />
@@ -26,4 +32,8 @@
             @endforeach
         </div>
     </div>
+    @endif
+    @else
+        <x-empty-state class="mt-10" title="Actualidad en preparación" description="Las noticias, opiniones y eventos aparecerán aquí después de su revisión editorial." action="Consultar comunicados" :href="route('comunicados')" />
+    @endif
 </section>

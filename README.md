@@ -1,58 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Portal de Derecho y Ciencias Políticas — UNASAM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Portal institucional y CMS para el Programa de Estudios de Derecho y Ciencias Políticas. Incluye páginas académicas, estadísticas, documentos, comunicados, blog, plana docente y la revista “Derecho y Cultura” organizada por volúmenes y números.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3+ y Laravel 13
+- Filament 5 con autenticación administrativa por correo y contraseña
+- Blade, Livewire, Tailwind CSS 4 y Vite 8
+- Spatie Media Library sobre almacenamiento público local
+- PostgreSQL en producción; SQLite en pruebas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Instalación local
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    composer install
+    cp .env.example .env
+    php artisan key:generate
+    php artisan storage:link
+    php artisan migrate --seed
+    npm ci
+    npm run build
+    composer run dev
 
-## Learning Laravel
+El sitio queda en http://localhost:8000 y el CMS en http://localhost:8000/admin.
+El comando de desarrollo inicia PHP con límites locales de 25 MB por archivo y 30 MB por petición, suficientes para los documentos permitidos por `MEDIA_MAX_PDF_KB`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+El seeder no contiene credenciales predeterminadas. Para crear el primer superadministrador, define temporalmente:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    ADMIN_NAME="Nombre del responsable"
+    ADMIN_EMAIL="responsable@unasam.edu.pe"
+    ADMIN_PASSWORD="Una-clave-segura-2026"
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Después ejecuta php artisan db:seed --class=AdminUserSeeder y retira la contraseña del entorno. La contraseña debe tener al menos 12 caracteres, mayúsculas, minúsculas, números y símbolos. El administrador puede actualizar su nombre y contraseña desde el perfil del panel.
 
-## Agentic Development
+## Contenido y publicación
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- super_admin: administra usuarios, seguridad, contenido y auditoría.
+- editor: administra contenido; no puede administrar usuarios ni seguridad.
+- Blog, comunicados, números y artículos admiten borradores y programación por fecha.
+- Un artículo solo es visible si pertenece a un número público y tiene contenido web o PDF.
+- No existen seeders demostrativos ni registros demostrativos. Los seeders restantes contienen únicamente configuración e información institucional heredada; el contenido editorial se crea desde `/admin` y puede revisarse mediante una vista previa privada antes de publicarse.
+- El contenido heredado muestra su procedencia y estado de revisión.
+- La ficha de “Derecho y Cultura” procede de la RCF N.° 063-2026-UNASAM-FDCCPP/D. e incluye enfoque, políticas, equipo editorial y normas para autores.
+- El ISSN permanece vacío hasta que exista una asignación oficial; no se ha configurado una URL OJS ni un logo propio.
+- El equipo editorial se administra como registros estructurados desde Filament. Los números y artículos se publican de forma independiente.
+- Los perfiles docentes documentales se conservan pendientes de revisión y se administran exclusivamente desde Filament. El flujo editorial y los criterios de privacidad se describe en [Gestión del contenido docente](docs/CONTENIDO_DOCENTE.md).
 
-```bash
-composer require laravel/boost --dev
+Rutas editoriales públicas:
 
-php artisan boost:install
-```
+- /revista
+- /revista/equipo-editorial
+- /revista/normas-para-autores
+- /revista/{numero}
+- /revista/{numero}/{articulo}
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Archivos
 
-## Contributing
+Las cargas usan storage/app/public y requieren php artisan storage:link.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    MEDIA_UPLOADS_ENABLED=true
+    MEDIA_MAX_IMAGE_KB=5120
+    MEDIA_MAX_PDF_KB=20480
 
-## Code of Conduct
+En Render, MEDIA_UPLOADS_ENABLED=false: los campos de carga quedan deshabilitados porque el disco es efímero. No se debe activar hasta disponer de un disco persistente u object storage y un procedimiento de respaldo. El PDF institucional del RCF 063 se conserva en `docs/sources/revista` y debe adjuntarse manualmente desde Filament.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Saneamiento y caché
 
-## Security Vulnerabilities
+`php artisan content:purge-demo` inspecciona únicamente los identificadores demostrativos conocidos. Tras crear un respaldo con `php artisan content:backup`, agrega `--force` para eliminarlos. `php artisan content:cache:warm` precarga los datos públicos normalizados después de un despliegue o una carga editorial.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Calidad
 
-## License
+    php artisan test
+    ./vendor/bin/pint --test
+    npm run build
+    composer audit
+    npm audit --omit=dev
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+La CI ejecuta estas comprobaciones con PHP 8.4 y Node 22. El health check es /up y el sitemap público está en /sitemap.xml.

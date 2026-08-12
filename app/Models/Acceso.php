@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Acceso extends Model
@@ -20,4 +21,9 @@ class Acceso extends Model
         'orden' => 'integer',
         'activo' => 'boolean',
     ];
+
+    public function scopeActivos(Builder $query): Builder
+    {
+        return $query->where('activo', true)->orderBy('orden');
+    }
 }

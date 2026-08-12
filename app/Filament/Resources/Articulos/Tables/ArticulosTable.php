@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Articulos\Tables;
 
+use App\Enums\EditorialStatus;
+use App\Filament\Actions\PreviewActions;
+use App\Filament\Tables\EditorialStatusColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ArticulosTable
@@ -24,6 +26,10 @@ class ArticulosTable
                     ->label('Categoría')
                     ->badge()
                     ->toggleable(),
+                TextColumn::make('numero.titulo')
+                    ->label('Número')
+                    ->placeholder('Sin asignar')
+                    ->toggleable(),
                 TextColumn::make('fecha')
                     ->label('Fecha')
                     ->date('d/m/Y')
@@ -33,19 +39,15 @@ class ArticulosTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
-                IconColumn::make('publicado')
-                    ->label('Publicado')
-                    ->boolean(),
+                EditorialStatusColumn::make(),
             ])
             ->defaultSort('fecha', 'desc')
             ->filters([
-                TernaryFilter::make('publicado')
-                    ->label('Estado')
-                    ->placeholder('Todos')
-                    ->trueLabel('Publicados')
-                    ->falseLabel('Borradores'),
+                SelectFilter::make('estado_editorial')->label('Estado')->options(EditorialStatus::options()),
             ])
             ->recordActions([
+                PreviewActions::preview(),
+                PreviewActions::published(),
                 EditAction::make(),
             ])
             ->toolbarActions([

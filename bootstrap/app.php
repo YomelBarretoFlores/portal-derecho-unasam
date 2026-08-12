@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,10 +13,22 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Render (y cualquier proxy con TLS) reenvía la petición como HTTP con
-        // X-Forwarded-Proto: https. Confiar en el proxy para que Laravel detecte
-        // HTTPS y genere URLs https:// (assets, Livewire) sin contenido mixto.
-        $middleware->trustProxies(at: '*');
+        $middleware->redirectGuestsTo(fn (): string => route('filament.admin.auth.login'));
+
+        $trustedProxies = array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('TRUSTED_PROXIES', '')),
+        )));
+
+        if (env('APP_ENV') === 'production' && ($trustedProxies === [] || in_array('*', $trustedProxies, true))) {
+            throw new LogicException('TRUSTED_PROXIES debe contener IPs o CIDR explícitos en producción.');
+        }
+
+        if ($trustedProxies !== []) {
+            $middleware->trustProxies(at: $trustedProxies);
+        }
+
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

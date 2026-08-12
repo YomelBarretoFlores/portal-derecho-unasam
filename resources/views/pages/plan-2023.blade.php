@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Plan de Estudios 2023 — Derecho UNASAM')
-@section('description', 'Malla curricular vigente (Plan 2023) del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM: cursos por ciclo y créditos.')
+@section('title', 'Plan de Estudios {{ $plan }} — Derecho UNASAM')
+@section('description', 'Malla curricular del Plan {{ $plan }} del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Académico" title="Plan de Estudios 2023"
-        subtitle="Malla curricular vigente del Programa de Derecho y Ciencias Políticas." />
+    <x-page-hero seccion="Académico" title="Plan de Estudios {{ $plan }}"
+        :subtitle="$plan === '2023' ? 'Malla curricular vigente del Programa de Derecho y Ciencias Políticas.' : 'Plan curricular anterior, pendiente de revisión documental.'" />
 
     <section class="mx-auto max-w-4xl px-6 py-20">
         {{-- Metadatos: pares clave/valor → lista de definición --}}
@@ -72,6 +72,8 @@
                     @endforeach
                 </div>
             </div>
+        @else
+            <x-empty-state class="mt-12" title="Malla pendiente de publicación" description="Los cursos permanecerán fuera del portal hasta completar y validar el plan oficial por ciclos." action="Consultar documentos normativos" :href="route('documentos')" />
         @endif
 
         {{-- Documentos oficiales --}}

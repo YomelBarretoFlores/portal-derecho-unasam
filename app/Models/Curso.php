@@ -2,23 +2,41 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasEditorialWorkflow;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Curso extends Model
 {
+    use HasEditorialWorkflow;
+
     protected $fillable = [
+        'plan',
         'ciclo',
         'nombre',
         'creditos',
         'tipo',
         'orden',
+        'publicado',
+        'estado_editorial',
     ];
 
     protected $casts = [
         'ciclo' => 'integer',
         'creditos' => 'integer',
         'orden' => 'integer',
+        'publicado' => 'boolean',
     ];
+
+    public function scopePublicados(Builder $query, string $plan = '2023'): Builder
+    {
+        return $query
+            ->where('plan', $plan)
+            ->where('publicado', true)
+            ->orderBy('ciclo')
+            ->orderBy('orden')
+            ->orderBy('nombre');
+    }
 
     /**
      * Tipos de curso para el select del panel.

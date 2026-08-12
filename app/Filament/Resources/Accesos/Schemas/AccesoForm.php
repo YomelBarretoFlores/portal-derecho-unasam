@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Accesos\Schemas;
 
-use Filament\Forms\Components\TextInput;
+use App\Rules\SafeUrl;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
@@ -25,6 +26,7 @@ class AccesoForm
                 TextInput::make('url')
                     ->label('Enlace')
                     ->required()
+                    ->rule(new SafeUrl)
                     ->helperText('Ruta interna del sitio (p. ej. /plan-2023) o una URL completa (https://…).')
                     ->columnSpanFull(),
                 TextInput::make('orden')

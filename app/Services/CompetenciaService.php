@@ -2,23 +2,18 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\CompetenciaRepositoryInterface;
+use App\Models\Competencia;
 use Illuminate\Support\Collection;
 
 class CompetenciaService
 {
-    public function __construct(
-        private readonly CompetenciaRepositoryInterface $competencias,
-    ) {
-    }
-
     /**
      * Estructura por grupo (Generales/Específicas) y plan, compatible con la vista:
      * [['grupo','prefijo','planes'=>[['titulo','destacado','items'=>[['nombre','texto'],...]]]]].
      */
     public function grupos(): Collection
     {
-        return $this->competencias->ordenados()
+        return Competencia::query()->orderBy('orden')->get()
             ->groupBy('grupo')
             ->map(fn ($filas, $grupo) => [
                 'grupo' => 'Competencias '.$grupo,

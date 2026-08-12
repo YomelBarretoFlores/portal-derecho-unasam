@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BlogPosts\Pages;
 
+use App\Filament\Actions\PreviewActions;
 use App\Filament\Resources\BlogPosts\BlogPostResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -13,6 +14,8 @@ class EditBlogPost extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            PreviewActions::preview(),
+            PreviewActions::published(),
             DeleteAction::make(),
         ];
     }

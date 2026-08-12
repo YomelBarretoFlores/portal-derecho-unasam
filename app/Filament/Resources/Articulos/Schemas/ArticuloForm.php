@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources\Articulos\Schemas;
 
+use App\Filament\Forms\EditorialStatusSelect;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -21,7 +25,11 @@ class ArticuloForm
                     ->label('Título')
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (string $state, callable $set) => $set('slug', Str::slug($state)))
+                    ->afterStateUpdated(function (?string $state, ?string $old, Get $get, Set $set): void {
+                        if (blank($get('slug')) || $get('slug') === Str::slug((string) $old)) {
+                            $set('slug', Str::slug((string) $state));
+                        }
+                    })
                     ->columnSpanFull(),
                 TextInput::make('slug')
                     ->required()
@@ -31,7 +39,14 @@ class ArticuloForm
                 TagsInput::make('autores')
                     ->label('Autores')
                     ->placeholder('Añadir autor')
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published')
                     ->columnSpanFull(),
+                Select::make('revista_numero_id')
+                    ->label('Número de revista')
+                    ->relationship('numero', 'titulo')
+                    ->searchable()
+                    ->preload()
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published'),
                 TextInput::make('categoria')
                     ->label('Categoría')
                     ->datalist([
@@ -51,19 +66,27 @@ class ArticuloForm
                 Textarea::make('resumen')
                     ->label('Resumen')
                     ->rows(5)
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published')
+                    ->columnSpanFull(),
+                RichEditor::make('contenido')
+                    ->label('Contenido del artículo')
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published' && blank($get('pdf')))
+                    ->helperText('Puedes publicar contenido web, PDF o ambos.')
                     ->columnSpanFull(),
                 SpatieMediaLibraryFileUpload::make('pdf')
                     ->label('Archivo PDF')
                     ->collection('pdf')
                     ->acceptedFileTypes(['application/pdf'])
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published' && blank($get('contenido')))
+                    ->maxSize(config('media.max_pdf_kb'))
+                    ->disabled(fn (): bool => ! config('media.uploads_enabled'))
+                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'PDF opcional si existe contenido web.' : 'Las cargas están deshabilitadas en este entorno.')
                     ->columnSpanFull(),
                 DatePicker::make('fecha')
                     ->label('Fecha de publicación')
+                    ->required(fn (Get $get): bool => $get('estado_editorial') === 'published')
                     ->default(now()),
-                Toggle::make('publicado')
-                    ->label('Publicado')
-                    ->default(true)
-                    ->helperText('Si está activo, aparece en el sitio público.'),
+                EditorialStatusSelect::make(),
             ]);
     }
 }

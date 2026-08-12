@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources\Comunicados\Tables;
 
+use App\Enums\EditorialStatus;
+use App\Filament\Actions\PreviewActions;
+use App\Filament\Tables\EditorialStatusColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ComunicadosTable
@@ -24,9 +26,7 @@ class ComunicadosTable
                     ->label('Título')
                     ->searchable()
                     ->limit(50),
-                IconColumn::make('publicado')
-                    ->label('Publicado')
-                    ->boolean(),
+                EditorialStatusColumn::make(),
                 TextColumn::make('fecha_publicacion')
                     ->label('Publicación')
                     ->dateTime('d/m/Y H:i')
@@ -39,13 +39,11 @@ class ComunicadosTable
             ])
             ->defaultSort('fecha_publicacion', 'desc')
             ->filters([
-                TernaryFilter::make('publicado')
-                    ->label('Estado de publicación')
-                    ->placeholder('Todos')
-                    ->trueLabel('Publicados')
-                    ->falseLabel('Borradores'),
+                SelectFilter::make('estado_editorial')->label('Estado')->options(EditorialStatus::options()),
             ])
             ->recordActions([
+                PreviewActions::preview(),
+                PreviewActions::published(),
                 EditAction::make(),
             ])
             ->toolbarActions([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Documentos\Schemas;
 
+use App\Rules\SafeUrl;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -31,10 +32,13 @@ class DocumentoForm
                     ->label('Archivo PDF')
                     ->collection('archivo')
                     ->acceptedFileTypes(['application/pdf'])
+                    ->maxSize(config('media.max_pdf_kb'))
+                    ->disabled(fn (): bool => ! config('media.uploads_enabled'))
+                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'PDF, máximo configurado por el portal.' : 'Las cargas están deshabilitadas en este entorno.')
                     ->columnSpanFull(),
                 TextInput::make('url')
                     ->label('Enlace externo (si no subes PDF)')
-                    ->url()
+                    ->rule(new SafeUrl)
                     ->columnSpanFull(),
                 TextInput::make('orden')
                     ->label('Orden')

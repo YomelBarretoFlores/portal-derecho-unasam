@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -30,11 +30,14 @@ class UserForm
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->helperText('En edición, déjalo en blanco para no cambiarla.')
+                    ->minLength(12)
+                    ->rules(['regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[^A-Za-z0-9]/'])
                     ->maxLength(255),
-                Toggle::make('is_admin')
-                    ->label('Administrador')
-                    ->helperText('Permite el acceso al panel /admin.')
-                    ->default(true)
+                Select::make('role')
+                    ->label('Rol')
+                    ->options(User::ROLES)
+                    ->required()
+                    ->default(User::ROLE_EDITOR)
                     ->disabled(fn (?User $record): bool => $record?->id === auth()->id())
                     ->dehydrated(),
             ]);

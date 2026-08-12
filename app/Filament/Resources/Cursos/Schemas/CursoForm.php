@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Cursos\Schemas;
 
+use App\Filament\Forms\EditorialStatusSelect;
 use App\Models\Curso;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,6 +14,11 @@ class CursoForm
     {
         return $schema
             ->components([
+                Select::make('plan')
+                    ->label('Plan')
+                    ->options(['2023' => 'Plan 2023', '2019' => 'Plan 2019'])
+                    ->default('2023')
+                    ->required(),
                 Select::make('ciclo')
                     ->label('Ciclo')
                     ->options(array_combine(range(1, 10), range(1, 10)))
@@ -33,6 +39,7 @@ class CursoForm
                     ->numeric()
                     ->default(0)
                     ->helperText('Orden dentro del ciclo.'),
+                EditorialStatusSelect::make(),
             ]);
     }
 }

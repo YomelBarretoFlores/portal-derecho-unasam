@@ -1,12 +1,12 @@
 @props(['ajustes'])
 
-{{-- Franja fina de contacto sobre el nav (solo desktop) --}}
+{{-- Franja de utilidad compacta sobre la navegación principal. --}}
 <div class="hidden border-b border-white/5 bg-navy-950 sm:block">
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-2 text-xs text-white/60">
-        <p class="tracking-wide">
-            Programa de Estudios de Derecho y Ciencias Políticas · UNASAM
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-1.5 text-[11px] text-white/65">
+        <p class="tracking-[0.04em]">
+            Facultad de Derecho y Ciencias Políticas · UNASAM
         </p>
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-5">
             @if (! empty($ajustes['contacto_telefono']))
                 <a href="tel:{{ preg_replace('/[^0-9+]/', '', $ajustes['contacto_telefono']) }}"
                    class="flex items-center gap-1.5 transition hover:text-white">

@@ -83,7 +83,7 @@
         -webkit-font-smoothing: antialiased;
     }
     body {
-        @apply bg-white text-stone-600;
+        @apply overflow-x-hidden bg-white text-stone-600;
         font-family: var(--font-sans);
     }
     /* Títulos mayores en serif académico — el serif respira mejor con tracking casi neutro */
@@ -91,13 +91,17 @@
         font-family: var(--font-serif);
         @apply font-bold text-navy-900;
         letter-spacing: -0.01em;
+        text-wrap: balance;
     }
     /* Subtítulos en sans para marcar jerarquía frente a los títulos serif */
     h3, h4 {
         font-family: var(--font-sans);
         @apply font-semibold text-navy-900;
         letter-spacing: -0.02em;
+        text-wrap: balance;
     }
+    p { text-wrap: pretty; }
+    ::selection { background: var(--color-gold-200); color: var(--color-navy-950); }
 
     /* ---- Foco de teclado visible (solo navegación con teclado, no clic) ---- */
     :focus-visible {
@@ -117,6 +121,65 @@
 }
 
 @layer components {
+    .prose-editorial {
+        color: var(--color-stone-700);
+        font-size: 1.0625rem;
+        line-height: 1.8;
+        text-wrap: pretty;
+    }
+    .prose-editorial > * + * {
+        margin-top: 1.25rem;
+    }
+    .prose-editorial h2,
+    .prose-editorial h3 {
+        margin-top: 2.5rem;
+        color: var(--color-navy-900);
+        line-height: 1.2;
+    }
+    .prose-editorial h2 { font-size: 2rem; }
+    .prose-editorial h3 { font-size: 1.4rem; }
+    .prose-editorial a {
+        color: var(--color-navy-700);
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+    .prose-editorial ul { list-style: disc; padding-left: 1.4rem; }
+    .prose-editorial ol { list-style: decimal; padding-left: 1.4rem; }
+    .prose-editorial blockquote {
+        border-left: 2px solid var(--color-gold-400);
+        padding-left: 1.25rem;
+        color: var(--color-stone-600);
+        font-style: italic;
+    }
+    .prose-editorial img { max-width: 100%; height: auto; }
+
+    .editorial-empty {
+        @apply relative overflow-hidden border-y border-stone-200 bg-paper px-6 py-12 text-left md:px-10;
+    }
+    .editorial-empty::before {
+        content: '';
+        @apply absolute inset-y-0 left-0 w-1 bg-gold-400;
+    }
+    .editorial-empty-icon {
+        @apply flex h-11 w-11 shrink-0 items-center justify-center border border-navy-200 bg-white text-navy-800;
+    }
+    .editorial-panel {
+        @apply border border-stone-200 bg-white;
+    }
+    .filter-chip {
+        @apply border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors;
+    }
+    .filter-chip:hover { border-color: var(--color-navy-700); color: var(--color-navy-900); }
+    .filter-chip[aria-current='page'],
+    .filter-chip[aria-selected='true'] { @apply border-navy-900 bg-navy-900 text-white; }
+    .paper-grid {
+        background-color: var(--color-paper);
+        background-image:
+            linear-gradient(rgba(23, 51, 92, 0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(23, 51, 92, 0.035) 1px, transparent 1px);
+        background-size: 2rem 2rem;
+    }
+
     /* ---- Botones: planos, geometría recta, hover por color (sin lift editorial) ---- */
     .btn {
         @apply inline-flex items-center justify-center gap-2 rounded-none px-6 py-3 text-[15px] font-medium;
@@ -231,9 +294,8 @@
 
     /* ---- Cifras "huecas" (outline) para fondo oscuro ---- */
     .stat-outline {
-        color: transparent;
-        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.72);
-        text-stroke: 1.5px rgba(255, 255, 255, 0.72);
+        color: rgba(255, 255, 255, 0.96);
+        font-variant-numeric: tabular-nums;
     }
 
     /* ---- Texto contorno (tinta) para fondo claro (marquee) ---- */
@@ -244,24 +306,15 @@
     }
 }
 
-/* ---- Scroll-reveal sutil (IntersectionObserver en app.js) ----
-   Enhance-only: el contenido es visible por defecto. El estado oculto SOLO se
-   aplica cuando hay JS (clase .js en <html>), así que sin JS / en renderers
-   headless nada queda en blanco. */
+/* ---- Scroll-reveal no bloqueante: el contenido siempre parte visible. ---- */
 .reveal {
-    transition:
-        opacity 0.55s var(--ease-smooth),
-        transform 0.55s var(--ease-smooth);
-}
-.js .reveal {
-    opacity: 0;
-    transform: translateY(14px);
-}
-.js .reveal-left { transform: translateX(-18px); }
-.js .reveal-right { transform: translateX(18px); }
-.js .reveal.is-visible {
     opacity: 1;
     transform: none;
+}
+.reveal.is-visible { animation: reveal-in 0.42s var(--ease-smooth) both; }
+@keyframes reveal-in {
+    from { opacity: 0.72; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
 }
 
 /* ---- Stagger automático para hijos reveal ---- */
@@ -338,6 +391,7 @@
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        animation: none !important;
     }
     .btn:hover,
     .btn:active {

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estadistica;
-use App\Services\EstadisticaService;
+use App\Services\PublicContentCache;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EstadisticaController extends Controller
 {
-    public function show(string $tipo, EstadisticaService $estadisticas): View
+    public function show(string $tipo, PublicContentCache $content): View
     {
         $tipos = Estadistica::TIPOS;
 
@@ -21,7 +21,7 @@ class EstadisticaController extends Controller
             'tipo' => $tipo,
             'titulo' => $tipos[$tipo],
             'tipos' => $tipos,
-            'serie' => $estadisticas->serie($tipo),
+            'series' => $content->estadisticas(),
         ]);
     }
 }

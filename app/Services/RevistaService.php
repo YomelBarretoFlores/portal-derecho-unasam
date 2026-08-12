@@ -2,31 +2,44 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\ArticuloRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Articulo;
+use App\Models\Revista;
+use App\Models\RevistaNumero;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class RevistaService
 {
-    public function __construct(
-        private readonly ArticuloRepositoryInterface $articulos,
-    ) {
+    public function revistaPublica(): ?Revista
+    {
+        return Revista::query()
+            ->publica()
+            ->with([
+                'media',
+                'miembros' => fn ($query) => $query->activos()->ordenados(),
+            ])
+            ->first();
     }
 
-    /**
-     * Artículos visibles en el sitio público.
-     */
-    public function listadoPublico(): Collection
+    public function numeros(?string $q = null): LengthAwarePaginator
     {
-        return $this->articulos->publicados();
+        return RevistaNumero::query()->publicados()->with('media')
+            ->when($q, fn ($query) => $query->where(fn ($search) => $search
+                ->where('titulo', 'like', "%{$q}%")
+                ->orWhere('descripcion', 'like', "%{$q}%")))
+            ->orderByDesc('fecha_publicacion')->orderByDesc('orden')
+            ->paginate(12)->withQueryString();
     }
 
-    /**
-     * Categorías disponibles para los filtros.
-     *
-     * @return array<int, string>
-     */
-    public function categorias(): array
+    public function articulos(RevistaNumero $numero, ?string $q = null, ?string $categoria = null): LengthAwarePaginator
     {
-        return $this->articulos->categorias();
+        return Articulo::query()->publicados()
+            ->where('revista_numero_id', $numero->id)
+            ->with('media')
+            ->when($categoria, fn ($query) => $query->where('categoria', $categoria))
+            ->when($q, fn ($query) => $query->where(fn ($search) => $search
+                ->where('titulo', 'like', "%{$q}%")
+                ->orWhere('resumen', 'like', "%{$q}%")))
+            ->orderBy('orden')->orderBy('fecha')
+            ->paginate(12)->withQueryString();
     }
 }

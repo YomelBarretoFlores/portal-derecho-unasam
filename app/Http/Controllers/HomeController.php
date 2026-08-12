@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
-use App\Services\AccesoService;
-use App\Services\BlogService;
-use App\Services\EstadisticaService;
-use App\Services\RevistaService;
+use App\Services\PublicContentCache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -14,17 +11,10 @@ class HomeController extends Controller
     /**
      * Página de inicio con todas sus secciones, alimentada desde el CMS.
      */
-    public function index(
-        RevistaService $revista,
-        BlogService $blog,
-        EstadisticaService $estadisticas,
-        AccesoService $accesos,
-    ): View {
+    public function index(PublicContentCache $content): View
+    {
         return view('home', [
-            'revista' => $revista->listadoPublico()->take(4),
-            'posts' => $blog->listadoPublico()->take(4),
-            'matriculados' => $estadisticas->serie('matriculados'),
-            'accesos' => $accesos->listadoPublico(),
+            ...$content->home(),
             // Textos editables del Inicio (con valores por defecto).
             'home' => $this->textosInicio(),
         ]);
@@ -57,9 +47,8 @@ class HomeController extends Controller
             'home_stats_eyebrow' => 'El programa en cifras',
             'home_stats_titulo' => 'Una comunidad académica en crecimiento',
             'home_stats_narrativa' => 'En 2024 alcanzamos 1049 matriculados y 68 titulados, con más de 40 años formando abogados en 8 áreas del derecho.',
-            'home_revista_eyebrow' => 'Revista Jurídica UNASAM',
+            'home_revista_eyebrow' => 'Revista Derecho y Cultura',
             'home_revista_titulo' => 'Investigación jurídica original',
-            'home_revista_badge' => 'Vol. 1 · Núm. 1 — Marzo 2026',
             'home_blog_eyebrow' => 'Actualidad',
             'home_blog_titulo' => 'Noticias, opiniones y eventos',
         ];

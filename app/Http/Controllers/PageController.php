@@ -3,16 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
-use App\Services\AreaLaboralService;
-use App\Services\CompetenciaService;
-use App\Services\DocumentoService;
-use App\Services\HitoService;
-use App\Services\ObjetivoService;
-use App\Services\CursoService;
-use App\Services\PerfilIngresoService;
-use App\Models\Organigrama;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use App\Services\PublicContentCache;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PageController extends Controller
@@ -37,10 +29,10 @@ class PageController extends Controller
         ]);
     }
 
-    public function historia(HitoService $hitos): View
+    public function historia(PublicContentCache $content): View
     {
         return view('pages.historia', [
-            'hitos' => $hitos->listado(),
+            'hitos' => $content->hitos(),
             'trayectoriaTitulo' => Setting::get('historia_trayectoria_titulo'),
             'trayectoriaCuerpo' => Setting::get('historia_trayectoria_cuerpo'),
         ]);
@@ -54,21 +46,21 @@ class PageController extends Controller
         ]);
     }
 
-    public function campoLaboral(AreaLaboralService $areas): View
+    public function campoLaboral(PublicContentCache $content): View
     {
         return view('pages.campo-laboral', [
-            'areas' => $areas->listado(),
+            'areas' => $content->areasLaborales(),
         ]);
     }
 
-    public function objetivos(ObjetivoService $objetivos): View
+    public function objetivos(PublicContentCache $content): View
     {
         return view('pages.objetivos', [
-            'planes' => $objetivos->planes(),
+            'planes' => $content->objetivos(),
         ]);
     }
 
-    public function planEstudios2023(CursoService $cursos): View
+    public function planEstudios2023(PublicContentCache $content): View
     {
         return view('pages.plan-2023', [
             'grado' => Setting::get('plan_grado', 'Bachiller en Derecho'),
@@ -77,26 +69,36 @@ class PageController extends Controller
             'pdfUrl' => Setting::get('plan_pdf_url'),
             'sgaUrl' => Setting::get('plan_sga_url'),
             'intro' => Setting::get('plan_intro'),
-            'ciclos' => $cursos->porCiclo(),
+            'ciclos' => $content->cursos('2023'),
+            'plan' => '2023',
         ]);
     }
 
-    public function planEstudios2019(): View
+    public function planEstudios2019(PublicContentCache $content): View
     {
-        return view('pages.generic', ['titulo' => 'Plan de Estudios 2019', 'seccion' => 'Académico']);
+        return view('pages.plan-2023', [
+            'grado' => Setting::get('plan_grado', 'Bachiller en Derecho'),
+            'tituloProf' => Setting::get('plan_titulo_prof', 'Abogado(a)'),
+            'modalidad' => Setting::get('plan_modalidad', 'Presencial'),
+            'pdfUrl' => null,
+            'sgaUrl' => null,
+            'intro' => null,
+            'ciclos' => $content->cursos('2019'),
+            'plan' => '2019',
+        ]);
     }
 
-    public function competencias(CompetenciaService $competencias): View
+    public function competencias(PublicContentCache $content): View
     {
         return view('pages.competencias', [
-            'grupos' => $competencias->grupos(),
+            'grupos' => $content->competencias(),
         ]);
     }
 
-    public function perfilIngreso(PerfilIngresoService $perfil): View
+    public function perfilIngreso(PublicContentCache $content): View
     {
         return view('pages.perfil-ingreso', [
-            'areas' => $perfil->areas(),
+            'areas' => $content->perfilIngreso(),
             'especifico' => Setting::get('perfil_ingreso_especifico'),
         ]);
     }
@@ -109,26 +111,20 @@ class PageController extends Controller
         ]);
     }
 
-    public function organigrama(): View
+    public function organigrama(PublicContentCache $content): View
     {
-        $version = Cache::get('content.version', 1);
-        $data = Cache::remember("organigrama.data:v{$version}", 600, function () {
-            $org = Organigrama::with('media')->first();
-
-            return [
-                'titulo' => $org?->titulo,
-                'descripcion' => $org?->descripcion,
-                'imagen' => $org?->imagen_url,
-            ];
-        });
-
-        return view('pages.organigrama', $data);
+        return view('pages.organigrama', $content->organigrama());
     }
 
-    public function documentos(DocumentoService $documentos): View
+    public function documentos(Request $request, PublicContentCache $content): View
     {
+        $q = trim($request->string('q')->toString());
+        $categoria = trim($request->string('categoria')->toString());
+
         return view('pages.documentos', [
-            'documentos' => $documentos->listado(),
+            ...$content->documentos($q, $categoria, $request->integer('page', 1)),
+            'q' => $q,
+            'categoria' => $categoria,
         ]);
     }
 

@@ -3,22 +3,18 @@
 @section('title', 'Personal Docente — Derecho UNASAM')
 
 @section('content')
-    <x-page-hero seccion="Institucional" title="Personal Docente"
-        subtitle="Nuestra plana docente, especialistas en las distintas ramas del derecho." />
-
+    <x-page-hero seccion="Institucional" title="Personal Docente" subtitle="Plana docente publicada por el Programa de Derecho y Ciencias Políticas." />
     <section class="mx-auto max-w-7xl px-6 py-16">
         @if ($docentes->isEmpty())
-            <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-16 text-center">
-                <p class="font-sans text-stone-500">Aún no hay docentes publicados.</p>
-            </div>
+            <x-empty-state title="Nómina docente en revisión" description="Los perfiles se publican individualmente después de validar sus datos académicos y su documentación de respaldo." />
         @else
-            <div class="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($docentes as $docente)
-                    <div class="reveal">
-                        <x-docente-card :docente="$docente" />
-                    </div>
-                @endforeach
-            </div>
+            <div @class([
+                'grid gap-6',
+                'max-w-sm' => $docentes->count() === 1,
+                'max-w-4xl sm:grid-cols-2' => $docentes->count() === 2,
+                'sm:grid-cols-2 lg:grid-cols-3' => $docentes->count() >= 3,
+            ])>@foreach ($docentes as $docente)<x-docente-card :docente="$docente" />@endforeach</div>
+            <div class="mt-10">{{ $docentes->links() }}</div>
         @endif
     </section>
 @endsection

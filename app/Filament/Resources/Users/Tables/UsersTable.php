@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Models\User;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,7 +15,7 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')->label('Nombre')->searchable(),
                 TextColumn::make('email')->label('Correo')->searchable(),
-                IconColumn::make('is_admin')->label('Admin')->boolean(),
+                TextColumn::make('role')->label('Rol')->badge()->formatStateUsing(fn (?string $state): string => User::ROLES[$state] ?? 'Sin acceso'),
                 TextColumn::make('created_at')->label('Creado')->date()->sortable(),
             ])
             ->defaultSort('name')

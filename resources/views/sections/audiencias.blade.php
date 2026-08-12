@@ -32,14 +32,18 @@
     ];
 @endphp
 
-<section class="mx-auto max-w-7xl px-6 py-20">
+@php $totalAccesos = $accesos->count(); @endphp
+
+<section class="border-y border-stone-200 bg-paper py-20 md:py-24">
+    <div class="mx-auto max-w-7xl px-6">
     <div class="grid gap-x-12 gap-y-10 lg:grid-cols-[19rem_1fr]">
 
         {{-- Encabezado a un lado (composición asimétrica) --}}
         <div class="reveal lg:pt-2">
-            <h2 class="font-serif text-3xl text-navy-900 md:text-4xl">¿Qué buscas?</h2>
+            <p class="eyebrow">Orientación y recursos</p>
+            <h2 class="mt-3 font-serif text-3xl text-navy-900 md:text-4xl">Explora el programa</h2>
             <p class="mt-3 max-w-xs leading-relaxed text-stone-500">
-                Rutas rápidas según tu relación con el programa.
+                Encuentra información según tu relación con la comunidad universitaria.
             </p>
         </div>
 
@@ -65,5 +69,28 @@
                 </div>
             @endforeach
         </div>
+    </div>
+
+    @if ($accesos->isNotEmpty())
+        <div class="mt-12 border-t border-stone-300 pt-8">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <p class="eyebrow">Recursos destacados</p>
+                    <h3 class="mt-2 font-serif text-2xl font-semibold text-navy-900">Accesos directos</h3>
+                </div>
+                <p class="max-w-md text-sm leading-6 text-stone-500">Enlaces administrados desde el portal para consultas académicas frecuentes.</p>
+            </div>
+            <div @class([
+                'mt-7 grid gap-px overflow-hidden border border-stone-200 bg-stone-200',
+                'md:grid-cols-2' => $totalAccesos === 2,
+                'md:grid-cols-2 lg:grid-cols-3' => $totalAccesos === 3,
+                'sm:grid-cols-2 lg:grid-cols-4' => $totalAccesos >= 4,
+            ])>
+                @foreach ($accesos as $a)
+                    <x-acceso-card :titulo="$a->titulo" :descripcion="$a->descripcion" :href="$a->url" />
+                @endforeach
+            </div>
+        </div>
+    @endif
     </div>
 </section>

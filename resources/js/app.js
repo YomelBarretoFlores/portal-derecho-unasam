@@ -9,6 +9,11 @@ function initReveal() {
     const els = document.querySelectorAll('.reveal:not(.is-visible)');
     if (!els.length) return;
 
+    if (!('IntersectionObserver' in window) || reduceMotion) {
+        els.forEach((el) => el.classList.add('is-visible'));
+        return;
+    }
+
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
@@ -18,7 +23,7 @@ function initReveal() {
                 }
             });
         },
-        { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+        { threshold: 0.08, rootMargin: '0px 0px -24px 0px' }
     );
 
     els.forEach((el) => {

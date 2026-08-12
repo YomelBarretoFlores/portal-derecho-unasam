@@ -1,41 +1,42 @@
 # Despliegue en Render
 
-El portal se despliega como **servicio web Docker** en Render usando el `Dockerfile`
-(multi-etapa: Node compila los assets, FrankenPHP sirve la app) y el Blueprint `render.yaml`.
+El servicio usa el Dockerfile, Node 22 para compilar assets y FrankenPHP/PHP 8.4 para ejecutar Laravel. docker/entrypoint.sh cachea configuración, rutas y vistas, aplica migraciones y arranca el servidor.
 
-## Pasos
+## Variables obligatorias
 
-1. **Crear el servicio**
-   - Render Dashboard → **New → Blueprint** → seleccionar este repositorio.
-   - Render detecta `render.yaml` y crea el servicio `portal-derecho` (región Virginia, plan Starter).
+| Variable | Descripción |
+|---|---|
+| APP_KEY | Resultado de php artisan key:generate --show |
+| APP_URL | URL HTTPS pública |
+| DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD | PostgreSQL/Neon |
+| DB_PERSISTENT | false en producción |
+| TRUSTED_PROXIES | IP o CIDR real del proxy, separado por comas |
+| SESSION_SECURE_COOKIE | true |
+| MEDIA_UPLOADS_ENABLED | false en Render |
 
-2. **Completar las variables marcadas `sync: false`** (en *Environment*):
-   | Variable | Valor |
-   |---|---|
-   | `APP_KEY` | salida de `php artisan key:generate --show` (incluye el prefijo `base64:`) |
-   | `APP_URL` | la URL pública de Render (ej. `https://portal-derecho.onrender.com`) |
-   | `DB_HOST` | endpoint **-pooler** de Neon |
-   | `DB_DATABASE` | `neondb` |
-   | `DB_USERNAME` | usuario de Neon |
-   | `DB_PASSWORD` | contraseña de Neon |
+No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
 
-3. **Deploy.** Render construye la imagen y arranca. El `entrypoint` cachea config/rutas/vistas,
-   corre `migrate --force` y `storage:link`, y levanta FrankenPHP en `$PORT`.
+## Primera publicación
 
-4. Cada `git push` a la rama vuelve a desplegar automáticamente (`autoDeploy: true`).
+1. Crear un respaldo de la base y de storage/app/public.
+2. Configurar las variables del Blueprint render.yaml.
+3. Desplegar y comprobar /up.
+4. Revisar que las migraciones hayan finalizado.
+5. Confirmar en los logs que `content:cache:warm` terminó correctamente.
+6. Crear el superadministrador desde un entorno seguro con AdminUserSeeder y variables temporales.
+7. Entrar a /admin y verificar el acceso con la cuenta administrativa creada.
+8. Confirmar que los campos de archivos indican que las cargas están deshabilitadas.
 
-## Persistencia de imágenes del CMS (importante)
+## Archivos y copias de seguridad
 
-El disco de Render es **efímero**: las imágenes que el coordinador suba se perderían en cada
-redeploy. Dos soluciones:
+El filesystem de Render es efímero. En esta fase:
 
-- **Disco persistente de Render**: añadir un *Disk* montado en `/app/storage/app/public`.
-- **Object storage** (recomendado a futuro): mover los medios a Cloudflare R2 / S3
-  (config del disco `s3` en `config/filesystems.php` + credenciales en variables de entorno).
+- Los textos y metadatos sí se pueden editar.
+- No se permiten nuevas cargas desde Filament.
+- No se garantiza la permanencia de archivos escritos durante la ejecución.
 
-## Notas
+Antes de habilitar cargas en producción se debe conectar almacenamiento persistente, migrar los medios existentes, validar URLs y establecer copias de seguridad/restauración.
 
-- La región **Virginia** es la más cercana a Neon (São Paulo). Para mínima latencia de BD,
-  considerar crear el proyecto Neon en `us-east` o usar Postgres de Render en Virginia.
-- Crear el usuario admin de Filament tras el primer deploy:
-  `php artisan make:filament-user` (vía *Shell* de Render).
+## Recuperación administrativa
+
+No hay recuperación por correo mientras no exista SMTP. Si se pierde el acceso, otro superadministrador puede restablecer la contraseña; nunca se deben introducir contraseñas en logs o commits.

@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Organigramas\Schemas;
 
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class OrganigramaForm
@@ -25,8 +25,10 @@ class OrganigramaForm
                     ->collection('imagen')
                     ->image()
                     ->imageEditor()
+                    ->maxSize(config('media.max_image_kb'))
+                    ->disabled(fn (): bool => ! config('media.uploads_enabled'))
                     ->columnSpanFull()
-                    ->helperText('Sube la imagen del organigrama (JPG/PNG).'),
+                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'Sube la imagen del organigrama (JPG/PNG).' : 'Las cargas están deshabilitadas en este entorno.'),
             ]);
     }
 }

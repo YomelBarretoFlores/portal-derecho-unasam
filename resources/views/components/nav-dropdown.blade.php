@@ -1,5 +1,9 @@
 @props(['label', 'items' => []])
 
+@php
+    $active = collect($items)->contains(fn (array $item): bool => url()->current() === $item[1]);
+@endphp
+
 {{-- Dropdown accesible: abre por hover y por teclado (focus/click), cierra con Escape --}}
 <div x-data="{ open: false }"
      @mouseenter="open = true" @mouseleave="open = false"
@@ -8,7 +12,8 @@
      class="relative">
     <button x-ref="trigger" type="button" @click="open = !open"
             aria-haspopup="true" :aria-expanded="open"
-            class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[15px] font-medium text-navy-800 transition hover:bg-stone-100 hover:text-navy-900">
+            @if ($active) aria-current="page" @endif
+            class="flex items-center gap-1 px-3.5 py-2 text-[15px] font-medium transition hover:bg-stone-100 hover:text-navy-900 {{ $active ? 'bg-stone-100 text-navy-950' : 'text-navy-800' }}">
         {{ $label }}
         <svg class="h-3.5 w-3.5 transition" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
     </button>

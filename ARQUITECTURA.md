@@ -1,61 +1,45 @@
-# Portal Derecho UNASAM — Guía de arquitectura
+# Arquitectura
 
-Stack: **Laravel 13 · Filament 5 (CMS) · Livewire · Blade + Tailwind v4 · Spatie Media Library · NeonDB (Postgres)**
+El proyecto usa una arquitectura Laravel convencional. Los controladores aplican filtros y paginación mediante Eloquent; los modelos encapsulan relaciones, casts y scopes de publicación. Solo se conservan servicios cuando existe transformación o lógica editorial real.
 
-## Cómo correr el proyecto
+## Flujo principal
 
-```bash
-# 1. Backend
-php artisan serve
+    Ruta HTTP → Controlador → scopes Eloquent / servicio de dominio → Blade
+                             ↘ caché pública de arrays normalizados
 
-# 2. Frontend (en otra terminal) — compila Tailwind y recarga en vivo
-npm run dev
-```
+    Filament → policies → modelos → observadores de caché y auditoría
 
-- Sitio público: http://localhost:8000
-- Panel de administración (CMS): http://localhost:8000/admin
-  - Usuario: `barretofloresyomeljair@gmail.com` · Contraseña temporal: `cambiar123` (cámbiala)
+Servicios conservados:
 
-## Arquitectura por capas (clave para migrar de tecnología)
+- PublicContentCache: portada cacheada como arrays, nunca modelos serializados.
+- RevistaService: disponibilidad de la ficha y consulta editorial de integrantes, números y artículos.
+- CursoService, ObjetivoService y CompetenciaService: agrupaciones necesarias para las vistas académicas.
 
-```
-Controllers / Filament   → reciben la petición, NO tienen lógica
-        ↓
-Services                 → lógica de negocio. NO conocen Eloquent ni SQL
-        ↓
-Repositories\Contracts   → interfaces (el "qué")
-        ↓
-Repositories\Eloquent    → implementación (el "cómo"). ÚNICA capa que toca la BD
-        ↓
-Models (Eloquent)        → compartidos con Filament
-```
+content.version invalida la portada cuando cambia una entidad pública o un archivo. Los ajustes globales utilizan su propio mapa cacheado.
 
-**Regla de oro:** nada fuera de `app/Repositories/Eloquent/` puede importar Eloquent o escribir SQL.
-Para cambiar de BD/ORM se reescribe solo esa carpeta y se reapunta el binding en
-`app/Providers/RepositoryServiceProvider.php`. Cambiar solo de proveedor Postgres = editar `.env`.
+## Dominio editorial
 
-## Cómo agregar una nueva entidad (ej. Docente)
+- Revista contiene la ficha institucional, la resolución, el enfoque y las políticas de publicación.
+- RevistaMiembro representa una función y afiliación dentro del equipo editorial, con visibilidad y orden administrables.
+- RevistaNumero representa un volumen/número publicable.
+- Articulo pertenece opcionalmente a un número durante la migración, pero necesita esa relación para ser público.
+- BlogPost y Comunicado se publican únicamente cuando están activos y su fecha ya llegó.
+- Curso distingue planes 2019/2023 y requiere publicado=true para aparecer.
 
-Replica el patrón de **Comunicado**, que ya está implementado en todas las capas:
+La autorización se resuelve con policies:
 
-1. `php artisan make:model Docente -m` → define la migración y `php artisan migrate`
-2. `app/Repositories/Contracts/DocenteRepositoryInterface.php` (extiende `RepositoryInterface`)
-3. `app/Repositories/Eloquent/DocenteRepository.php` (extiende `BaseRepository`)
-4. Registra el binding en `RepositoryServiceProvider::$bindings`
-5. `app/Services/DocenteService.php` (inyecta la interfaz, no la implementación)
-6. `php artisan make:filament-resource Docente --generate` → CRUD en el admin
-7. Controlador + ruta + vista Blade que consuman el Service
+- super_admin tiene control total.
+- editor administra modelos de contenido.
+- La auditoría y los usuarios quedan reservados al superadministrador.
 
-## Archivos de referencia (entidad Comunicado)
+El registro content_audits conserva evento, actor, entidad, cambios, IP y fecha. Excluye contraseñas y secretos de autenticación.
 
-| Capa | Archivo |
-|---|---|
-| Modelo | `app/Models/Comunicado.php` |
-| Contrato | `app/Repositories/Contracts/ComunicadoRepositoryInterface.php` |
-| Repositorio | `app/Repositories/Eloquent/ComunicadoRepository.php` |
-| Servicio | `app/Services/ComunicadoService.php` |
-| Binding | `app/Providers/RepositoryServiceProvider.php` |
-| CMS | `app/Filament/Resources/Comunicados/` |
-| Público | `app/Http/Controllers/HomeController.php` + `resources/views/home.blade.php` |
+## Seguridad
 
-Los prototipos de diseño (React/JSX, solo referencia visual) están en `../design_handoff/` y `../Web Derecho UI/`.
+- No existe lista blanca de correos ni contraseña predeterminada.
+- TRUSTED_PROXIES acepta solo IP/CIDR explícitos; * detiene el arranque en producción.
+- El middleware global añade CSP, anti-framing, nosniff, política de referencia y restricciones de permisos.
+- El contenido enriquecido público se procesa con RichContentRenderer.
+- El acceso al panel requiere una cuenta autorizada y contraseña robusta.
+
+La migración de is_admin es progresiva: role ya gobierna la autorización y el campo anterior se conserva temporalmente para compatibilidad. Se eliminará en una migración posterior, después de verificar que todos los administradores fueron convertidos.

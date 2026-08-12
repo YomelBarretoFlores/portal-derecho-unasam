@@ -2,21 +2,16 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\CursoRepositoryInterface;
+use App\Models\Curso;
 use Illuminate\Support\Collection;
 
 class CursoService
 {
-    public function __construct(
-        private readonly CursoRepositoryInterface $cursos,
-    ) {
-    }
-
     /**
      * Cursos agrupados por ciclo: Collection<int ciclo, Collection<Curso>>.
      */
-    public function porCiclo(): Collection
+    public function porCiclo(string $plan = '2023'): Collection
     {
-        return $this->cursos->ordenados()->groupBy('ciclo');
+        return Curso::query()->publicados($plan)->get()->groupBy('ciclo');
     }
 }

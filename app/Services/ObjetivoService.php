@@ -2,22 +2,17 @@
 
 namespace App\Services;
 
-use App\Repositories\Contracts\ObjetivoRepositoryInterface;
+use App\Models\Objetivo;
 use Illuminate\Support\Collection;
 
 class ObjetivoService
 {
-    public function __construct(
-        private readonly ObjetivoRepositoryInterface $objetivos,
-    ) {
-    }
-
     /**
      * Objetivos agrupados por plan: [['titulo','destacado','objetivos'=>[texto,...]], ...].
      */
     public function planes(): Collection
     {
-        return $this->objetivos->ordenados()
+        return Objetivo::query()->orderBy('orden')->get()
             ->groupBy('plan')
             ->map(fn ($items, $plan) => [
                 'titulo' => $plan,

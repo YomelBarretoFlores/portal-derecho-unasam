@@ -10,7 +10,7 @@ services:
     region: virginia          # La más cercana a Neon (sa-east-1, São Paulo)
     plan: free                # Gratis. Se duerme tras 15 min sin visitas (1ª carga ~30-60s).
                               # Para "siempre activo" cambiar a: plan: starter ($7/mes)
-    healthCheckPath: /
+    healthCheckPath: /up
     autoDeploy: true          # Redeploy automático en cada push a la rama
 
     envVars:
@@ -43,6 +43,12 @@ services:
         value: "5432"
       - key: DB_SSLMODE
         value: require
+      - key: DB_PERSISTENT
+        value: "false"
+      - key: DB_CONNECT_TIMEOUT
+        value: "10"
+      - key: PGCONNECT_TIMEOUT
+        value: "10"
       - key: DB_HOST
         sync: false           # endpoint -pooler de Neon
       - key: DB_DATABASE
@@ -61,3 +67,7 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      - key: MEDIA_UPLOADS_ENABLED
+        value: "false"
+      - key: TRUSTED_PROXIES
+        value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"

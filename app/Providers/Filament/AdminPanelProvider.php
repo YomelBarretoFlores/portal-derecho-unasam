@@ -27,6 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
+            ->strictAuthorization()
             ->spa()
             ->brandName('Derecho UNASAM')
             ->brandLogo(fn () => view('filament.brand'))

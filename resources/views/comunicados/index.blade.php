@@ -1,45 +1,35 @@
 @extends('layouts.app')
 
 @section('title', 'Comunicados — Derecho UNASAM')
+@section('description', 'Avisos y comunicados oficiales del Programa de Estudios de Derecho y Ciencias Políticas.')
 
 @section('content')
-    <x-page-hero seccion="Transparencia" title="Comunicados"
-        subtitle="Avisos y comunicados oficiales del Programa de Estudios." />
-
+    <x-page-hero seccion="Transparencia" title="Comunicados" subtitle="Avisos y comunicados oficiales del Programa de Estudios." />
     <section class="mx-auto max-w-6xl px-6 py-20">
         @if ($comunicados->isEmpty())
-            <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-stone-200 bg-paper px-6 py-16 text-center">
-                <p class="font-sans text-stone-500">Aún no hay comunicados publicados.</p>
-            </div>
+            <x-empty-state title="Sin comunicados vigentes" description="Los avisos oficiales aparecerán aquí después de su aprobación y publicación por la Facultad." action="Volver al inicio" :href="route('home')" />
         @else
-            <div class="stagger-children grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div @class([
+                'grid gap-8',
+                'max-w-3xl' => $comunicados->count() === 1,
+                'sm:grid-cols-2' => $comunicados->count() === 2,
+                'sm:grid-cols-2 lg:grid-cols-3' => $comunicados->count() >= 3,
+            ])>
                 @foreach ($comunicados as $comunicado)
-                    <article class="reveal card-hover flex flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
-                        {{-- Media --}}
-                        <div class="relative aspect-[3/2] overflow-hidden">
-                            @if ($comunicado->_imagen_url)
-                                <img src="{{ $comunicado->_imagen_url }}" alt="{{ $comunicado->titulo }}"
-                                     loading="lazy" decoding="async" class="h-full w-full object-cover">
-                            @else
-                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-800 to-navy-950">
-                                    <svg class="h-12 w-12 text-white/20" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 4H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- Cuerpo --}}
+                    <article class="card-hover flex flex-col overflow-hidden border border-stone-200 bg-white">
+                        @if ($comunicado->_imagen_url)
+                            <img src="{{ $comunicado->_imagen_url }}" alt="{{ $comunicado->titulo }}" loading="lazy" class="aspect-[3/2] w-full object-cover">
+                        @endif
                         <div class="flex grow flex-col p-6">
-                            <h3 class="text-lg font-semibold leading-snug text-navy-900">{{ $comunicado->titulo }}</h3>
-                            @if ($comunicado->resumen)
-                                <p class="mt-2 line-clamp-2 grow font-sans text-sm leading-relaxed text-stone-500">{{ $comunicado->resumen }}</p>
-                            @endif
-                            @if ($comunicado->fecha)
-                                <time class="mt-4 block font-sans text-xs text-stone-400">{{ $comunicado->fecha->translatedFormat('d \d\e F, Y') }}</time>
-                            @endif
+                            <time class="text-xs text-stone-400" datetime="{{ $comunicado->fecha_publicacion->toAtomString() }}">{{ $comunicado->fecha_publicacion->translatedFormat('d M Y') }}</time>
+                            <h2 class="mt-3 text-xl leading-snug"><a href="{{ route('comunicados.show', $comunicado->slug) }}" wire:navigate.hover>{{ $comunicado->titulo }}</a></h2>
+                            @if ($comunicado->resumen)<p class="mt-3 grow text-sm leading-relaxed text-stone-500">{{ $comunicado->resumen }}</p>@endif
+                            <a href="{{ route('comunicados.show', $comunicado->slug) }}" wire:navigate.hover class="mt-5 text-sm font-semibold text-navy-700">Leer comunicado →</a>
                         </div>
                     </article>
                 @endforeach
             </div>
+            <div class="mt-10">{{ $comunicados->links() }}</div>
         @endif
     </section>
 @endsection

@@ -4,12 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Acceso;
 use App\Models\AreaLaboral;
-use App\Models\Articulo;
-use App\Models\BlogPost;
 use App\Models\Competencia;
-use App\Models\Comunicado;
-use App\Models\Curso;
-use App\Models\Docente;
 use App\Models\Documento;
 use App\Models\Estadistica;
 use App\Models\Hito;
@@ -26,25 +21,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- Fase 1: colecciones ---
-        if (BlogPost::count() === 0) {
-            $this->call(BlogPostSeeder::class);
-        }
-
-        if (Articulo::count() === 0) {
-            $this->call(ArticuloSeeder::class);
-        }
-
-        if (Docente::count() === 0) {
-            $this->call(DocenteSeeder::class);
-        }
-
         if (Estadistica::count() === 0) {
             $this->call(EstadisticaSeeder::class);
-        }
-
-        if (Comunicado::count() === 0) {
-            $this->call(ComunicadoSeeder::class);
         }
 
         // --- Fase 2: páginas institucionales ---
@@ -73,10 +51,6 @@ class DatabaseSeeder extends Seeder
         }
 
         // --- Fase 3: malla y organigrama ---
-        if (Curso::count() === 0) {
-            $this->call(CursoSeeder::class);
-        }
-
         if (Organigrama::count() === 0) {
             $this->call(OrganigramaSeeder::class);
         }
@@ -87,6 +61,9 @@ class DatabaseSeeder extends Seeder
 
         // Settings: idempotente por clave (solo crea las faltantes, no pisa ediciones).
         $this->call(SettingSeeder::class);
+
+        // El contenido editorial y los perfiles docentes se crean y revisan
+        // exclusivamente desde Filament. No se siembran demos ni publicaciones.
 
         // --- Usuario administrador ---
         $this->call(AdminUserSeeder::class);

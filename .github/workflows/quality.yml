@@ -1,0 +1,41 @@
+name: Calidad
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, sqlite3, gd, exif
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Instalar PHP
+        run: composer install --no-interaction --prefer-dist
+      - name: Instalar frontend
+        run: npm ci
+      - name: Preparar entorno
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Pruebas
+        run: php artisan test
+      - name: Estilo PHP
+        run: ./vendor/bin/pint --test
+      - name: Compilar frontend
+        run: npm run build
+      - name: Auditar Composer
+        run: composer audit
+      - name: Auditar npm
+        run: npm audit --omit=dev --audit-level=high
