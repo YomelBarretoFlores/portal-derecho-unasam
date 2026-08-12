@@ -29,12 +29,12 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+      - name: Compilar frontend
+        run: npm run build
       - name: Pruebas
         run: php artisan test
       - name: Estilo PHP
         run: ./vendor/bin/pint --test
-      - name: Compilar frontend
-        run: npm run build
       - name: Auditar Composer
         run: composer audit
       - name: Auditar npm

@@ -45,8 +45,6 @@ services:
         value: require
       - key: DB_PERSISTENT
         value: "false"
-      - key: DB_CONNECT_TIMEOUT
-        value: "10"
       - key: PGCONNECT_TIMEOUT
         value: "10"
       - key: DB_HOST

@@ -99,7 +99,6 @@ return [
             'sslmode' => env('DB_SSLMODE', 'prefer'),
             'options' => extension_loaded('pdo_pgsql') ? [
                 PDO::ATTR_PERSISTENT => (bool) env('DB_PERSISTENT', false),
-                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 10),
             ] : [],
         ],
 
