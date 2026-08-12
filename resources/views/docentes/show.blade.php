@@ -42,9 +42,9 @@
 
         <div class="mt-10 grid gap-10 lg:grid-cols-[18rem_1fr] lg:gap-16">
             <aside>
-                <div class="aspect-square overflow-hidden bg-navy-950">
+                <div class="aspect-[4/5] overflow-hidden bg-stone-50 p-2">
                     @if ($fotoPublica)
-                        <img src="{{ $fotoPublica }}" alt="Retrato de {{ $docente->name }}" class="h-full w-full object-cover" decoding="async">
+                        <img src="{{ $fotoPublica }}" alt="Retrato de {{ $docente->name }}" class="h-full w-full object-contain object-top" decoding="async">
                     @else
                         <div class="flex h-full items-center justify-center text-5xl font-semibold text-white/90">{{ $docente->iniciales }}</div>
                     @endif

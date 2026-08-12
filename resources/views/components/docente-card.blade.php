@@ -9,10 +9,10 @@
 
 <article class="card-hover group flex h-full flex-col overflow-hidden rounded-none border border-stone-200 bg-white">
     {{-- Foto / fallback iniciales --}}
-    <div class="aspect-square overflow-hidden">
+    <div class="aspect-[4/5] overflow-hidden bg-stone-50 p-2">
         @if ($foto)
             <img src="{{ $foto }}" alt="Retrato de {{ $docente->name }}" loading="lazy" decoding="async"
-                 class="h-full w-full object-cover grayscale-[12%] transition duration-500 group-hover:scale-[1.025] group-hover:grayscale-0">
+                 class="h-full w-full object-contain object-top grayscale-[8%] transition duration-300 group-hover:grayscale-0">
         @else
             <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-800 to-navy-950">
                 <span class="text-4xl font-semibold tracking-tight text-white/90">{{ $docente->iniciales }}</span>
