@@ -16,8 +16,8 @@
             </p>
 
             <div class="mt-9 grid max-w-lg grid-cols-2 divide-x divide-white/15 border-y border-white/10 py-6">
-                <x-stat :value="$matriculadoActual?->total ?? 0" :label="'Matriculados ('.($matriculadoActual?->anio ?? 'sin datos').')'" />
-                <x-stat :value="$tituladosActual?->total ?? 0" :label="'Titulados ('.($tituladosActual?->anio ?? 'sin datos').')'" />
+                <x-stat class="pr-5 sm:pr-10" :value="$matriculadoActual?->total ?? 0" :label="'Matriculados ('.($matriculadoActual?->anio ?? 'sin datos').')'" />
+                <x-stat class="pl-5 sm:pl-10" :value="$tituladosActual?->total ?? 0" :label="'Titulados ('.($tituladosActual?->anio ?? 'sin datos').')'" />
             </div>
             <a href="{{ route('estadisticas', 'matriculados') }}" wire:navigate.hover class="mt-7 inline-flex text-sm font-semibold text-gold-300 underline decoration-gold-300/35 underline-offset-4 hover:decoration-gold-300">Consultar todas las estadísticas →</a>
         </div>

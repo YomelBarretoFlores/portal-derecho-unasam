@@ -30,8 +30,8 @@
             @endphp
             <div x-show="active === @js($key)" x-cloak role="tabpanel" class="mt-12">
                 <h2 class="sr-only">{{ $label }}</h2>
-                <div class="grid gap-12 lg:grid-cols-[minmax(20rem,0.85fr)_minmax(0,1.15fr)]">
-                    <div>
+                <div class="grid min-w-0 gap-12 lg:grid-cols-[minmax(20rem,0.85fr)_minmax(0,1.15fr)]">
+                    <div class="min-w-0">
                         <h3 class="text-xl font-semibold text-navy-900">{{ $label }} por año</h3>
                         <div class="mt-5 overflow-x-auto border-t-2 border-navy-900">
                             <table class="w-full min-w-[20rem] font-sans text-sm">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="min-w-0">
                         <h3 class="text-xl font-semibold text-navy-900">Evolución</h3>
                         <div class="mt-6 overflow-x-auto pb-2">
                         <div class="flex min-w-[28rem] items-end justify-between gap-3 border-b border-stone-200" style="height:260px">

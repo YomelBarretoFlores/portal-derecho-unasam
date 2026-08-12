@@ -77,6 +77,30 @@ class DocenteProfilesTest extends TestCase
             ->assertSee(route('docentes.show', $docente), false);
     }
 
+    public function test_a_documented_static_photo_is_used_when_no_media_was_uploaded(): void
+    {
+        $docente = Docente::query()->create($this->perfil([
+            'name' => 'Fabel Bernabé Robles Espinoza',
+            'slug' => 'fabel-bernabe-robles-espinoza',
+            'estado_revision' => 'verified',
+            'documento_fuente' => 'Fabel.docx',
+            'activo' => true,
+        ]));
+
+        $this->assertStringEndsWith(
+            '/img/docentes/fabel-bernabe-robles-espinoza.webp',
+            $docente->fotoPublicaUrl(),
+        );
+
+        $this->get(route('docentes'))
+            ->assertOk()
+            ->assertSee('img/docentes/fabel-bernabe-robles-espinoza.webp', false);
+
+        $this->get(route('docentes.show', $docente))
+            ->assertOk()
+            ->assertSee('img/docentes/fabel-bernabe-robles-espinoza.webp', false);
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>

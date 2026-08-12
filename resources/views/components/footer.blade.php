@@ -29,7 +29,7 @@
             <div class="sm:col-span-2 lg:col-span-2">
                 <picture>
                     <source srcset="{{ asset('img/logo-derecho.webp') }}" type="image/webp">
-                    <img src="{{ asset('img/logo-derecho.png') }}" alt="FDCCPP" loading="lazy" decoding="async" class="h-12 w-auto">
+                    <img src="{{ asset('img/logo-derecho.webp') }}" alt="FDCCPP" loading="lazy" decoding="async" class="h-12 w-auto">
                 </picture>
                 <h3 class="mt-5 text-lg font-semibold text-white">{{ $ajustes['footer_marca'] }}</h3>
                 <p class="mt-2 max-w-xs text-sm leading-relaxed text-white/55">

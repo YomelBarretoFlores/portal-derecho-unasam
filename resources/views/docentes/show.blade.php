@@ -3,10 +3,8 @@
 @section('title', $docente->name.' — Personal docente — Derecho UNASAM')
 @section('description', \Illuminate\Support\Str::limit($docente->resena, 155))
 @section('og_type', 'profile')
-@section('og_image', $docente->getFirstMediaUrl('foto') ?: asset('img/escudo-unasam.png'))
-
-@push('schema')
 @php
+    $fotoPublica = $docente->fotoPublicaUrl();
     $personSchema = array_filter([
         '@'.'context' => 'https://schema.org',
         '@type' => 'Person',
@@ -14,7 +12,7 @@
         'jobTitle' => $docente->categoria,
         'description' => $docente->resena,
         'email' => $docente->email_institucional,
-        'image' => $docente->getFirstMediaUrl('foto') ?: null,
+        'image' => $fotoPublica ? url($fotoPublica) : null,
         'affiliation' => [
             '@type' => 'CollegeOrUniversity',
             'name' => 'Universidad Nacional Santiago Antúnez de Mayolo',
@@ -27,6 +25,9 @@
         ])),
     ]);
 @endphp
+@section('og_image', $fotoPublica ? url($fotoPublica) : asset('img/escudo-unasam.png'))
+
+@push('schema')
 <script type="application/ld+json">{!! json_encode($personSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 <x-breadcrumb-schema :items="[
     ['name' => 'Inicio', 'url' => route('home')],
@@ -42,8 +43,8 @@
         <div class="mt-10 grid gap-10 lg:grid-cols-[18rem_1fr] lg:gap-16">
             <aside>
                 <div class="aspect-square overflow-hidden bg-navy-950">
-                    @if ($docente->getFirstMediaUrl('foto'))
-                        <img src="{{ $docente->getFirstMediaUrl('foto') }}" alt="Retrato de {{ $docente->name }}" class="h-full w-full object-cover">
+                    @if ($fotoPublica)
+                        <img src="{{ $fotoPublica }}" alt="Retrato de {{ $docente->name }}" class="h-full w-full object-cover" decoding="async">
                     @else
                         <div class="flex h-full items-center justify-center text-5xl font-semibold text-white/90">{{ $docente->iniciales }}</div>
                     @endif

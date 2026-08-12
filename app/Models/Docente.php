@@ -95,6 +95,31 @@ class Docente extends Model implements HasMedia
             ->nonQueued();
     }
 
+    /**
+     * Retrato publicado: prioriza la carga editorial y usa como respaldo la
+     * fotografía institucional documentada que viaja con la aplicación.
+     */
+    public function fotoPublicaUrl(string $conversion = ''): string
+    {
+        $path = config('docentes.fotos_institucionales.'.$this->slug);
+
+        if (filled($path) && is_file(public_path($path))) {
+            return '/'.ltrim($path, '/');
+        }
+
+        $media = $this->getFirstMedia('foto');
+
+        if ($media) {
+            $mediaPath = $media->getPath($conversion);
+
+            if (is_file($mediaPath) && filesize($mediaPath) > 0) {
+                return $media->getUrl($conversion);
+            }
+        }
+
+        return '';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (self $docente): void {

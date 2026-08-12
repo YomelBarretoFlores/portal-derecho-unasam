@@ -29,7 +29,7 @@
         </div>
     @elseif ($horizontal)
         <div class="paper-grid relative flex min-h-60 items-end overflow-hidden border-b border-stone-200 p-8 md:min-h-full md:border-b-0 md:border-r">
-            <span class="absolute -right-4 -top-8 font-serif text-[10rem] font-bold leading-none text-navy-900/[0.055]" aria-hidden="true">D</span>
+            <span class="pointer-events-none absolute right-7 top-7 select-none font-serif text-[8rem] font-bold leading-none text-navy-900/[0.045] md:right-9 md:top-8 md:text-[9rem]" aria-hidden="true">D</span>
             <div class="relative">
                 <span class="eyebrow">Actualidad institucional</span>
                 <p class="mt-3 max-w-xs font-serif text-2xl font-semibold leading-tight text-navy-900">Derecho, cultura y vida universitaria</p>

@@ -173,7 +173,7 @@ class PublicContentCache
                 'area' => $docente->area,
                 'grado' => $docente->grado,
                 'iniciales' => $docente->iniciales,
-                '_foto_url' => $docente->getFirstMediaUrl('foto', 'thumb'),
+                '_foto_url' => $docente->fotoPublicaUrl('thumb'),
             ])->all());
 
         return $this->paginate($items, 12, $page);

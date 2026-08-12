@@ -11,7 +11,7 @@
     {{-- Foto / fallback iniciales --}}
     <div class="aspect-square overflow-hidden">
         @if ($foto)
-            <img src="{{ $foto }}" alt="{{ $docente->name }}" loading="lazy" decoding="async"
+            <img src="{{ $foto }}" alt="Retrato de {{ $docente->name }}" loading="lazy" decoding="async"
                  class="h-full w-full object-cover grayscale-[12%] transition duration-500 group-hover:scale-[1.025] group-hover:grayscale-0">
         @else
             <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-800 to-navy-950">
