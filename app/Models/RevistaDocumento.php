@@ -43,6 +43,14 @@ class RevistaDocumento extends Model implements HasMedia
 
     public function getDownloadUrlAttribute(): string
     {
-        return $this->getFirstMediaUrl('archivo') ?: (string) $this->url;
+        $fallbackUrl = (string) $this->url;
+
+        // Render does not have persistent uploads. Versioned public documents
+        // must therefore resolve without querying Media Library in that environment.
+        if (! config('media.uploads_enabled') && filled($fallbackUrl)) {
+            return $fallbackUrl;
+        }
+
+        return $this->getFirstMediaUrl('archivo') ?: $fallbackUrl;
     }
 }

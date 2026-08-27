@@ -147,6 +147,24 @@ class RevistaMicrositeTest extends TestCase
         }
     }
 
+    public function test_versioned_document_urls_do_not_require_media_library_when_uploads_are_disabled(): void
+    {
+        config()->set('media.uploads_enabled', false);
+        $revista = $this->journal();
+        RevistaDocumento::query()->create([
+            'revista_id' => $revista->id,
+            'categoria' => 'norma',
+            'titulo' => 'Normas de publicación',
+            'url' => '/docs/revista/normas-publicacion-v1.pdf',
+            'visible' => true,
+            'estado_editorial' => 'published',
+        ]);
+
+        $this->get(route('revista.normas'))
+            ->assertOk()
+            ->assertSee('/docs/revista/normas-publicacion-v1.pdf', false);
+    }
+
     public function test_initial_content_import_is_idempotent_and_preserves_existing_details(): void
     {
         $revista = $this->journal();

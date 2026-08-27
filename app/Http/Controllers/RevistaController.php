@@ -121,7 +121,7 @@ class RevistaController extends Controller
     public function formatos(RevistaService $revista): View
     {
         $ficha = $this->ficha($revista);
-        $documentos = RevistaDocumento::query()->publicos()->where('revista_id', $ficha->id)->where('categoria', 'formato')->with('media')->orderBy('orden')->get();
+        $documentos = RevistaDocumento::query()->publicos()->where('revista_id', $ficha->id)->where('categoria', 'formato')->orderBy('orden')->get();
 
         return view('revista.formatos', compact('ficha', 'documentos'));
     }
@@ -145,7 +145,7 @@ class RevistaController extends Controller
         $ficha = $revista->revistaPublica();
         abort_unless($ficha && filled($ficha->normas_publicacion), 404);
 
-        $documento = $ficha->documentos()->publicos()->where('categoria', 'norma')->with('media')->orderBy('orden')->first();
+        $documento = $ficha->documentos()->publicos()->where('categoria', 'norma')->orderBy('orden')->first();
 
         return view('revista.normas', ['revista' => $ficha, 'documento' => $documento]);
     }
