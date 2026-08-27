@@ -15,6 +15,7 @@ class RevistaService
             ->publica()
             ->with([
                 'media',
+                'contactos',
                 'miembros' => fn ($query) => $query->activos()->ordenados(),
             ])
             ->first();

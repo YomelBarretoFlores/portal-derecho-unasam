@@ -71,6 +71,24 @@ class RevistaResource extends Resource
                     RichEditor::make('normas_publicacion')->label('Normas para autores')->columnSpanFull(),
                 ]),
 
+            Section::make('Páginas del micrositio')
+                ->description('Estos contenidos aparecen en las secciones fijas de la revista.')
+                ->schema([
+                    RichEditor::make('contenido_sobre')->label('Sobre la revista'),
+                    RichEditor::make('contenido_politicas')->label('Políticas editoriales'),
+                    RichEditor::make('contenido_indexacion')->label('Indexación'),
+                    RichEditor::make('contenido_privacidad')->label('Declaración de privacidad'),
+                    RichEditor::make('contenido_preservacion')->label('Preservación digital'),
+                    RichEditor::make('introduccion_envios')->label('Introducción de envíos'),
+                ]),
+
+            Section::make('Redes sociales oficiales')
+                ->columns(2)
+                ->schema([
+                    TextInput::make('facebook_url')->label('Facebook')->url(),
+                    TextInput::make('whatsapp_url')->label('WhatsApp')->url(),
+                ]),
+
             Section::make('Resolución de creación')
                 ->columns(2)
                 ->schema([

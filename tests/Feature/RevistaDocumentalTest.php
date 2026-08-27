@@ -38,7 +38,7 @@ class RevistaDocumentalTest extends TestCase
             'activo' => true,
         ]);
 
-        $this->get(route('revista'))->assertOk()->assertSee('Revista Científica de Derecho y Antropología Jurídica')->assertSee('Pendiente de asignación');
+        $this->get(route('revista'))->assertOk()->assertSee('Revista Científica de Derecho y Antropología Jurídica')->assertSee('ISSN en línea en proceso de gestión');
         $this->get(route('revista.equipo'))->assertOk()->assertSee('Félix Claudio Julca Guerrero');
         $this->get(route('revista.normas'))->assertOk()->assertSee('Política de envío y evaluación')->assertDontSee('LLALLIQ');
     }

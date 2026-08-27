@@ -67,6 +67,10 @@
     <x-contact-topbar :ajustes="$ajustes" />
     <x-nav />
 
+    @if (request()->routeIs('revista*'))
+        @include('revista.partials.nav')
+    @endif
+
     <main id="main-content" class="flex-1">
         <x-content-provenance />
         @yield('content')

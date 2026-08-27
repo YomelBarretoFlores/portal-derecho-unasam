@@ -22,7 +22,12 @@ class SitemapController extends Controller
         ])->filter(fn (string $name) => Route::has($name))->map(fn (string $name) => route($name));
 
         if (Revista::query()->publica()->exists()) {
-            $staticRoutes->push(route('revista.equipo'), route('revista.normas'));
+            $staticRoutes->push(...collect([
+                'revista.actual', 'revista.archivos', 'revista.politicas', 'revista.comite-editorial',
+                'revista.comite-cientifico', 'revista.avisos', 'revista.envios', 'revista.sobre',
+                'revista.indexacion', 'revista.contacto', 'revista.privacidad', 'revista.preservacion',
+                'revista.formatos', 'revista.normas',
+            ])->map(fn (string $name) => route($name))->all());
         }
 
         $urls = $staticRoutes

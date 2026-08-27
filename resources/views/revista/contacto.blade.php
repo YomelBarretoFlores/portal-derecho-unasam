@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title','Contacto — '.$revista->nombre_corto)
+@section('content')
+<x-page-hero seccion="Revista" title="Contacto" subtitle="Canales oficiales del equipo editorial." />
+<section class="mx-auto max-w-5xl px-6 py-16 md:py-20"><div class="grid gap-6 md:grid-cols-2">@foreach($contactos as $contacto)<article class="border-t-2 border-navy-900 bg-paper p-6"><p class="eyebrow">{{ \App\Models\RevistaContacto::TIPOS[$contacto->tipo] ?? $contacto->tipo }}</p><h2 class="mt-3 text-2xl">{{ $contacto->nombre }}</h2>@if($contacto->cargo)<p class="mt-2 text-sm">{{ $contacto->cargo }}</p>@endif<div class="mt-5 space-y-2 text-sm">@if($contacto->email)<a class="block text-navy-700 underline" href="mailto:{{ $contacto->email }}">{{ $contacto->email }}</a>@endif @if($contacto->telefono)<a class="block text-navy-700 underline" href="tel:+51{{ preg_replace('/\D/','',$contacto->telefono) }}">{{ $contacto->telefono }}</a>@endif</div></article>@endforeach</div><div class="mt-10 flex flex-wrap gap-3">@if($revista->facebook_url)<a class="btn btn-primary" href="{{ $revista->facebook_url }}" target="_blank" rel="noopener">Facebook oficial</a>@endif @if($revista->whatsapp_url)<a class="btn btn-ghost" href="{{ $revista->whatsapp_url }}" target="_blank" rel="noopener">WhatsApp oficial</a>@endif</div></section>
+@endsection

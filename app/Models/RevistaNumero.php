@@ -21,6 +21,7 @@ class RevistaNumero extends Model implements HasMedia
     protected $fillable = [
         'revista_id', 'volumen', 'numero', 'slug', 'titulo', 'subtitulo',
         'descripcion', 'fecha_publicacion', 'orden', 'publicado',
+        'es_actual',
         'estado_editorial',
     ];
 
@@ -28,6 +29,7 @@ class RevistaNumero extends Model implements HasMedia
         'fecha_publicacion' => 'date',
         'orden' => 'integer',
         'publicado' => 'boolean',
+        'es_actual' => 'boolean',
     ];
 
     public function revista(): BelongsTo
@@ -64,6 +66,14 @@ class RevistaNumero extends Model implements HasMedia
         static::saving(function (self $numero): void {
             if ($numero->publicado && (blank($numero->volumen) || blank($numero->numero) || blank($numero->titulo) || blank($numero->fecha_publicacion))) {
                 throw ValidationException::withMessages(['publicado' => 'Completa volumen, número, título y fecha antes de publicar.']);
+            }
+        });
+
+        static::saved(function (self $numero): void {
+            if ($numero->es_actual) {
+                static::query()->where('revista_id', $numero->revista_id)
+                    ->whereKeyNot($numero->getKey())->where('es_actual', true)
+                    ->update(['es_actual' => false]);
             }
         });
     }

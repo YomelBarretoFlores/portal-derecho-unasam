@@ -13,6 +13,10 @@ El servicio usa el Dockerfile, Node 22 para compilar assets y FrankenPHP/PHP 8.4
 | TRUSTED_PROXIES | IP o CIDR real del proxy, separado por comas |
 | SESSION_SECURE_COOKIE | true |
 | MEDIA_UPLOADS_ENABLED | false en Render |
+| SUBMISSIONS_ENABLED | false hasta aprobar privacidad y almacenamiento |
+| SUBMISSIONS_DISK | Disco privado persistente; `local` solo en desarrollo |
+| SUBMISSIONS_PRIVACY_APPROVED | false mientras la declaración esté en preparación |
+| SUBMISSIONS_STORAGE_PERSISTENT | false en Render sin volumen u object storage |
 
 No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
 
@@ -26,6 +30,7 @@ No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
 6. Crear el superadministrador desde un entorno seguro con AdminUserSeeder y variables temporales.
 7. Entrar a /admin y verificar el acceso con la cuenta administrativa creada.
 8. Confirmar que los campos de archivos indican que las cargas están deshabilitadas.
+9. Confirmar que `/revista/envios` no muestra el formulario en Render.
 
 ## Archivos y copias de seguridad
 
@@ -36,6 +41,8 @@ El filesystem de Render es efímero. En esta fase:
 - No se garantiza la permanencia de archivos escritos durante la ejecución.
 
 Antes de habilitar cargas en producción se debe conectar almacenamiento persistente, migrar los medios existentes, validar URLs y establecer copias de seguridad/restauración.
+
+Los envíos de manuscritos se habilitan únicamente cuando las tres variables de seguridad (`SUBMISSIONS_ENABLED`, `SUBMISSIONS_PRIVACY_APPROVED` y `SUBMISSIONS_STORAGE_PERSISTENT`) están en `true`. Sus archivos no deben usar el disco público.
 
 ## Recuperación administrativa
 

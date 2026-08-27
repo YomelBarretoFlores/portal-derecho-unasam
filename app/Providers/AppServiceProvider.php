@@ -18,6 +18,12 @@ use App\Models\Objetivo;
 use App\Models\Organigrama;
 use App\Models\PerfilIngresoArea;
 use App\Models\Revista;
+use App\Models\RevistaAviso;
+use App\Models\RevistaContacto;
+use App\Models\RevistaDocumento;
+use App\Models\RevistaEnvio;
+use App\Models\RevistaEnvioVersion;
+use App\Models\RevistaLineaInvestigacion;
 use App\Models\RevistaMiembro;
 use App\Models\RevistaNumero;
 use App\Models\Setting;
@@ -57,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
         Curso::class,
         Organigrama::class,
         Revista::class,
+        RevistaAviso::class,
+        RevistaContacto::class,
+        RevistaDocumento::class,
+        RevistaLineaInvestigacion::class,
         RevistaMiembro::class,
         RevistaNumero::class,
     ];
@@ -72,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        $contentPolicyModels = array_merge(self::CONTENT_MODELS, [Setting::class]);
+        $contentPolicyModels = array_merge(self::CONTENT_MODELS, [Setting::class, RevistaEnvio::class, RevistaEnvioVersion::class]);
         foreach ($contentPolicyModels as $model) {
             Gate::policy($model, ContentPolicy::class);
         }
@@ -104,7 +114,9 @@ class AppServiceProvider extends ServiceProvider
         Setting::deleted($invalidar);
         $this->registrarAuditoria(Setting::class);
         $this->registrarAuditoria(User::class);
-        $this->registrarAuditoria(Media::class);
+        // Los metadatos y nombres de archivos no se copian al historial de auditoría.
+        $this->registrarAuditoria(RevistaEnvio::class);
+        $this->registrarAuditoria(RevistaEnvioVersion::class);
 
         // Las subidas/borrados de archivos (Spatie Media) también invalidan.
         Media::saved($invalidar);
@@ -123,7 +135,11 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            $excluded = ['password', 'remember_token', 'app_authentication_secret', 'app_authentication_recovery_codes', 'updated_at'];
+            $excluded = [
+                'password', 'remember_token', 'app_authentication_secret', 'app_authentication_recovery_codes', 'updated_at',
+                'documento_identidad', 'whatsapp', 'telefono', 'manuscrito_path', 'carta_path', 'declaracion_path',
+                'constancia_estilo_path', 'archivo_path', 'ip_hash',
+            ];
             $newValues = $event === 'deleted' ? [] : $record->getAttributes();
             $oldValues = $event === 'created' ? [] : $record->getOriginal();
 

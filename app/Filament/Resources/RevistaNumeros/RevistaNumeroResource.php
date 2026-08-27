@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -54,6 +55,8 @@ class RevistaNumeroResource extends Resource
             DatePicker::make('fecha_publicacion')->label('Fecha de publicación')
                 ->required(fn (Get $get): bool => $get('estado_editorial') === 'published'),
             TextInput::make('orden')->numeric()->default(0),
+            Toggle::make('es_actual')->label('Número actual')
+                ->helperText('Al activarlo, cualquier otro número actual de la revista se convertirá en archivo.'),
             SpatieMediaLibraryFileUpload::make('portada')->collection('portada')->image()
                 ->maxSize(config('media.max_image_kb'))->disabled(fn (): bool => ! config('media.uploads_enabled')),
             SpatieMediaLibraryFileUpload::make('numero_pdf')->label('PDF del número')->collection('numero_pdf')
@@ -71,6 +74,9 @@ class RevistaNumeroResource extends Resource
             TextColumn::make('numero')->label('Núm.'),
             TextColumn::make('titulo')->searchable(),
             TextColumn::make('fecha_publicacion')->date()->sortable(),
+            TextColumn::make('es_actual')->label('Ubicación')->badge()
+                ->formatStateUsing(fn (bool $state): string => $state ? 'Actual' : 'Archivo')
+                ->color(fn (bool $state): string => $state ? 'success' : 'gray'),
             EditorialStatusColumn::make(),
         ])->defaultSort('fecha_publicacion', 'desc')->recordActions([
             PreviewActions::preview(),

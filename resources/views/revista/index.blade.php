@@ -53,7 +53,7 @@
             <div class="grid gap-12 border-b border-stone-200 pb-16 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-20">
                 <div>
                     <div class="flex items-center gap-4">
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center border border-navy-900 bg-navy-950 font-serif text-xl font-bold text-gold-300" aria-label="Monograma tipográfico Derecho y Cultura">D&amp;C</div>
+                        <img src="{{ asset('img/revista/logo-derecho-y-cultura.jpg') }}" alt="Logo oficial de Derecho y Cultura" class="h-20 w-20 shrink-0 border border-stone-200 object-cover">
                         <div>
                             <p class="eyebrow">Presentación</p>
                             <p class="mt-1 text-sm text-stone-500">Revista científica institucional · UNASAM</p>
@@ -68,7 +68,8 @@
                     @endif
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ route('revista.normas') }}" wire:navigate.hover class="btn btn-primary">Normas para autores</a>
-                        <a href="{{ route('revista.equipo') }}" wire:navigate.hover class="btn btn-ghost">Equipo editorial</a>
+                        <a href="{{ route('revista.comite-editorial') }}" wire:navigate.hover class="btn btn-ghost">Comité editorial</a>
+                        <a href="{{ route('revista.formatos') }}" wire:navigate.hover class="btn btn-ghost">Formatos y plantillas</a>
                     </div>
                 </div>
 
@@ -90,7 +91,7 @@
                         </div>
                         <div>
                             <dt class="font-semibold text-navy-900">ISSN en línea</dt>
-                            <dd class="mt-1 text-stone-600">{{ $revista->issn ?: 'Pendiente de asignación' }}</dd>
+                            <dd class="mt-1 text-stone-600">{{ $revista->issn ?: 'ISSN en línea en proceso de gestión' }}</dd>
                         </div>
                     </dl>
                     @if ($resolucionUrl)

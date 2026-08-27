@@ -20,6 +20,9 @@ class Revista extends Model implements HasMedia
         'periodicidad', 'modalidad', 'idiomas', 'tipos_contribucion',
         'sistema_arbitraje', 'norma_citacion', 'normas_publicacion',
         'issn', 'contacto_email', 'activo', 'publicado',
+        'contenido_politicas', 'contenido_sobre', 'contenido_indexacion',
+        'contenido_privacidad', 'contenido_preservacion', 'introduccion_envios',
+        'facebook_url', 'whatsapp_url',
         'estado_editorial',
     ];
 
@@ -39,6 +42,31 @@ class Revista extends Model implements HasMedia
     public function miembros(): HasMany
     {
         return $this->hasMany(RevistaMiembro::class);
+    }
+
+    public function documentos(): HasMany
+    {
+        return $this->hasMany(RevistaDocumento::class);
+    }
+
+    public function avisos(): HasMany
+    {
+        return $this->hasMany(RevistaAviso::class);
+    }
+
+    public function contactos(): HasMany
+    {
+        return $this->hasMany(RevistaContacto::class);
+    }
+
+    public function lineasInvestigacion(): HasMany
+    {
+        return $this->hasMany(RevistaLineaInvestigacion::class);
+    }
+
+    public function envios(): HasMany
+    {
+        return $this->hasMany(RevistaEnvio::class);
     }
 
     public function scopePublica(Builder $query): Builder

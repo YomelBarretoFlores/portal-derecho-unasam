@@ -24,6 +24,10 @@ Portal institucional y CMS para el Programa de Estudios de Derecho y Ciencias Po
 El sitio queda en http://localhost:8000 y el CMS en http://localhost:8000/admin.
 El comando de desarrollo inicia PHP con límites locales de 25 MB por archivo y 30 MB por petición, suficientes para los documentos permitidos por `MEDIA_MAX_PDF_KB`.
 
+En Windows (PowerShell o Warp), usa el comando configurado sin Laravel Pail, ya que Pail requiere la extensión `pcntl`:
+
+    .\vendor\_runtime\php84\php.exe .codex\composer.phar run dev:windows
+
 El seeder no contiene credenciales predeterminadas. Para crear el primer superadministrador, define temporalmente:
 
     ADMIN_NAME="Nombre del responsable"
@@ -62,6 +66,8 @@ Las cargas usan storage/app/public y requieren php artisan storage:link.
     MEDIA_MAX_PDF_KB=20480
 
 En Render, MEDIA_UPLOADS_ENABLED=false: los campos de carga quedan deshabilitados porque el disco es efímero. No se debe activar hasta disponer de un disco persistente u object storage y un procedimiento de respaldo. El PDF institucional del RCF 063 se conserva en `docs/sources/revista` y debe adjuntarse manualmente desde Filament.
+
+La recepción pública de manuscritos usa almacenamiento privado y tres interruptores independientes. En producción deben permanecer en `false` hasta contar con privacidad aprobada y almacenamiento persistente: `SUBMISSIONS_ENABLED`, `SUBMISSIONS_PRIVACY_APPROVED` y `SUBMISSIONS_STORAGE_PERSISTENT`. En local pueden activarse junto con `SUBMISSIONS_DISK=local`.
 
 ## Saneamiento y caché
 

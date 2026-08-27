@@ -62,6 +62,9 @@ class DatabaseSeeder extends Seeder
         // Settings: idempotente por clave (solo crea las faltantes, no pisa ediciones).
         $this->call(SettingSeeder::class);
 
+        // Micrositio de la revista: carga idempotente, sin duplicar ni borrar ediciones.
+        $this->call(RevistaContentSeeder::class);
+
         // El contenido editorial y los perfiles docentes se crean y revisan
         // exclusivamente desde Filament. No se siembran demos ni publicaciones.
 
