@@ -178,6 +178,23 @@ class RevistaMicrositeTest extends TestCase
         $this->assertSame('detalle-existente@unasam.edu.pe', RevistaMiembro::query()->where('nombre', 'Katherine Mónica Castro Menacho')->value('email'));
     }
 
+    public function test_initial_content_import_keeps_the_journal_public_when_a_legacy_status_disagrees(): void
+    {
+        $revista = $this->journal();
+        DB::table('revistas')->where('id', $revista->id)->update([
+            'estado_editorial' => EditorialStatus::Verified->value,
+            'activo' => true,
+            'publicado' => true,
+        ]);
+
+        app(RevistaContentSeeder::class)->run();
+
+        $revista->refresh();
+        $this->assertSame(EditorialStatus::Published->value, $revista->estado_editorial);
+        $this->assertTrue($revista->activo);
+        $this->assertTrue($revista->publicado);
+    }
+
     private function journal(): Revista
     {
         return Revista::query()->create([

@@ -49,6 +49,7 @@ class RevistaContentSeeder extends Seeder
             'introduccion_envios' => $revista->introduccion_envios ?: '<p>Los manuscritos se reciben mediante el formulario público. El equipo editorial verifica la documentación y responde por correo institucional.</p>',
             'facebook_url' => $revista->facebook_url ?: 'https://www.facebook.com/profile.php?id=61593094042138',
             'whatsapp_url' => $revista->whatsapp_url ?: 'https://chat.whatsapp.com/DVDjf2Yrlqu4V0wL9A0ebJ',
+            'estado_editorial' => EditorialStatus::Published->value,
         ])->save();
 
         $documents = [
