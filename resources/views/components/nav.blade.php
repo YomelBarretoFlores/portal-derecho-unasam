@@ -115,7 +115,7 @@
                 </div>
             @endforeach
 
-            <a href="https://unasam.edu.pe" target="_blank" rel="noopener" @click="mobile = false" class="btn btn-sm btn-primary mt-3 w-full">Portal UNASAM ↗</a>
+            <a href="https://unasam.edu.pe" target="_blank" rel="noopener" @click="mobile = false" class="btn btn-sm btn-primary mt-3 w-full">Portal UNASAM <x-ui-icon name="external-link" class="h-3.5 w-3.5" /></a>
         </div>
     </div>
 

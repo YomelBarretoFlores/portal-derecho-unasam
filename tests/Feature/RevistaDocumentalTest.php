@@ -38,7 +38,7 @@ class RevistaDocumentalTest extends TestCase
             'activo' => true,
         ]);
 
-        $this->get(route('revista'))->assertOk()->assertSee('Revista Científica de Derecho y Antropología Jurídica')->assertSee('ISSN en línea en proceso de gestión');
+        $this->get(route('revista'))->assertOk()->assertSee('Revista Científica de Derecho y Antropología Jurídica')->assertDontSee('ISSN en línea en proceso de gestión');
         $this->get(route('revista.equipo'))->assertOk()->assertSee('Félix Claudio Julca Guerrero');
         $this->get(route('revista.normas'))->assertOk()->assertSee('Política de envío y evaluación')->assertDontSee('LLALLIQ');
     }
@@ -50,9 +50,11 @@ class RevistaDocumentalTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Revista científica institucional')
+            ->assertSee('Información institucional')
             ->assertSee('N.° 063-2026-UNASAM-FDCCPP/D.')
             ->assertSee('Conocer la revista')
-            ->assertSee('Primer número pendiente')
+            ->assertSee('resolucion-creacion-v1.pdf')
+            ->assertDontSee('Primer número pendiente')
             ->assertDontSee('La información oficial se incorporará después de validar la resolución de creación.');
     }
 

@@ -26,10 +26,10 @@
 
 @section('content')
     <article class="mx-auto max-w-3xl px-6 py-16 lg:py-24">
-        <a href="{{ route('blog') }}" wire:navigate.hover class="text-sm font-semibold text-navy-700">← Volver al blog</a>
+        <a href="{{ route('blog') }}" wire:navigate.hover class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"><x-ui-icon name="arrow-left" /> Volver al blog</a>
         <div class="mt-8 flex flex-wrap items-center gap-3 text-sm text-stone-500">
             <span class="bg-navy-50 px-3 py-1 font-semibold text-navy-700">{{ ucfirst($post->tipo) }}</span>
-            @if ($post->fecha)<time datetime="{{ $post->fecha->toDateString() }}">{{ $post->fecha->translatedFormat('d \d\e F \d\e Y') }}</time>@else<span>Fecha pendiente</span>@endif
+            @if ($post->fecha)<time datetime="{{ $post->fecha->toDateString() }}">{{ $post->fecha->translatedFormat('d \d\e F \d\e Y') }}</time>@endif
             @if ($post->autor)<span>{{ $post->autor }}</span>@endif
         </div>
         <h1 class="mt-5 text-4xl leading-tight text-navy-900 md:text-6xl">{{ $post->titulo }}</h1>

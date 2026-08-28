@@ -51,7 +51,7 @@ class PublicContentCache
                     'resolucion_fecha' => $revistaInstitucional->resolucion_fecha?->toDateString(),
                     'periodicidad' => $revistaInstitucional->periodicidad,
                     'modalidad' => $revistaInstitucional->modalidad,
-                    '_resolucion_url' => $revistaInstitucional->getFirstMediaUrl('resolucion'),
+                    '_resolucion_url' => $revistaInstitucional->resolution_url,
                 ] : null,
                 'matriculados' => Estadistica::query()->where('tipo', 'matriculados')->orderBy('anio')->get(['anio', 'total'])->toArray(),
                 'titulados' => Estadistica::query()->where('tipo', 'titulados')->latest('anio')->first(['anio', 'total'])?->toArray(),
@@ -208,7 +208,7 @@ class PublicContentCache
                     'issn' => $revista->issn,
                     'contacto_email' => $revista->contacto_email,
                     'normas_publicacion' => $revista->normas_publicacion,
-                    '_resolucion_url' => $revista->getFirstMediaUrl('resolucion'),
+                    '_resolucion_url' => $revista->resolution_url,
                 ] : null,
                 'numeros' => $numeros,
             ];

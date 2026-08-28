@@ -72,7 +72,6 @@
     @endif
 
     <main id="main-content" class="flex-1">
-        <x-content-provenance />
         @yield('content')
     </main>
 

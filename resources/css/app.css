@@ -109,7 +109,7 @@
         outline-offset: 2px;
         border-radius: 4px;
     }
-    /* Sobre fondos de tinta oscura el anillo tinta no contrasta → blanco */
+    /* Sobre fondos de tinta oscura, el anillo se muestra en blanco. */
     .btn-light:focus-visible,
     .btn-ghost-light:focus-visible,
     .bg-navy-900 a:focus-visible,
@@ -196,7 +196,7 @@
     .btn-sm {
         @apply rounded-none px-4 py-2 text-[13px];
     }
-    /* Primario: navy sólido → navy más oscuro en hover (texto blanco siempre legible) */
+    /* Primario: navy sólido y navy más oscuro en hover. */
     .btn-primary {
         @apply bg-navy-900 text-white hover:bg-navy-800;
     }
@@ -218,7 +218,7 @@
         transition-timing-function: var(--ease-smooth);
         transition-duration: 0.2s;
     }
-    /* Gateado: en touch el tap dispara :hover falso → solo en dispositivos con hover real */
+    /* En touch, el tap puede disparar un hover falso; se limita a dispositivos compatibles. */
     @media (hover: hover) and (pointer: fine) {
         .card-hover:hover {
             border-color: var(--color-navy-900);

@@ -18,7 +18,7 @@ class PublicUiTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('Actualidad en preparación')
+            ->assertSee('Publicaciones institucionales')
             ->assertSee('editorial-empty', false)
             ->assertSee('Navegación principal sin JavaScript')
             ->assertDontSee("document.documentElement.classList.add('js')", false);
@@ -26,6 +26,19 @@ class PublicUiTest extends TestCase
         $css = File::get(resource_path('css/app.css'));
         $this->assertStringNotContainsString('.js .reveal', $css);
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
+    }
+
+    public function test_public_templates_do_not_contain_emoji_arrows_or_internal_provenance_copy(): void
+    {
+        $templates = collect(File::allFiles(resource_path('views')))
+            ->map(fn ($file): string => File::get($file->getPathname()))
+            ->implode("\n");
+
+        $this->assertDoesNotMatchRegularExpression('/[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}\x{2190}-\x{21FF}]/u', $templates);
+        $this->assertStringNotContainsString('Contenido institucional heredado', $templates);
+        $this->assertStringNotContainsString('Pendiente de revisión o actualización', $templates);
+        $this->assertStringNotContainsString('Ver fuente', $templates);
+        $this->assertStringNotContainsString('Contenido en preparación', $templates);
     }
 
     public function test_homepage_gives_a_single_post_a_full_editorial_layout(): void

@@ -34,6 +34,6 @@
     </div>
     @endif
     @else
-        <x-empty-state class="mt-10" title="Actualidad en preparación" description="Las noticias, opiniones y eventos aparecerán aquí después de su revisión editorial." action="Consultar comunicados" :href="route('comunicados')" />
+        <x-empty-state class="mt-10" title="Publicaciones institucionales" description="Consulta los comunicados oficiales del Programa de Derecho y Ciencias Políticas." action="Consultar comunicados" :href="route('comunicados')" />
     @endif
 </section>

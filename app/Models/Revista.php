@@ -14,6 +14,8 @@ class Revista extends Model implements HasMedia
 {
     use HasEditorialWorkflow, InteractsWithMedia;
 
+    public const RESOLUTION_PUBLIC_PATH = 'docs/revista/resolucion-creacion-v1.pdf';
+
     protected $fillable = [
         'nombre', 'nombre_corto', 'presentacion', 'enfoque_alcance', 'unidad_responsable',
         'resolucion_numero', 'resolucion_fecha', 'resolucion_resumen',
@@ -78,6 +80,17 @@ class Revista extends Model implements HasMedia
     {
         $this->addMediaCollection('logo')->singleFile();
         $this->addMediaCollection('resolucion')->singleFile()->acceptsMimeTypes(['application/pdf']);
+    }
+
+    public function getResolutionUrlAttribute(): string
+    {
+        $fallbackUrl = asset(self::RESOLUTION_PUBLIC_PATH);
+
+        if (! config('media.uploads_enabled')) {
+            return $fallbackUrl;
+        }
+
+        return $this->getFirstMediaUrl('resolucion') ?: $fallbackUrl;
     }
 
     protected static function booted(): void

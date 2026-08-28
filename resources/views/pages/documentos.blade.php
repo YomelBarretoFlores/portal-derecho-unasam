@@ -24,7 +24,7 @@
                     <thead class="bg-navy-900 text-left text-white"><tr><th class="px-5 py-4">Documento</th><th class="px-5 py-4">Categoría</th><th class="px-5 py-4">Fecha</th><th class="px-5 py-4 text-right">Archivo</th></tr></thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($documentos as $documento)
-                            <tr><td class="px-5 py-4 font-medium text-navy-900">{{ $documento->titulo }}</td><td class="px-5 py-4">{{ $documento->categoria }}</td><td class="px-5 py-4">{{ $documento->fecha?->translatedFormat('d M Y') }}</td><td class="px-5 py-4 text-right">@if ($documento->enlace)<a href="{{ $documento->enlace }}" target="_blank" rel="noopener" class="font-semibold text-navy-700">Abrir PDF ↗</a>@else<span class="text-stone-400">Pendiente</span>@endif</td></tr>
+                            <tr><td class="px-5 py-4 font-medium text-navy-900">{{ $documento->titulo }}</td><td class="px-5 py-4">{{ $documento->categoria }}</td><td class="px-5 py-4">{{ $documento->fecha?->translatedFormat('d M Y') }}</td><td class="px-5 py-4 text-right">@if ($documento->enlace)<a href="{{ $documento->enlace }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 font-semibold text-navy-700">Abrir PDF <x-ui-icon name="external-link" /></a>@endif</td></tr>
                         @endforeach
                     </tbody>
                 </table>

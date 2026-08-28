@@ -2,7 +2,7 @@
 @section('title','Normas para autores — '.$revista->nombre_corto)
 @section('description','Requisitos oficiales de presentación, evaluación y publicación de manuscritos.')
 @section('content')
-<x-page-hero seccion="Revista" title="Normas para autores" subtitle="El PDF aprobado es la fuente normativa autoritativa." />
+<x-page-hero seccion="Revista" title="Normas para autores" subtitle="Requisitos para la presentación y evaluación de manuscritos." />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
     <div class="grid gap-10 lg:grid-cols-[1fr_20rem]">
         <div>

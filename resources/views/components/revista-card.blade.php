@@ -36,6 +36,6 @@
         </div>
     @endif
     @if ($numeroSlug)
-        <a href="{{ route('revista.articulo', [$numeroSlug, $articulo->slug]) }}" wire:navigate.hover class="mt-4 text-sm font-semibold text-navy-700">Ver artículo <span aria-hidden="true">→</span></a>
+        <a href="{{ route('revista.articulo', [$numeroSlug, $articulo->slug]) }}" wire:navigate.hover class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Ver artículo <x-ui-icon name="arrow-right" /></a>
     @endif
 </article>

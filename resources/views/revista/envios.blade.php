@@ -5,13 +5,13 @@
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
     @if($revista->introduccion_envios)<div class="prose-editorial max-w-3xl">{{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($revista->introduccion_envios) }}</div>@endif
     <ol class="mt-12 grid gap-px border border-stone-200 bg-stone-200 sm:grid-cols-3 lg:grid-cols-6" aria-label="Flujo editorial">
-        @foreach(['Envío','Verificación editorial','Respuesta por correo','Corrección','Revisión por pares','Decisión'] as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<span class="absolute -right-3 top-1/2 z-10 hidden text-navy-500 lg:block" aria-hidden="true">→</span>@endunless</li>@endforeach
+        @foreach(['Envío','Verificación editorial','Respuesta por correo','Corrección','Revisión por pares','Decisión'] as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<x-ui-icon name="arrow-right" class="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 bg-white text-navy-500 lg:block" />@endunless</li>@endforeach
     </ol>
     <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a></div>
     @if(session('submission_success'))<div class="mt-10 border-l-4 border-green-600 bg-green-50 p-6" role="status"><h2 class="text-xl">Envío recibido</h2><p class="mt-2">Guarda tu código de seguimiento: <strong>{{ session('submission_success') }}</strong>. El equipo responderá por correo institucional.</p></div>@endif
     @if(session('correction_success'))<div class="mt-10 border-l-4 border-green-600 bg-green-50 p-6" role="status">La versión corregida fue recibida correctamente.</div>@endif
     @if(!$submissionsEnabled)
-        <div class="editorial-empty mt-12"><p class="eyebrow">Recepción temporalmente cerrada</p><h2 class="mt-3 text-3xl">El formulario se habilitará próximamente</h2><p class="mt-4 max-w-3xl leading-relaxed">La funcionalidad está implementada, pero la recepción permanece desactivada hasta contar con declaración de privacidad aprobada y almacenamiento privado persistente. No se están recolectando datos personales.</p></div>
+        <div class="editorial-empty mt-12"><p class="eyebrow">Recepción de manuscritos</p><h2 class="mt-3 text-3xl">Recepción en línea cerrada</h2><p class="mt-4 max-w-3xl leading-relaxed">Actualmente no se reciben manuscritos mediante el portal. Consulta las normas para autores y los formatos oficiales antes de preparar una propuesta editorial.</p></div>
     @else
         <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1fr)_24rem]">
             <form method="post" action="{{ route('revista.envios.store') }}" enctype="multipart/form-data" class="space-y-8">@csrf

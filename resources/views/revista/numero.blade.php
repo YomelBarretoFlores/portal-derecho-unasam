@@ -15,13 +15,13 @@
 @section('content')
     <section class="border-b border-stone-200 bg-paper">
         <div class="mx-auto max-w-7xl px-6 py-16">
-            <a href="{{ route('revista') }}" wire:navigate.hover class="text-sm font-semibold text-navy-700">← Todos los números</a>
+            <a href="{{ route('revista') }}" wire:navigate.hover class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"><x-ui-icon name="arrow-left" /> Todos los números</a>
             <p class="mt-8 text-xs font-semibold uppercase tracking-widest text-navy-600">Vol. {{ $numero->volumen }} · Núm. {{ $numero->numero }}</p>
             <h1 class="mt-3 max-w-4xl text-4xl leading-tight md:text-6xl">{{ $numero->titulo }}</h1>
             @if ($numero->descripcion)<p class="mt-5 max-w-2xl text-lg leading-relaxed text-stone-600">{{ $numero->descripcion }}</p>@endif
             <div class="mt-6 flex flex-wrap gap-4 text-sm text-stone-500">
-                <time>{{ $numero->fecha_publicacion?->translatedFormat('F Y') ?: 'Fecha pendiente' }}</time>
-                @if ($numero->getFirstMediaUrl('numero_pdf'))<a href="{{ $numero->getFirstMediaUrl('numero_pdf') }}" target="_blank" rel="noopener" class="font-semibold text-navy-700">Descargar número completo ↗</a>@endif
+                @if($numero->fecha_publicacion)<time>{{ $numero->fecha_publicacion->translatedFormat('F Y') }}</time>@endif
+                @if ($numero->getFirstMediaUrl('numero_pdf'))<a href="{{ $numero->getFirstMediaUrl('numero_pdf') }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 font-semibold text-navy-700">Descargar número completo <x-ui-icon name="external-link" /></a>@endif
             </div>
         </div>
     </section>

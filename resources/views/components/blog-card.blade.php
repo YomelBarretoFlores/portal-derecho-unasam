@@ -50,6 +50,6 @@
             <span>{{ $post->autor }}</span>
             <span>{{ $post->tiempo_lectura }} de lectura</span>
         </div>
-        <a href="{{ route('blog.show', $post->slug) }}" wire:navigate.hover class="mt-4 text-sm font-semibold text-navy-700">Leer publicación <span aria-hidden="true">→</span></a>
+        <a href="{{ route('blog.show', $post->slug) }}" wire:navigate.hover class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Leer publicación <x-ui-icon name="arrow-right" /></a>
     </div>
 </article>

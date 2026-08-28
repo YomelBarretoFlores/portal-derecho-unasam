@@ -20,7 +20,7 @@
                      class="mx-auto h-auto w-full rounded-lg">
             </div>
         @else
-            <x-empty-state class="reveal mx-auto max-w-3xl" title="Organigrama en preparación" description="La estructura organizativa se publicará cuando la Facultad complete su validación y adjunte el documento oficial." />
+            <x-empty-state class="reveal mx-auto max-w-3xl" title="Estructura organizativa" description="Consulta los documentos institucionales disponibles del Programa de Derecho y Ciencias Políticas." action="Consultar documentos" :href="route('documentos')" />
         @endif
     </section>
 @endsection

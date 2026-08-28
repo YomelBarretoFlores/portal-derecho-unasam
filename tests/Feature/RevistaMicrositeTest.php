@@ -28,14 +28,14 @@ class RevistaMicrositeTest extends TestCase
         $revista = $this->journal();
         RevistaDocumento::query()->create(['revista_id' => $revista->id, 'categoria' => 'norma', 'titulo' => 'Normas de publicación', 'url' => '/docs/revista/normas-publicacion-v1.pdf', 'visible' => true, 'estado_editorial' => 'published']);
 
-        $this->get(route('revista.actual'))->assertOk()->assertSee('Próximamente se publicará la primera edición')->assertSee('PDF');
+        $this->get(route('revista.actual'))->assertOk()->assertSee('Derecho y Cultura inicia su colección editorial')->assertSee('PDF');
         $this->get(route('revista.archivos'))->assertOk()->assertSee('Aún no hay ediciones anteriores');
-        $this->get(route('revista.politicas'))->assertOk()->assertSee('La política editorial se incorporará');
-        $this->get(route('revista.avisos'))->assertOk()->assertSee('Próximamente publicaremos avisos');
-        $this->get(route('revista.indexacion'))->assertOk()->assertSee('Proceso de indexación en curso')->assertSee('ISSN en línea en proceso de gestión');
-        $this->get(route('revista.privacidad'))->assertOk()->assertSee('Contenido institucional en preparación');
+        $this->get(route('revista.politicas'))->assertOk()->assertSee('revisión por pares doble ciego');
+        $this->get(route('revista.avisos'))->assertOk()->assertSee('Sin avisos vigentes');
+        $this->get(route('revista.indexacion'))->assertOk()->assertSee('revista científica digital de periodicidad semestral')->assertDontSee('ISSN en línea en proceso');
+        $this->get(route('revista.privacidad'))->assertOk()->assertSee('no se recopilan datos personales mediante formularios públicos');
         $this->get(route('revista.normas'))->assertOk()->assertSee('Garamond 12')->assertSee('normas-publicacion-v1.pdf');
-        $this->get(route('revista.envios'))->assertOk()->assertSee('Actual')->assertSee('Acerca de')->assertSee('Recepción temporalmente cerrada');
+        $this->get(route('revista.envios'))->assertOk()->assertSee('Actual')->assertSee('Acerca de')->assertSee('Recepción en línea cerrada');
     }
 
     public function test_editorial_and_scientific_committees_are_separated(): void
@@ -139,6 +139,7 @@ class RevistaMicrositeTest extends TestCase
             'carta-presentacion-v1.docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'declaracion-originalidad-cesion-v1.docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'plantilla-editorial-v1.docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'resolucion-creacion-v1.pdf' => 'application/pdf',
         ];
         foreach ($files as $name => $mime) {
             $path = public_path('docs/revista/'.$name);
@@ -202,8 +203,8 @@ class RevistaMicrositeTest extends TestCase
             'presentacion' => '<p>Presentación.</p>', 'unidad_responsable' => 'Unidad de Investigación', 'resolucion_numero' => '063-2026',
             'resolucion_fecha' => '2026-07-06', 'resolucion_resumen' => 'Creación aprobada.', 'periodicidad' => 'Semestral',
             'contacto_email' => 'revista@unasam.edu.pe', 'normas_publicacion' => '<p>Normas oficiales.</p>',
-            'contenido_politicas' => '<p>La política editorial se incorporará una vez sea aprobada y remitida por el equipo editorial.</p>',
-            'contenido_indexacion' => '<p>Proceso de indexación en curso.</p>', 'contenido_privacidad' => '<p>Contenido institucional en preparación.</p>',
+            'contenido_politicas' => '<p>Derecho y Cultura recibe trabajos originales vinculados al Derecho y la Antropología Jurídica. Los manuscritos se someten a verificación editorial y revisión por pares doble ciego de acuerdo con las normas para autores.</p>',
+            'contenido_indexacion' => '<p>Derecho y Cultura es una revista científica digital de periodicidad semestral de la Universidad Nacional Santiago Antúnez de Mayolo.</p>', 'contenido_privacidad' => '<p>Derecho y Cultura protege la información de autores y colaboradores durante la gestión editorial. Actualmente no se recopilan datos personales mediante formularios públicos.</p>',
             'estado_editorial' => EditorialStatus::Published->value,
         ]);
     }

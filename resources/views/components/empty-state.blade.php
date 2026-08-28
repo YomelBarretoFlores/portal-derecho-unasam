@@ -17,7 +17,7 @@
             <p class="mt-2 max-w-2xl text-sm leading-6 text-stone-500">{{ $description }}</p>
             @if ($action && $href)
                 <a href="{{ $href }}" wire:navigate.hover class="link-arrow mt-5 inline-flex text-sm font-semibold text-navy-800">
-                    {{ $action }} <span class="ml-2" aria-hidden="true">→</span>
+                    {{ $action }} <x-ui-icon name="arrow-right" class="ml-2" />
                 </a>
             @endif
         </div>

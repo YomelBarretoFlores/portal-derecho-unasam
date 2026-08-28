@@ -30,7 +30,7 @@
         </h3>
         <p class="mt-0.5 text-xs text-stone-400">{{ $docente->grado }}</p>
         <p class="mt-4 text-sm font-semibold text-navy-700">
-            <a href="{{ route('docentes.show', $docente->slug) }}" wire:navigate.hover>Ver perfil <span aria-hidden="true">→</span></a>
+            <a href="{{ route('docentes.show', $docente->slug) }}" wire:navigate.hover class="inline-flex items-center gap-2">Ver perfil <x-ui-icon name="arrow-right" /></a>
         </p>
     </div>
 </article>

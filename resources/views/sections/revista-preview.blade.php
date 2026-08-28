@@ -28,7 +28,7 @@
                         <a href="{{ $pdfUrl }}" target="_blank" rel="noopener" class="rounded-lg border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
                     </div>
                 @endif
-                <a href="{{ route('revista.articulo', [$revistaNumero->slug, $featured->slug]) }}" wire:navigate.hover class="mt-5 text-sm font-semibold text-navy-700">Leer artículo <span aria-hidden="true">→</span></a>
+                <a href="{{ route('revista.articulo', [$revistaNumero->slug, $featured->slug]) }}" wire:navigate.hover class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Leer artículo <x-ui-icon name="arrow-right" /></a>
             </article>
 
             {{-- Lista --}}
@@ -73,12 +73,12 @@
                     </div>
                     <a href="{{ route('revista') }}" wire:navigate.hover class="link-arrow group mt-8 inline-flex items-center gap-2 text-sm font-semibold text-navy-800">
                         Conocer la revista
-                        <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span>
+                        <x-ui-icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
                     </a>
                 </article>
 
                 <aside class="reveal border-t border-stone-200 bg-navy-950 p-8 text-white md:p-10 lg:border-l lg:border-t-0" aria-label="Creación oficial de la revista">
-                    <span class="inline-flex border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">Creación oficial verificada</span>
+                    <span class="inline-flex border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">Información institucional</span>
                     <dl class="mt-8 space-y-6 text-sm">
                         <div>
                             <dt class="text-xs uppercase tracking-wider text-white/55">Resolución</dt>
@@ -91,20 +91,16 @@
                             <dt class="text-xs uppercase tracking-wider text-white/55">Unidad responsable</dt>
                             <dd class="mt-2 leading-relaxed text-white/80">{{ $revistaInstitucional->unidad_responsable }}</dd>
                         </div>
-                        <div>
-                            <dt class="text-xs uppercase tracking-wider text-white/55">Estado editorial</dt>
-                            <dd class="mt-2 text-white/80">Ficha institucional publicada · Primer número pendiente</dd>
-                        </div>
                     </dl>
                     @if ($revistaInstitucional->_resolucion_url)
                         <a href="{{ $revistaInstitucional->_resolucion_url }}" target="_blank" rel="noopener" class="mt-8 inline-flex text-sm font-semibold underline decoration-white/40 underline-offset-4 hover:decoration-white">
-                            Consultar resolución oficial ↗
+                            Consultar resolución oficial <x-ui-icon name="external-link" class="ml-2 h-4 w-4" />
                         </a>
                     @endif
                 </aside>
             </div>
         @else
-            <x-empty-state class="mt-10 bg-white" title="Ficha editorial pendiente" description="La revista aparecerá en esta sección cuando su información institucional sea revisada y publicada." />
+            <x-empty-state class="mt-10 bg-white" title="Derecho y Cultura" description="Revista científica de Derecho y Antropología Jurídica de la UNASAM." />
         @endif
     </div>
 </section>

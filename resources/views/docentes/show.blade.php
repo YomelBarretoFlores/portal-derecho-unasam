@@ -38,7 +38,7 @@
 
 @section('content')
     <article class="mx-auto max-w-6xl px-6 py-16 lg:py-24">
-        <a href="{{ route('docentes') }}" wire:navigate.hover class="text-sm font-semibold text-navy-700">← Volver al personal docente</a>
+        <a href="{{ route('docentes') }}" wire:navigate.hover class="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"><x-ui-icon name="arrow-left" /> Volver al personal docente</a>
 
         <div class="mt-10 grid gap-10 lg:grid-cols-[18rem_1fr] lg:gap-16">
             <aside>

@@ -19,7 +19,7 @@
                 <x-stat class="pr-5 sm:pr-10" :value="$matriculadoActual?->total ?? 0" :label="'Matriculados ('.($matriculadoActual?->anio ?? 'sin datos').')'" />
                 <x-stat class="pl-5 sm:pl-10" :value="$tituladosActual?->total ?? 0" :label="'Titulados ('.($tituladosActual?->anio ?? 'sin datos').')'" />
             </div>
-            <a href="{{ route('estadisticas', 'matriculados') }}" wire:navigate.hover class="mt-7 inline-flex text-sm font-semibold text-gold-300 underline decoration-gold-300/35 underline-offset-4 hover:decoration-gold-300">Consultar todas las estadísticas →</a>
+            <a href="{{ route('estadisticas', 'matriculados') }}" wire:navigate.hover class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-gold-300 underline decoration-gold-300/35 underline-offset-4 hover:decoration-gold-300">Consultar todas las estadísticas <x-ui-icon name="arrow-right" /></a>
         </div>
 
         {{-- Bar chart matriculados --}}

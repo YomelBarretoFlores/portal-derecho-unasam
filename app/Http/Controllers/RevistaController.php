@@ -72,7 +72,7 @@ class RevistaController extends Controller
 
     public function politicas(RevistaService $revista): View
     {
-        return $this->contentPage($revista, 'Políticas editoriales', 'contenido_politicas');
+        return $this->contentPage($revista, 'Políticas editoriales', 'contenido_politicas', 'Derecho y Cultura recibe trabajos originales vinculados al Derecho y la Antropología Jurídica. Los manuscritos se someten a verificación editorial y revisión por pares doble ciego de acuerdo con las normas para autores.');
     }
 
     public function sobre(RevistaService $revista): View
@@ -82,17 +82,17 @@ class RevistaController extends Controller
 
     public function indexacion(RevistaService $revista): View
     {
-        return $this->contentPage($revista, 'Indexación', 'contenido_indexacion', 'Proceso de indexación en curso.');
+        return $this->contentPage($revista, 'Indexación', 'contenido_indexacion', 'Derecho y Cultura es una revista científica digital de periodicidad semestral de la Universidad Nacional Santiago Antúnez de Mayolo.');
     }
 
     public function privacidad(RevistaService $revista): View
     {
-        return $this->contentPage($revista, 'Declaración de privacidad', 'contenido_privacidad', 'Contenido institucional en preparación.');
+        return $this->contentPage($revista, 'Declaración de privacidad', 'contenido_privacidad', 'Derecho y Cultura protege la información de autores y colaboradores durante la gestión editorial. Actualmente no se recopilan datos personales mediante formularios públicos.');
     }
 
     public function preservacion(RevistaService $revista): View
     {
-        return $this->contentPage($revista, 'Preservación digital', 'contenido_preservacion', 'Contenido institucional en preparación.');
+        return $this->contentPage($revista, 'Preservación digital', 'contenido_preservacion', 'Los números publicados de Derecho y Cultura se conservan en formato PDF y permanecen disponibles para consulta y descarga en el archivo editorial del portal.');
     }
 
     public function comiteEditorial(RevistaService $revista): View
@@ -173,7 +173,7 @@ class RevistaController extends Controller
     private function contentPage(RevistaService $service, string $title, string $field, ?string $fallback = null): View
     {
         $revista = $this->ficha($service);
-        $content = $revista->{$field} ?: '<p>'.e($fallback ?: 'Contenido institucional en preparación.').'</p>';
+        $content = $revista->{$field} ?: '<p>'.e($fallback ?: 'Información editorial de Derecho y Cultura.').'</p>';
 
         return view('revista.page', compact('revista', 'title', 'content'));
     }

@@ -5,10 +5,10 @@
 
 @section('content')
     <x-page-hero seccion="Académico" title="Plan de Estudios {{ $plan }}"
-        :subtitle="$plan === '2023' ? 'Malla curricular vigente del Programa de Derecho y Ciencias Políticas.' : 'Plan curricular anterior, pendiente de revisión documental.'" />
+        :subtitle="$plan === '2023' ? 'Malla curricular vigente del Programa de Derecho y Ciencias Políticas.' : 'Plan curricular 2019 del Programa de Derecho y Ciencias Políticas.'" />
 
     <section class="mx-auto max-w-4xl px-6 py-20">
-        {{-- Metadatos: pares clave/valor → lista de definición --}}
+        {{-- Metadatos: pares clave/valor en una lista de definición. --}}
         <dl class="reveal grid gap-4 sm:grid-cols-3">
             @foreach ([['Grado académico', $grado], ['Título profesional', $tituloProf], ['Modalidad', $modalidad]] as [$k, $v])
                 <div class="rounded-2xl border border-stone-200 bg-paper p-5 text-center">
@@ -73,7 +73,7 @@
                 </div>
             </div>
         @else
-            <x-empty-state class="mt-12" title="Malla pendiente de publicación" description="Los cursos permanecerán fuera del portal hasta completar y validar el plan oficial por ciclos." action="Consultar documentos normativos" :href="route('documentos')" />
+            <x-empty-state class="mt-12" title="Plan de estudios" description="Consulta los documentos normativos y la información académica disponible del plan curricular." action="Consultar documentos normativos" :href="route('documentos')" />
         @endif
 
         {{-- Documentos oficiales --}}

@@ -6,8 +6,8 @@
         ? \Illuminate\Support\Str::limit(\Filament\Forms\Components\RichEditor\RichContentRenderer::make($revista->presentacion)->toText(), 155)
         : 'Revista Científica de Derecho y Antropología Jurídica de la UNASAM.';
     $resolucionUrl = $revista?->_resolucion_url ?? '';
-    if (! $resolucionUrl && $revista && method_exists($revista, 'getFirstMediaUrl')) {
-        $resolucionUrl = $revista->getFirstMediaUrl('resolucion');
+    if (! $resolucionUrl && $revista && isset($revista->resolution_url)) {
+        $resolucionUrl = $revista->resolution_url;
     }
     $idiomas = collect($revista?->idiomas ?? [])->map(fn (string $idioma) => match ($idioma) {
         'es' => 'Español',
@@ -63,8 +63,6 @@
                         <div class="prose-editorial mt-7 max-w-3xl">
                             {{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($revista->presentacion) }}
                         </div>
-                    @else
-                        <p class="mt-5 text-stone-500">La presentación todavía está pendiente de completar.</p>
                     @endif
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ route('revista.normas') }}" wire:navigate.hover class="btn btn-primary">Normas para autores</a>
@@ -83,20 +81,20 @@
                         <div>
                             <dt class="font-semibold text-navy-900">Resolución de creación</dt>
                             <dd class="mt-1 text-stone-600">{{ $revista->resolucion_numero }}</dd>
-                            <dd class="text-stone-500">{{ $revista->resolucion_fecha?->translatedFormat('d \d\e F \d\e Y') ?: 'Fecha pendiente' }}</dd>
+                            @if($revista->resolucion_fecha)<dd class="text-stone-500">{{ $revista->resolucion_fecha->translatedFormat('d \d\e F \d\e Y') }}</dd>@endif
                         </div>
                         <div>
                             <dt class="font-semibold text-navy-900">Contacto editorial</dt>
                             <dd class="mt-1"><a class="text-navy-700 underline underline-offset-4" href="mailto:{{ $revista->contacto_email }}">{{ $revista->contacto_email }}</a></dd>
                         </div>
-                        <div>
+                        @if($revista->issn)<div>
                             <dt class="font-semibold text-navy-900">ISSN en línea</dt>
-                            <dd class="mt-1 text-stone-600">{{ $revista->issn ?: 'ISSN en línea en proceso de gestión' }}</dd>
-                        </div>
+                            <dd class="mt-1 text-stone-600">{{ $revista->issn }}</dd>
+                        </div>@endif
                     </dl>
                     @if ($resolucionUrl)
                         <a href="{{ $resolucionUrl }}" target="_blank" rel="noopener" class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-navy-800 underline underline-offset-4">
-                            Consultar resolución oficial <span aria-hidden="true">↗</span>
+                            Consultar resolución oficial <x-ui-icon name="external-link" />
                         </a>
                     @endif
                 </aside>
@@ -105,7 +103,7 @@
             <dl class="grid border-b border-stone-200 sm:grid-cols-2 lg:grid-cols-4">
                 <div class="border-stone-200 py-7 sm:border-r sm:pr-6">
                     <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Periodicidad</dt>
-                    <dd class="mt-2 font-semibold text-navy-900">{{ $revista->periodicidad ?: 'Pendiente' }}</dd>
+                    <dd class="mt-2 font-semibold text-navy-900">{{ $revista->periodicidad }}</dd>
                 </div>
                 <div class="border-t border-stone-200 py-7 sm:border-t-0 sm:px-6 lg:border-r">
                     <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Modalidad</dt>
@@ -148,7 +146,7 @@
             </div>
 
             @if ($numeros->isEmpty())
-                <x-empty-state class="mt-10" title="El primer número está pendiente" description="La revista cuenta con ficha institucional y normas editoriales verificadas. Los números aparecerán aquí al concluir su proceso de evaluación y publicación." action="Consultar normas para autores" :href="route('revista.normas')" />
+                <x-empty-state class="mt-10" title="Primera edición" description="La colección editorial comenzará con el primer número de Derecho y Cultura." action="Consultar normas para autores" :href="route('revista.normas')" />
             @else
                 <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($numeros as $numero)
@@ -164,7 +162,7 @@
                                 <p class="text-xs font-semibold uppercase tracking-wider text-navy-600">Vol. {{ $numero->volumen }} · Núm. {{ $numero->numero }}</p>
                                 <h3 class="mt-3 text-2xl leading-tight"><a href="{{ route('revista.numero', $numero) }}" wire:navigate.hover>{{ $numero->titulo }}</a></h3>
                                 @if ($numero->descripcion)<p class="mt-3 text-sm leading-relaxed text-stone-500">{{ \Illuminate\Support\Str::limit($numero->descripcion, 170) }}</p>@endif
-                                <time class="mt-5 block text-xs text-stone-400">{{ $numero->fecha_publicacion?->translatedFormat('F Y') ?: 'Fecha pendiente' }}</time>
+                                @if($numero->fecha_publicacion)<time class="mt-5 block text-xs text-stone-400">{{ $numero->fecha_publicacion->translatedFormat('F Y') }}</time>@endif
                             </div>
                         </article>
                     @endforeach

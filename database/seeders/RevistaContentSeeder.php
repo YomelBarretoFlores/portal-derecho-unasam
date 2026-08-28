@@ -41,11 +41,11 @@ class RevistaContentSeeder extends Seeder
             'nombre' => 'Derecho y Cultura, Revista Científica de Derecho y Antropología Jurídica',
             'nombre_corto' => 'Derecho y Cultura',
             'normas_publicacion' => $revista->normas_publicacion ?: '<h2>Política de envío y evaluación</h2><p>Los manuscritos deben ser originales, presentarse en la plantilla oficial y serán evaluados mediante revisión por pares doble ciego.</p>',
-            'contenido_politicas' => $revista->contenido_politicas ?: '<p>La política editorial se incorporará una vez sea aprobada y remitida por el equipo editorial.</p>',
+            'contenido_politicas' => $revista->contenido_politicas ?: '<p>Derecho y Cultura recibe trabajos originales vinculados al Derecho y la Antropología Jurídica. Los manuscritos se someten a verificación editorial y revisión por pares doble ciego de acuerdo con las normas para autores.</p>',
             'contenido_sobre' => $revista->contenido_sobre ?: ($revista->presentacion ?: '<p>Revista científica digital especializada en Derecho y Antropología Jurídica.</p>'),
-            'contenido_indexacion' => $revista->contenido_indexacion ?: '<p>Proceso de indexación en curso.</p>',
-            'contenido_privacidad' => $revista->contenido_privacidad ?: '<p>Contenido institucional en preparación.</p>',
-            'contenido_preservacion' => $revista->contenido_preservacion ?: '<p>Contenido institucional en preparación.</p>',
+            'contenido_indexacion' => $revista->contenido_indexacion ?: '<p>Derecho y Cultura es una revista científica digital de periodicidad semestral de la Universidad Nacional Santiago Antúnez de Mayolo.</p>',
+            'contenido_privacidad' => $revista->contenido_privacidad ?: '<p>Derecho y Cultura protege la información de autores y colaboradores durante la gestión editorial. Actualmente no se recopilan datos personales mediante formularios públicos.</p>',
+            'contenido_preservacion' => $revista->contenido_preservacion ?: '<p>Los números publicados de Derecho y Cultura se conservan en formato PDF y permanecen disponibles para consulta y descarga en el archivo editorial del portal.</p>',
             'introduccion_envios' => $revista->introduccion_envios ?: '<p>Los manuscritos se reciben mediante el formulario público. El equipo editorial verifica la documentación y responde por correo institucional.</p>',
             'facebook_url' => $revista->facebook_url ?: 'https://www.facebook.com/profile.php?id=61593094042138',
             'whatsapp_url' => $revista->whatsapp_url ?: 'https://chat.whatsapp.com/DVDjf2Yrlqu4V0wL9A0ebJ',
@@ -56,7 +56,7 @@ class RevistaContentSeeder extends Seeder
             ['norma', 'Normas de publicación', 'Documento normativo completo y autoritativo.', '/docs/revista/normas-publicacion-v1.pdf'],
             ['formato', 'Carta de presentación', 'Formato editable requerido para el envío.', '/docs/revista/carta-presentacion-v1.docx'],
             ['formato', 'Declaración de originalidad y cesión', 'Formato editable que debe presentarse firmado.', '/docs/revista/declaracion-originalidad-cesion-v1.docx'],
-            ['formato', 'Plantilla editorial para artículos', 'Copia corregida conforme a las normas aprobadas.', '/docs/revista/plantilla-editorial-v1.docx'],
+            ['formato', 'Plantilla editorial para artículos', 'Documento editable para redactar y presentar artículos.', '/docs/revista/plantilla-editorial-v1.docx'],
         ];
         foreach ($documents as [$categoria, $titulo, $descripcion, $url]) {
             RevistaDocumento::query()->updateOrCreate(
