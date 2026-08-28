@@ -41,6 +41,9 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-in
 # Copiar el código de la aplicación
 COPY . .
 
+# Permitir los cuatro adjuntos del formulario dentro de los límites validados por Laravel.
+COPY docker/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Assets ya compilados desde la etapa 1
 COPY --from=assets /app/public/build ./public/build
 

@@ -18,6 +18,8 @@ El servicio usa el Dockerfile, Node 22 para compilar assets y FrankenPHP/PHP 8.4
 | SUBMISSIONS_PRIVACY_APPROVED | false mientras la declaración esté en preparación |
 | SUBMISSIONS_STORAGE_PERSISTENT | false en Render sin volumen u object storage |
 
+Para activar la recepción, configura un disco privado persistente —por ejemplo S3 o un servicio compatible—, verifica una carga y descarga autenticada, y recién entonces establece los tres interruptores en `true`. `SUBMISSIONS_DISK=public` es rechazado por la aplicación.
+
 No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
 
 ## Primera publicación
@@ -31,6 +33,7 @@ No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
 7. Entrar a /admin y verificar el acceso con la cuenta administrativa creada.
 8. Confirmar que los campos de archivos indican que las cargas están deshabilitadas.
 9. Confirmar que `/revista/envios` no muestra el formulario en Render.
+10. Al habilitarlo en una infraestructura persistente, enviar un manuscrito de prueba y comprobar la campana de notificaciones y el contador de **Envíos de manuscritos** en Filament.
 
 ## Archivos y copias de seguridad
 

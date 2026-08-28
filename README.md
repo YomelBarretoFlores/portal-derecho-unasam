@@ -67,7 +67,7 @@ Las cargas usan storage/app/public y requieren php artisan storage:link.
 
 En Render, MEDIA_UPLOADS_ENABLED=false: los campos de carga quedan deshabilitados porque el disco es efímero. No se debe activar hasta disponer de un disco persistente u object storage y un procedimiento de respaldo. El PDF institucional del RCF 063 se conserva en `docs/sources/revista` y debe adjuntarse manualmente desde Filament.
 
-La recepción pública de manuscritos usa almacenamiento privado y tres interruptores independientes. En producción deben permanecer en `false` hasta contar con privacidad aprobada y almacenamiento persistente: `SUBMISSIONS_ENABLED`, `SUBMISSIONS_PRIVACY_APPROVED` y `SUBMISSIONS_STORAGE_PERSISTENT`. En local pueden activarse junto con `SUBMISSIONS_DISK=local`.
+La recepción pública de manuscritos usa almacenamiento privado y tres interruptores independientes. En producción deben permanecer en `false` hasta contar con privacidad aprobada y almacenamiento persistente: `SUBMISSIONS_ENABLED`, `SUBMISSIONS_PRIVACY_APPROVED` y `SUBMISSIONS_STORAGE_PERSISTENT`. En local pueden activarse junto con `SUBMISSIONS_DISK=local`. Se rechazan proveedores de correo personal configurados en `SUBMISSIONS_PERSONAL_EMAIL_DOMAINS`. Cada envío o corrección genera una notificación persistente para editores y superadministradores en Filament; el recurso **Envíos de manuscritos** muestra además un contador de casos que requieren atención.
 
 ## Saneamiento y caché
 

@@ -29,6 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile()
             ->strictAuthorization()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->spa()
             ->brandName('Derecho UNASAM')
             ->brandLogo(fn () => view('filament.brand'))

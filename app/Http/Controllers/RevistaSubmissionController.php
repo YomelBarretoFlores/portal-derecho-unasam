@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -29,7 +30,12 @@ class RevistaSubmissionController extends Controller
             'afiliacion' => ['required', 'string', 'max:255'],
             'ciudad' => ['required', 'string', 'max:120'],
             'pais' => ['required', 'string', 'max:120'],
-            'email_institucional' => ['required', 'email:rfc', 'max:255'],
+            'email_institucional' => ['required', 'email:rfc', 'max:255', function (string $attribute, mixed $value, \Closure $fail): void {
+                $domain = Str::lower(Str::afterLast((string) $value, '@'));
+                if (in_array($domain, config('submissions.personal_email_domains', []), true)) {
+                    $fail('Ingresa un correo institucional, no una cuenta de correo personal.');
+                }
+            }],
             'whatsapp' => ['required', 'regex:/^\+[1-9][0-9]{7,14}$/'],
             'orcid' => ['nullable', 'regex:/^(https:\/\/orcid\.org\/)?\d{4}-\d{4}-\d{4}-[\dX]{4}$/i'],
             'tipo_contribucion' => ['required', Rule::in(array_keys(RevistaEnvio::TIPOS))],

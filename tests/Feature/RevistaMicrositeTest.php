@@ -78,6 +78,8 @@ class RevistaMicrositeTest extends TestCase
         config()->set('submissions.disk', 'local');
         $revista = $this->journal();
         $linea = RevistaLineaInvestigacion::query()->create(['revista_id' => $revista->id, 'nombre' => 'Derecho', 'activa' => true]);
+        $editor = User::factory()->create(['role' => User::ROLE_EDITOR]);
+        $superAdmin = User::factory()->create(['role' => User::ROLE_SUPER_ADMIN]);
 
         $response = $this->post(route('revista.envios.store'), $this->submissionData($linea->id));
         $response->assertRedirect(route('revista.envios'));
@@ -87,7 +89,14 @@ class RevistaMicrositeTest extends TestCase
         $this->assertNotSame('87654321', DB::table('revista_envios')->value('documento_identidad'));
         Storage::disk('local')->assertExists($envio->manuscrito_path);
         $this->assertMatchesRegularExpression('/^DYC-[A-Z0-9]{12}$/', $envio->codigo_seguimiento);
-        $this->assertDatabaseCount('users', 0);
+        $this->assertDatabaseCount('notifications', 2);
+        $this->assertSame('Nuevo manuscrito recibido', $editor->notifications()->firstOrFail()->data['title']);
+        $this->assertSame('Nuevo manuscrito recibido', $superAdmin->notifications()->firstOrFail()->data['title']);
+        $editorNotification = $editor->notifications()->firstOrFail();
+        $notificationPayload = json_encode($editorNotification->data);
+        $this->assertStringNotContainsString('87654321', $notificationPayload);
+        $this->assertStringNotContainsString('+51950061184', $notificationPayload);
+        $this->assertStringContainsString('/admin/revista-envios/'.$envio->id.'/edit', $editorNotification->data['actions'][0]['url']);
 
         $this->post(route('revista.envios.correction'), [
             'codigo_seguimiento' => strtolower($envio->codigo_seguimiento),
@@ -96,9 +105,26 @@ class RevistaMicrositeTest extends TestCase
         ])->assertRedirect(route('revista.envios'));
         $this->assertSame('correccion_recibida', $envio->refresh()->estado);
         $this->assertCount(1, $envio->versiones);
+        $this->assertDatabaseCount('notifications', 4);
+        $this->assertContains('Nueva corrección recibida', $editor->notifications()->get()->pluck('data.title')->all());
 
-        $editor = User::factory()->create(['role' => User::ROLE_EDITOR]);
+        $unauthorized = User::factory()->create(['role' => null, 'is_admin' => false]);
+        $this->actingAs($unauthorized)->get(route('revista.envios.admin.download', [$envio, 'manuscrito']))->assertForbidden();
         $this->actingAs($editor)->get(route('revista.envios.admin.download', [$envio, 'manuscrito']))->assertOk();
+    }
+
+    public function test_submission_rejects_a_public_storage_disk(): void
+    {
+        config()->set('submissions.enabled', true);
+        config()->set('submissions.privacy_approved', true);
+        config()->set('submissions.storage_persistent', true);
+        config()->set('submissions.disk', 'public');
+        $this->journal();
+
+        $this->get(route('revista.envios'))
+            ->assertOk()
+            ->assertSee('Recepción en línea cerrada');
+        $this->post(route('revista.envios.store'))->assertStatus(503);
     }
 
     public function test_submission_rejects_long_abstract_too_many_coauthors_and_invalid_files(): void
@@ -112,11 +138,12 @@ class RevistaMicrositeTest extends TestCase
         $data = $this->submissionData($linea->id);
         $data['resumen'] = implode(' ', array_fill(0, 201, 'palabra'));
         $data['coautores'] = ['Uno', 'Dos', 'Tres', 'Cuatro'];
+        $data['email_institucional'] = 'autor@gmail.com';
         $data['manuscrito'] = UploadedFile::fake()->create('manuscrito.pdf', 5, 'application/pdf');
 
         $this->from(route('revista.envios'))->post(route('revista.envios.store'), $data)
             ->assertRedirect(route('revista.envios'))
-            ->assertSessionHasErrors(['resumen', 'coautores', 'manuscrito']);
+            ->assertSessionHasErrors(['email_institucional', 'resumen', 'coautores', 'manuscrito']);
         $this->assertDatabaseCount('revista_envios', 0);
     }
 

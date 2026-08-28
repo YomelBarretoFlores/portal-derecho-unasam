@@ -35,6 +35,25 @@ class RevistaEnvioResource extends Resource
         return false;
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $pending = RevistaEnvio::query()
+            ->whereIn('estado', ['recibido', 'correccion_recibida'])
+            ->count();
+
+        return $pending > 0 ? (string) $pending : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Envíos que requieren atención editorial';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
