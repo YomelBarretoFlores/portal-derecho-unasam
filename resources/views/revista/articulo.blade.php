@@ -38,6 +38,6 @@
         </div>
         @if ($articulo->resumen)<div class="mt-8 border-l-2 border-gold-400 pl-6 text-lg leading-relaxed text-stone-600">{{ $articulo->resumen }}</div>@endif
         @if ($articulo->contenido)<div class="prose-editorial mt-10">{{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($articulo->contenido) }}</div>@endif
-        @if ($articulo->getFirstMediaUrl('pdf'))<a href="{{ $articulo->getFirstMediaUrl('pdf') }}" target="_blank" rel="noopener" class="btn btn-primary mt-10">Descargar PDF</a>@endif
+        @if ($articulo->pdf_url)<a href="{{ $articulo->pdf_url }}" target="_blank" rel="noopener" class="btn btn-primary mt-10">Descargar PDF</a>@endif
     </article>
 @endsection

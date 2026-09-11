@@ -16,7 +16,7 @@ class RevistaAviso extends Model implements HasMedia
 
     protected $table = 'revista_avisos';
 
-    protected $fillable = ['revista_id', 'titulo', 'slug', 'resumen', 'contenido', 'fecha_publicacion', 'fecha_caducidad', 'enlace', 'estado_editorial'];
+    protected $fillable = ['revista_id', 'titulo', 'slug', 'resumen', 'contenido', 'fecha_publicacion', 'fecha_caducidad', 'enlace', 'estado_editorial', 'adjunto_url_respaldo'];
 
     protected $casts = ['fecha_publicacion' => 'datetime', 'fecha_caducidad' => 'datetime'];
 
@@ -28,6 +28,18 @@ class RevistaAviso extends Model implements HasMedia
     public function scopePublicados(Builder $query): Builder
     {
         return $query->where('estado_editorial', 'published')->whereNotNull('fecha_publicacion')->where('fecha_publicacion', '<=', now())->where(fn (Builder $q) => $q->whereNull('fecha_caducidad')->orWhere('fecha_caducidad', '>=', now()));
+    }
+
+    /** Adjunto del aviso: archivo subido o URL pública de respaldo. */
+    public function getAdjuntoUrlAttribute(): string
+    {
+        $respaldo = (string) $this->adjunto_url_respaldo;
+
+        if (! config('media.uploads_enabled') && filled($respaldo)) {
+            return $respaldo;
+        }
+
+        return $this->getFirstMediaUrl('adjunto') ?: $respaldo;
     }
 
     public function registerMediaCollections(): void

@@ -17,16 +17,16 @@
     </h3>
     <p class="mt-3 grow text-sm leading-relaxed text-stone-500">{{ Str::limit($articulo->resumen, 180) }}</p>
 
-    <div class="mt-5 text-xs text-stone-400">
+    <div class="mt-5 text-xs text-stone-500">
         <p class="font-medium text-stone-600">{{ implode(' · ', $articulo->autores) }}</p>
-        <p class="mt-1">pp. {{ $articulo->paginas }} · {{ $articulo->descargas }} descargas</p>
+        <p class="mt-1">pp. {{ $articulo->paginas }}</p>
         <p class="mt-0.5">DOI: {{ $articulo->doi }}</p>
     </div>
 
     @php
         $pdfUrl = $articulo->_pdf_url ?? '';
-        if (! $pdfUrl && method_exists($articulo, 'relationLoaded') && $articulo->relationLoaded('media')) {
-            $pdfUrl = $articulo->getFirstMediaUrl('pdf');
+        if (! $pdfUrl && $articulo instanceof \App\Models\Articulo) {
+            $pdfUrl = $articulo->pdf_url;
         }
     @endphp
     @if ($pdfUrl)

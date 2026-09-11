@@ -2,7 +2,7 @@
 
 @section('title', $numero->titulo.' — '.$numero->revista->nombre)
 @section('description', $numero->descripcion ?: 'Artículos publicados en el volumen '.$numero->volumen.', número '.$numero->numero.'.')
-@section('og_image', $numero->getFirstMediaUrl('portada') ?: asset('img/escudo-unasam.png'))
+@section('og_image', $numero->portada_url ?: asset('img/escudo-unasam.png'))
 
 @push('schema')
 <x-breadcrumb-schema :items="[
@@ -21,7 +21,7 @@
             @if ($numero->descripcion)<p class="mt-5 max-w-2xl text-lg leading-relaxed text-stone-600">{{ $numero->descripcion }}</p>@endif
             <div class="mt-6 flex flex-wrap gap-4 text-sm text-stone-500">
                 @if($numero->fecha_publicacion)<time>{{ $numero->fecha_publicacion->translatedFormat('F Y') }}</time>@endif
-                @if ($numero->getFirstMediaUrl('numero_pdf'))<a href="{{ $numero->getFirstMediaUrl('numero_pdf') }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 font-semibold text-navy-700">Descargar número completo <x-ui-icon name="external-link" /></a>@endif
+                @if ($numero->pdf_url)<a href="{{ $numero->pdf_url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 font-semibold text-navy-700">Descargar número completo <x-ui-icon name="external-link" /></a>@endif
             </div>
         </div>
     </section>

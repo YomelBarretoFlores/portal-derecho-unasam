@@ -5,11 +5,11 @@
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
 @if ($numero)
     <div class="grid gap-12 lg:grid-cols-[20rem_minmax(0,1fr)]">
-        @if ($numero->getFirstMediaUrl('portada'))<img src="{{ $numero->getFirstMediaUrl('portada') }}" alt="Portada de {{ $numero->titulo }}" class="w-full border border-stone-200">@else<div class="paper-grid flex aspect-[4/5] flex-col items-center justify-center gap-3 border border-stone-200 text-navy-800"><x-ui-icon name="document" class="h-16 w-16" /><span class="text-sm font-semibold uppercase tracking-wider">PDF</span></div>@endif
+        @if ($numero->portada_url)<img src="{{ $numero->portada_url }}" alt="Portada de {{ $numero->titulo }}" class="w-full border border-stone-200">@else<div class="paper-grid flex aspect-[4/5] flex-col items-center justify-center gap-3 border border-stone-200 text-navy-800"><x-ui-icon name="document" class="h-16 w-16" /><span class="text-sm font-semibold uppercase tracking-wider">PDF</span></div>@endif
         <div><p class="eyebrow">Vol. {{ $numero->volumen }} · Núm. {{ $numero->numero }}</p><h1 class="mt-4 text-4xl">{{ $numero->titulo }}</h1>
             @if($numero->descripcion)<p class="mt-5 text-lg leading-relaxed">{{ $numero->descripcion }}</p>@endif
             <p class="mt-4 text-sm text-stone-500">{{ $numero->fecha_publicacion?->translatedFormat('F Y') }}</p>
-            <div class="mt-8 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.numero',$numero) }}">Ver artículos</a>@if($numero->getFirstMediaUrl('numero_pdf'))<a class="btn btn-ghost" href="{{ $numero->getFirstMediaUrl('numero_pdf') }}" target="_blank" rel="noopener">Descargar número completo (PDF)</a>@endif</div>
+            <div class="mt-8 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.numero',$numero) }}">Ver artículos</a>@if($numero->pdf_url)<a class="btn btn-ghost" href="{{ $numero->pdf_url }}" target="_blank" rel="noopener">Descargar número completo (PDF)</a>@endif</div>
         </div>
     </div>
 @else

@@ -189,7 +189,7 @@ class PublicContentCache
                 ->map(fn (RevistaNumero $numero): array => [
                     ...$this->numeroArray($numero),
                     'descripcion' => $numero->descripcion,
-                    '_portada_url' => $numero->getFirstMediaUrl('portada'),
+                    '_portada_url' => $numero->portada_url,
                 ])->all();
 
             return [
@@ -290,7 +290,7 @@ class PublicContentCache
             'resumen' => $articulo->resumen,
             'doi' => $articulo->doi,
             'descargas' => $articulo->descargas,
-            '_pdf_url' => $articulo->getFirstMediaUrl('pdf'),
+            '_pdf_url' => $articulo->pdf_url,
             'numero' => $numeroSlug ? (object) ['slug' => $numeroSlug] : null,
         ];
     }
