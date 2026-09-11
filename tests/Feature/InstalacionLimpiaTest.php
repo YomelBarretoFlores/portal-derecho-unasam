@@ -6,6 +6,7 @@ use App\Models\Acceso;
 use App\Models\Competencia;
 use App\Models\Hito;
 use App\Models\Objetivo;
+use App\Models\Revista;
 use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\AdminUserSeeder;
@@ -79,6 +80,26 @@ class InstalacionLimpiaTest extends TestCase
         $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
 
         $this->assertSame('Texto editado desde el panel', Setting::query()->where('clave', 'lema')->value('valor'));
+    }
+
+    public function test_the_seeder_never_republishes_a_journal_the_editors_unpublished(): void
+    {
+        // RevistaContentSeeder es una importación autoritativa: reescribe el
+        // nombre de la revista y fuerza su estado a «publicado». Ejecutarlo en
+        // cada despliegue revertiría una decisión editorial deliberada, y sin
+        // que nadie se enterara hasta ver la revista publicada de nuevo.
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        Revista::query()->first()->forceFill([
+            'nombre_corto' => 'Nombre corregido por el editor',
+            'estado_editorial' => 'draft',
+        ])->save();
+
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        $revista = Revista::query()->first();
+        $this->assertSame('Nombre corregido por el editor', $revista->nombre_corto);
+        $this->assertSame('draft', $revista->estado_editorial);
     }
 
     public function test_the_admin_account_is_created_from_environment_variables(): void

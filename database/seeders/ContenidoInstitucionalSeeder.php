@@ -11,6 +11,7 @@ use App\Models\Hito;
 use App\Models\Objetivo;
 use App\Models\Organigrama;
 use App\Models\PerfilIngresoArea;
+use App\Models\Revista;
 use Illuminate\Database\Seeder;
 
 /**
@@ -51,7 +52,16 @@ class ContenidoInstitucionalSeeder extends Seeder
         // Idempotente por clave: crea las que falten, no toca las existentes.
         $this->call(SettingSeeder::class);
 
-        // Micrositio de la revista: carga idempotente, sin duplicar ni borrar.
-        $this->call(RevistaContentSeeder::class);
+        // El micrositio de la revista SOLO se importa en una instalación nueva.
+        //
+        // Repetirlo no es inofensivo, aunque no duplique filas. RevistaContentSeeder
+        // es una importación autoritativa: reescribe el nombre de la revista, fuerza
+        // su estado editorial a «publicado» y sobrescribe con updateOrCreate el
+        // cargo, el correo y el teléfono de cada contacto. Ejecutado en cada
+        // despliegue revertiría el trabajo del equipo editorial —incluida la
+        // decisión deliberada de dejar la revista sin publicar— sin avisar a nadie.
+        if (Revista::count() === 0) {
+            $this->call(RevistaContentSeeder::class);
+        }
     }
 }
