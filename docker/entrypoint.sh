@@ -9,6 +9,27 @@ if [ -n "$RENDER_EXTERNAL_URL" ]; then
 fi
 
 echo "→ APP_URL = ${APP_URL}"
+
+# Reconstruir el árbol de «storage» si falta algo.
+#
+# Es imprescindible cuando se monta un volumen persistente en /app/storage para
+# conservar los archivos subidos: el volumen empieza vacío y TAPA los
+# directorios que traía la imagen. Laravel entonces ni siquiera arranca —«Please
+# provide a valid cache path»— y el fallo no dice nada sobre volúmenes, así que
+# parece un problema de la aplicación cuando es del montaje.
+#
+# Crearlos aquí hace que montar el volumen sea un paso seguro en lugar de una
+# trampa. Si ya existen, mkdir -p no toca nada.
+echo "→ Directorios de almacenamiento…"
+mkdir -p \
+    storage/app/public \
+    storage/app/private \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs
+chmod -R ug+rw storage || true
+
 echo "→ Preparando la aplicación…"
 
 # Cachear configuración, rutas y vistas para producción (más rápido)
