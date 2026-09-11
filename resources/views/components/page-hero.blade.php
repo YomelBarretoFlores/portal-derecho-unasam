@@ -44,9 +44,9 @@
     <div class="relative mx-auto max-w-7xl px-6 py-14 md:py-20">
         <nav class="flex items-center gap-2 text-sm text-stone-500">
             <a href="{{ route('home') }}" wire:navigate.hover class="transition {{ $variant === 'publication' ? 'text-white/55 hover:text-white' : 'hover:text-navy-900' }}">Inicio</a>
-            <span @class(['text-white/25' => $variant === 'publication', 'text-stone-300' => $variant !== 'publication'])>/</span>
+            <span aria-hidden="true" @class(['text-white/25' => $variant === 'publication', 'text-stone-300' => $variant !== 'publication'])>/</span>
             <span @class(['text-white/55' => $variant === 'publication'])>{{ $seccion }}</span>
-            <span @class(['text-white/25' => $variant === 'publication', 'text-stone-300' => $variant !== 'publication'])>/</span>
+            <span aria-hidden="true" @class(['text-white/25' => $variant === 'publication', 'text-stone-300' => $variant !== 'publication'])>/</span>
             <span class="truncate {{ $variant === 'publication' ? 'text-white/80' : 'text-navy-800' }}">{{ $title }}</span>
         </nav>
         <div class="accent-line mt-6"></div>

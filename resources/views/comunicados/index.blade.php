@@ -21,7 +21,7 @@
                             <img src="{{ $comunicado->_imagen_url }}" alt="{{ $comunicado->titulo }}" loading="lazy" class="aspect-[3/2] w-full object-cover">
                         @endif
                         <div class="flex grow flex-col p-6">
-                            <time class="text-xs text-stone-400" datetime="{{ $comunicado->fecha_publicacion->toAtomString() }}">{{ $comunicado->fecha_publicacion->translatedFormat('d M Y') }}</time>
+                            <time class="text-xs text-stone-500" datetime="{{ $comunicado->fecha_publicacion->toAtomString() }}">{{ $comunicado->fecha_publicacion->translatedFormat('d M Y') }}</time>
                             <h2 class="mt-3 text-xl leading-snug"><a href="{{ route('comunicados.show', $comunicado->slug) }}" wire:navigate.hover>{{ $comunicado->titulo }}</a></h2>
                             @if ($comunicado->resumen)<p class="mt-3 grow text-sm leading-relaxed text-stone-500">{{ $comunicado->resumen }}</p>@endif
                             <a href="{{ route('comunicados.show', $comunicado->slug) }}" wire:navigate.hover class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Leer comunicado <x-ui-icon name="arrow-right" /></a>

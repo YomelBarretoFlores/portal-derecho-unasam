@@ -37,7 +37,7 @@
                         <h3 class="text-base font-semibold text-navy-900">{{ $titulo }}</h3>
                         <p class="text-sm text-stone-500">{{ $desc }}</p>
                     </div>
-                    <svg class="h-5 w-5 shrink-0 text-stone-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    <svg class="h-5 w-5 shrink-0 text-stone-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                 </a>
             @endforeach
         </div>

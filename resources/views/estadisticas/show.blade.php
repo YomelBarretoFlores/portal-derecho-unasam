@@ -36,14 +36,14 @@
                         <div class="mt-5 overflow-x-auto border-t-2 border-navy-900">
                             <table class="w-full min-w-[20rem] font-sans text-sm">
                                 <caption class="sr-only">{{ $label }} por año.</caption>
-                                <thead><tr class="border-b-2 border-stone-200 text-left text-stone-400"><th class="pb-3 font-semibold">Año</th><th class="pb-3 font-semibold">Total</th><th class="pb-3 text-right font-semibold">Variación</th></tr></thead>
+                                <thead><tr class="border-b-2 border-stone-200 text-left text-stone-500"><th class="pb-3 font-semibold">Año</th><th class="pb-3 font-semibold">Total</th><th class="pb-3 text-right font-semibold">Variación</th></tr></thead>
                                 <tbody>
                                     @foreach ($serie as $i => $punto)
                                         @php $prev = $i > 0 ? $serie[$i - 1]->total : null; $var = $prev ? round(($punto->total - $prev) / $prev * 100, 1) : null; @endphp
                                         <tr class="border-b border-stone-100">
                                             <td class="py-3 font-medium text-navy-900">{{ $punto->anio }}</td>
                                             <td class="py-3 text-stone-600">{{ $punto->total }}</td>
-                                            <td class="py-3 text-right">@if ($var !== null)<span class="font-medium {{ $var >= 0 ? 'text-emerald-600' : 'text-red-500' }}">{{ $var >= 0 ? '+' : '' }}{{ $var }}%</span>@else<span class="text-stone-300">—</span>@endif</td>
+                                            <td class="py-3 text-right">@if ($var !== null)<span class="font-medium {{ $var >= 0 ? 'text-emerald-600' : 'text-red-500' }}">{{ $var >= 0 ? '+' : '' }}{{ $var }}%</span>@else<span class="text-stone-500">—</span>@endif</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -59,7 +59,7 @@
                                 <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
                                     <span class="font-sans text-xs font-semibold text-navy-700">{{ $punto->total }}</span>
                                     <div class="w-full border-t-2 border-gold-400 bg-navy-800" style="height: {{ round($punto->total / $max * 100) }}%"></div>
-                                    <span class="font-sans text-xs text-stone-400">{{ $punto->anio }}</span>
+                                    <span class="font-sans text-xs text-stone-500">{{ $punto->anio }}</span>
                                 </div>
                             @endforeach
                         </div>

@@ -404,6 +404,9 @@
     .marquee-track {
         animation: none !important;
     }
+    .animate-drop-in {
+        animation: none !important;
+    }
     html {
         scroll-behavior: auto !important;
     }
