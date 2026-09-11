@@ -1,8 +1,8 @@
 # Despliegue en Render
 
-> **Para entregar al área de TI hay una versión en página web de esta guía**, más corta y con
-> los pasos en orden: `docs/despliegue-para-ti.html`. Este documento es la referencia completa
-> y manda ante cualquier diferencia.
+> **Para entregar al área de sistemas hay versiones en página web de esta guía**, con los pasos
+> en orden y cada variable explicada. No se versionan aquí —se entregan por correo—, y se
+> regeneran desde este documento. Este manda ante cualquier diferencia.
 
 El servicio usa el Dockerfile, Node 22 para compilar los assets y FrankenPHP/PHP 8.4 para ejecutar Laravel.
 

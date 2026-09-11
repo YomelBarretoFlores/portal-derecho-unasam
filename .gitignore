@@ -47,3 +47,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Guías de despliegue en HTML: se entregan por correo al área de sistemas,
+# no se publican en el repositorio. Se regeneran desde DEPLOY.md.
+docs/*.html
