@@ -44,7 +44,9 @@ class UrlDeRespaldo
             ->label($etiqueta)
             ->rule(new SafeUrl)
             ->columnSpanFull()
-            ->helperText(self::ayuda());
+            ->helperText(self::ayuda(
+                'Pegue la dirección del archivo, la que termina en .pdf.',
+            ));
     }
 
     /**
@@ -64,8 +66,9 @@ class UrlDeRespaldo
     private static function ayuda(string $extra = ''): string
     {
         $base = config('media.uploads_enabled')
-            ? 'Solo se usa si no se sube ningún archivo.'
-            : 'Por ahora es la única forma de poner una imagen aquí.';
+            ? 'Opcional: déjelo vacío si ya subió el archivo arriba. Sirve para '
+              .'enlazar uno que esté alojado en otro sitio.'
+            : 'Por ahora es la única forma de poner un archivo aquí.';
 
         return trim($base.' '.$extra);
     }

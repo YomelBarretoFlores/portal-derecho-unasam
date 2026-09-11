@@ -4,6 +4,7 @@ namespace App\Filament\Resources\RevistaNumeros;
 
 use App\Filament\Actions\PreviewActions;
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use App\Filament\Resources\RevistaNumeros\Pages\CreateRevistaNumero;
 use App\Filament\Resources\RevistaNumeros\Pages\EditRevistaNumero;
 use App\Filament\Resources\RevistaNumeros\Pages\ListRevistaNumeros;
@@ -11,8 +12,6 @@ use App\Filament\Resources\RevistaNumeros\RelationManagers\ArticulosRelationMana
 use App\Filament\Tables\EditorialStatusColumn;
 use App\Models\Revista;
 use App\Models\RevistaNumero;
-use App\Rules\ImagenVisible;
-use App\Rules\SafeUrl;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -70,11 +69,8 @@ class RevistaNumeroResource extends Resource
             SpatieMediaLibraryFileUpload::make('numero_pdf')->label('PDF del número')->collection('numero_pdf')
                 ->acceptedFileTypes(['application/pdf'])->maxSize(config('media.max_pdf_kb'))
                 ->disabled(fn (): bool => ! config('media.uploads_enabled')),
-            TextInput::make('portada_url_respaldo')->label('URL pública de respaldo de la portada')
-                ->rule(new SafeUrl)->rule(new ImagenVisible)->columnSpanFull()
-                ->helperText('Se usa cuando las cargas de archivos están deshabilitadas en el entorno. Debe estar en un dominio autorizado: si no, el navegador la bloquea y la portada no se ve.'),
-            TextInput::make('pdf_url_respaldo')->label('URL pública de respaldo del PDF del número')
-                ->rule(new SafeUrl)->columnSpanFull(),
+            UrlDeRespaldo::imagen('portada_url_respaldo', 'Dirección web de la portada'),
+            UrlDeRespaldo::archivo('pdf_url_respaldo', 'Dirección web del PDF'),
             EditorialStatusSelect::make(),
         ]);
     }

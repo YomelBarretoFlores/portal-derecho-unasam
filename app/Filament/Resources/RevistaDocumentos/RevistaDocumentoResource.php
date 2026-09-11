@@ -3,13 +3,13 @@
 namespace App\Filament\Resources\RevistaDocumentos;
 
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use App\Filament\Resources\RevistaDocumentos\Pages\CreateRevistaDocumento;
 use App\Filament\Resources\RevistaDocumentos\Pages\EditRevistaDocumento;
 use App\Filament\Resources\RevistaDocumentos\Pages\ListRevistaDocumentos;
 use App\Filament\Tables\EditorialStatusColumn;
 use App\Models\Revista;
 use App\Models\RevistaDocumento;
-use App\Rules\SafeUrl;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -49,8 +49,9 @@ class RevistaDocumentoResource extends Resource
             Textarea::make('descripcion')->columnSpanFull(),
             SpatieMediaLibraryFileUpload::make('archivo')->collection('archivo')
                 ->acceptedFileTypes(['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                ->maxSize(config('media.max_pdf_kb'))->disabled(fn (): bool => ! config('media.uploads_enabled')),
-            TextInput::make('url')->label('URL pública de respaldo')->rule(new SafeUrl)->columnSpanFull(),
+                ->maxSize(config('media.max_pdf_kb'))->disabled(fn (): bool => ! config('media.uploads_enabled'))
+                ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('PDF o documento de Word.')),
+            UrlDeRespaldo::archivo('url', 'Dirección web del documento'),
             TextInput::make('orden')->numeric()->default(0),
             Toggle::make('visible')->default(true),
             EditorialStatusSelect::make(),

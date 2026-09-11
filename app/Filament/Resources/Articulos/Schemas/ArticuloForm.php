@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Articulos\Schemas;
 
 use App\Filament\Forms\EditorialStatusSelect;
-use App\Rules\SafeUrl;
+use App\Filament\Forms\UrlDeRespaldo;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -87,13 +87,10 @@ class ArticuloForm
                     ->required(fn (Get $get): bool => $get('estado_editorial') === 'published' && blank($get('contenido')) && blank($get('pdf_url_respaldo')))
                     ->maxSize(config('media.max_pdf_kb'))
                     ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'PDF opcional si existe contenido web.' : 'Las cargas están deshabilitadas en este entorno; usa la URL de respaldo.')
+                    ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('PDF opcional si el artículo ya tiene texto aquí.'))
                     ->columnSpanFull(),
-                TextInput::make('pdf_url_respaldo')
-                    ->label('URL pública de respaldo del PDF')
-                    ->rule(new SafeUrl)
-                    ->helperText('Alternativa al archivo subido. Basta con una de las dos para publicar sin contenido web.')
-                    ->columnSpanFull(),
+                UrlDeRespaldo::archivo('pdf_url_respaldo', 'Dirección web del PDF')
+                    ->helperText('Basta con el archivo subido o con esta dirección: con cualquiera de las dos se puede publicar aunque no haya texto.'),
                 DatePicker::make('fecha')
                     ->label('Fecha de publicación')
                     ->required(fn (Get $get): bool => $get('estado_editorial') === 'published')

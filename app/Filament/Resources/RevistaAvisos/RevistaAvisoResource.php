@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RevistaAvisos;
 
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use App\Filament\Resources\RevistaAvisos\Pages\CreateRevistaAviso;
 use App\Filament\Resources\RevistaAvisos\Pages\EditRevistaAviso;
 use App\Filament\Resources\RevistaAvisos\Pages\ListRevistaAvisos;
@@ -49,7 +50,7 @@ class RevistaAvisoResource extends Resource
             DateTimePicker::make('fecha_publicacion'), DateTimePicker::make('fecha_caducidad'),
             TextInput::make('enlace')->rule(new SafeUrl)->columnSpanFull(),
             SpatieMediaLibraryFileUpload::make('adjunto')->collection('adjunto')->maxSize(config('media.max_pdf_kb'))->disabled(fn (): bool => ! config('media.uploads_enabled')),
-            TextInput::make('adjunto_url_respaldo')->label('URL pública de respaldo del adjunto')->rule(new SafeUrl)->columnSpanFull(),
+            UrlDeRespaldo::archivo('adjunto_url_respaldo', 'Dirección web del adjunto'),
             EditorialStatusSelect::make(),
         ]);
     }
