@@ -383,6 +383,30 @@
     to { transform: scaleY(1); }
 }
 
+/* ---- Mascota del 404: entra una vez y luego respira. ----
+   Es el único sitio del portal donde una ilustración puede llevar la voz
+   cantante: no compite con contenido oficial —no hay ninguno— y quien llega
+   ya venía frustrado por un enlace roto. En el resto del sitio la mascota
+   acompaña desde una esquina y se queda quieta: PRODUCT.md pide confianza y
+   respeto, no entusiasmo, y una ilustración en movimiento junto a la plana
+   docente o a la revista diría lo contrario.
+   El flotar es de 10 px en 6 s: se percibe como que está viva, no como que
+   pide atención. */
+.mascota-404 {
+    animation: mascota-entra 0.7s var(--ease-smooth) both;
+}
+.mascota-404 img {
+    animation: mascota-flota 6s ease-in-out 0.7s infinite;
+}
+@keyframes mascota-entra {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes mascota-flota {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
 /* ---- View Transitions (Livewire wire:navigate) ---- */
 ::view-transition-old(root) {
     animation: 0.2s var(--ease-smooth) both vt-fade-out;
@@ -415,6 +439,11 @@
     }
     .marquee-track {
         animation: none !important;
+    }
+    .mascota-404,
+    .mascota-404 img {
+        animation: none !important;
+        transform: none !important;
     }
     html {
         scroll-behavior: auto !important;
