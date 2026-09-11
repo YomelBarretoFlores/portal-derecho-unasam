@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class BlogPost extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     protected $fillable = [
         'tipo',
@@ -25,6 +26,7 @@ class BlogPost extends Model implements HasMedia
         'tiempo_lectura',
         'fecha',
         'publicado',
+        'imagen_url_respaldo',
         'estado_editorial',
     ];
 
@@ -52,6 +54,21 @@ class BlogPost extends Model implements HasMedia
                 throw ValidationException::withMessages(['publicado' => 'Una publicación necesita fecha y contenido antes de publicarse.']);
             }
         });
+    }
+
+    /**
+     * Imagen publicada: el archivo subido, si no la URL de respaldo del panel.
+     *
+     * La conversión («thumb») solo aplica al archivo subido: una dirección
+     * externa se sirve tal cual, porque Media Library no generó nada de ella.
+     */
+    public function imagenUrl(string $conversion = ''): string
+    {
+        if ($this->archivoSubidoDisponible('imagen')) {
+            return $this->getFirstMediaUrl('imagen', $conversion);
+        }
+
+        return (string) $this->imagen_url_respaldo;
     }
 
     public function registerMediaCollections(): void

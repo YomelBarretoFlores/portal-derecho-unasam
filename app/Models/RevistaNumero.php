@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class RevistaNumero extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     protected $table = 'revista_numeros';
 
@@ -72,8 +73,7 @@ class RevistaNumero extends Model implements HasMedia
 
     /**
      * Portada: el archivo subido si existe, si no la URL pública de respaldo.
-     * Sin cargas habilitadas el respaldo manda, porque Media Library no puede
-     * resolver nada en ese entorno (mismo criterio que RevistaDocumento).
+     * El orden lo fija ResuelveMedios, igual para todo el portal.
      */
     public function getPortadaUrlAttribute(): string
     {
@@ -84,15 +84,6 @@ class RevistaNumero extends Model implements HasMedia
     public function getPdfUrlAttribute(): string
     {
         return $this->resolverMedia('numero_pdf', (string) $this->pdf_url_respaldo);
-    }
-
-    private function resolverMedia(string $coleccion, string $respaldo): string
-    {
-        if (! config('media.uploads_enabled') && filled($respaldo)) {
-            return $respaldo;
-        }
-
-        return $this->getFirstMediaUrl($coleccion) ?: $respaldo;
     }
 
     public function registerMediaCollections(): void

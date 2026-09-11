@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Organigramas\Schemas;
 
+use App\Filament\Forms\UrlDeRespaldo;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -28,7 +29,8 @@ class OrganigramaForm
                     ->maxSize(config('media.max_image_kb'))
                     ->disabled(fn (): bool => ! config('media.uploads_enabled'))
                     ->columnSpanFull()
-                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'Sube la imagen del organigrama (JPG/PNG).' : 'Las cargas están deshabilitadas en este entorno.'),
+                    ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('Sube la imagen del organigrama (JPG/PNG).')),
+                UrlDeRespaldo::imagen('imagen_url_respaldo', 'URL pública de respaldo del organigrama'),
             ]);
     }
 }

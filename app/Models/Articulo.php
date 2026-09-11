@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Articulo extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     protected $table = 'articulos';
 
@@ -90,13 +91,7 @@ class Articulo extends Model implements HasMedia
     /** PDF del artículo: archivo subido o URL pública de respaldo. */
     public function getPdfUrlAttribute(): string
     {
-        $respaldo = (string) $this->pdf_url_respaldo;
-
-        if (! config('media.uploads_enabled') && filled($respaldo)) {
-            return $respaldo;
-        }
-
-        return $this->getFirstMediaUrl('pdf') ?: $respaldo;
+        return $this->resolverMedia('pdf', (string) $this->pdf_url_respaldo);
     }
 
     /**

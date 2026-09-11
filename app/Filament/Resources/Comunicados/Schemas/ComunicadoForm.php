@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Comunicados\Schemas;
 
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -39,8 +40,9 @@ class ComunicadoForm
                     ->imageEditor()
                     ->maxSize(config('media.max_image_kb'))
                     ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'JPG, PNG o WebP.' : 'Las cargas están deshabilitadas en este entorno.')
+                    ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('JPG, PNG o WebP.'))
                     ->columnSpanFull(),
+                UrlDeRespaldo::imagen('imagen_url_respaldo', 'URL pública de respaldo de la imagen'),
                 Textarea::make('resumen')
                     ->label('Resumen')
                     ->rows(2)

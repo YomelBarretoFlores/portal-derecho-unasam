@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class RevistaDocumento extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     // Solo estas dos categorías tienen salida pública: /revista/normas-para-autores
     // y /revista/formatos-y-plantillas. Las políticas editoriales se editan como
@@ -46,14 +47,6 @@ class RevistaDocumento extends Model implements HasMedia
 
     public function getDownloadUrlAttribute(): string
     {
-        $fallbackUrl = (string) $this->url;
-
-        // Render does not have persistent uploads. Versioned public documents
-        // must therefore resolve without querying Media Library in that environment.
-        if (! config('media.uploads_enabled') && filled($fallbackUrl)) {
-            return $fallbackUrl;
-        }
-
-        return $this->getFirstMediaUrl('archivo') ?: $fallbackUrl;
+        return $this->resolverMedia('archivo', (string) $this->url);
     }
 }

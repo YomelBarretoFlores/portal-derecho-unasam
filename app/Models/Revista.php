@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,9 +13,15 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Revista extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     public const RESOLUTION_PUBLIC_PATH = 'docs/revista/resolucion-creacion-v1.pdf';
+
+    /**
+     * Logo que viaja en el repositorio. Es la red de seguridad, no la
+     * fuente: manda lo que haya en el panel.
+     */
+    public const LOGO_PUBLIC_PATH = 'img/revista/logo-derecho-y-cultura.jpg';
 
     protected $fillable = [
         'nombre', 'nombre_corto', 'presentacion', 'enfoque_alcance', 'unidad_responsable',
@@ -25,6 +32,7 @@ class Revista extends Model implements HasMedia
         'contenido_politicas', 'contenido_sobre', 'contenido_indexacion',
         'contenido_privacidad', 'contenido_preservacion', 'introduccion_envios',
         'facebook_url', 'whatsapp_url',
+        'logo_url_respaldo', 'resolucion_url_respaldo',
         'estado_editorial',
     ];
 
@@ -84,13 +92,27 @@ class Revista extends Model implements HasMedia
 
     public function getResolutionUrlAttribute(): string
     {
-        $fallbackUrl = asset(self::RESOLUTION_PUBLIC_PATH);
+        return $this->resolverMedia(
+            'resolucion',
+            (string) $this->resolucion_url_respaldo,
+            asset(self::RESOLUTION_PUBLIC_PATH),
+        );
+    }
 
-        if (! config('media.uploads_enabled')) {
-            return $fallbackUrl;
-        }
-
-        return $this->getFirstMediaUrl('resolucion') ?: $fallbackUrl;
+    /**
+     * Logo de la revista.
+     *
+     * Existía el campo en el panel, existía la colección en el modelo, y la
+     * portada de la revista pintaba un archivo fijo del repositorio sin
+     * mirarlos. Subir un logo nuevo no cambiaba nada en el sitio.
+     */
+    public function getLogoUrlAttribute(): string
+    {
+        return $this->resolverMedia(
+            'logo',
+            (string) $this->logo_url_respaldo,
+            asset(self::LOGO_PUBLIC_PATH),
+        );
     }
 
     protected static function booted(): void

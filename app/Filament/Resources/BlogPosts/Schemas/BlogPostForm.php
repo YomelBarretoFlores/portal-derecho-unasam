@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BlogPosts\Schemas;
 
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -49,8 +50,9 @@ class BlogPostForm
                     ->imageEditor()
                     ->maxSize(config('media.max_image_kb'))
                     ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                    ->helperText(fn (): string => config('media.uploads_enabled') ? 'JPG, PNG o WebP.' : 'Las cargas están deshabilitadas en este entorno; los archivos existentes no se eliminan.')
+                    ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('JPG, PNG o WebP.'))
                     ->columnSpanFull(),
+                UrlDeRespaldo::imagen('imagen_url_respaldo', 'URL pública de respaldo de la imagen'),
                 Textarea::make('extracto')
                     ->label('Extracto')
                     ->rows(3)

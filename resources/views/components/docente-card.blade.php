@@ -2,8 +2,8 @@
 
 @php
     $foto = $docente->_foto_url ?? '';
-    if (! $foto && method_exists($docente, 'relationLoaded') && $docente->relationLoaded('media')) {
-        $foto = $docente->getFirstMediaUrl('foto', 'thumb');
+    if (! $foto && method_exists($docente, 'fotoPublicaUrl')) {
+        $foto = $docente->fotoPublicaUrl('thumb');
     }
 @endphp
 

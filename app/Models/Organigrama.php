@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Organigrama extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia, ResuelveMedios;
 
     protected $table = 'organigrama';
 
     protected $fillable = [
         'titulo',
         'descripcion',
+        'imagen_url_respaldo',
     ];
 
     /**
@@ -34,10 +36,14 @@ class Organigrama extends Model implements HasMedia
     }
 
     /**
-     * URL de la imagen subida (o null).
+     * Imagen del organigrama: el archivo subido o la URL de respaldo.
+     *
+     * Antes devolvía null sin más cuando no había archivo subido, y como las
+     * cargas están deshabilitadas eso era siempre: la página del organigrama
+     * no tenía forma alguna de mostrar un organigrama.
      */
     public function getImagenUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('imagen') ?: null;
+        return $this->resolverMedia('imagen', (string) $this->imagen_url_respaldo) ?: null;
     }
 }

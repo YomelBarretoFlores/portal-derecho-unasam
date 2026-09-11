@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class RevistaAviso extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     protected $table = 'revista_avisos';
 
@@ -33,13 +34,7 @@ class RevistaAviso extends Model implements HasMedia
     /** Adjunto del aviso: archivo subido o URL pública de respaldo. */
     public function getAdjuntoUrlAttribute(): string
     {
-        $respaldo = (string) $this->adjunto_url_respaldo;
-
-        if (! config('media.uploads_enabled') && filled($respaldo)) {
-            return $respaldo;
-        }
-
-        return $this->getFirstMediaUrl('adjunto') ?: $respaldo;
+        return $this->resolverMedia('adjunto', (string) $this->adjunto_url_respaldo);
     }
 
     public function registerMediaCollections(): void

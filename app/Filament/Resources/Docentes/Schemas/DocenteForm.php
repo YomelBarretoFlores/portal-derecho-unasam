@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Docentes\Schemas;
 
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use App\Rules\SafeUrl;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -63,10 +64,11 @@ class DocenteForm
                             ->avatar()
                             ->maxSize(config('media.max_image_kb'))
                             ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                            ->helperText(fn (): string => config('media.uploads_enabled')
-                                ? 'Usa un retrato institucional sin firmas, documentos, capturas ni fondos distractores. JPG, PNG o WebP.'
-                                : 'Las cargas están deshabilitadas en este entorno; la fotografía existente continúa visible.')
+                            ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga(
+                                'Usa un retrato institucional sin firmas, documentos, capturas ni fondos distractores. JPG, PNG o WebP.',
+                            ))
                             ->columnSpanFull(),
+                        UrlDeRespaldo::imagen('foto_url_respaldo', 'URL pública de respaldo del retrato'),
                     ]),
 
                 Section::make('Contacto y perfiles académicos')

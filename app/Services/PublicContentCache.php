@@ -222,7 +222,7 @@ class PublicContentCache
                 'titulo' => $comunicado->titulo,
                 'resumen' => $comunicado->resumen,
                 'fecha_publicacion' => $comunicado->fecha_publicacion?->toIso8601String(),
-                '_imagen_url' => $comunicado->getFirstMediaUrl('imagen', 'thumb'),
+                '_imagen_url' => $comunicado->imagenUrl('thumb'),
             ])->all());
 
         return $this->paginate($items, 9, $page, ['fecha_publicacion']);
@@ -292,6 +292,7 @@ class PublicContentCache
                     'contacto_email' => $revista->contacto_email,
                     'normas_publicacion' => $revista->normas_publicacion,
                     '_resolucion_url' => $revista->resolution_url,
+                    '_logo_url' => $revista->logo_url,
                 ] : null,
                 'numeros' => $numeros,
             ];
@@ -363,7 +364,7 @@ class PublicContentCache
             'autor' => $post->autor,
             'tiempo_lectura' => $post->tiempo_lectura,
             'fecha' => $post->fecha?->toDateString(),
-            '_imagen_url' => $post->getFirstMediaUrl('imagen', 'thumb'),
+            '_imagen_url' => $post->imagenUrl('thumb'),
         ];
     }
 

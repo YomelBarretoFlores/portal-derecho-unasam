@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\EditorialStatus;
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -14,7 +15,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Docente extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     public const ESTADOS_REVISION = [
         'pending' => 'Pendiente de revisión',
@@ -38,6 +39,7 @@ class Docente extends Model implements HasMedia
         'estado_revision',
         'documento_fuente',
         'observaciones_revision',
+        'foto_url_respaldo',
         'orden',
         'activo',
         'estado_editorial',
@@ -96,28 +98,34 @@ class Docente extends Model implements HasMedia
     }
 
     /**
-     * Retrato publicado: prioriza la carga editorial y usa como respaldo la
-     * fotografía institucional documentada que viaja con la aplicación.
+     * Retrato publicado.
+     *
+     * Manda lo que se administre desde el panel —el archivo subido, y si no
+     * la dirección de respaldo—, y solo cuando no hay ninguna de las dos se
+     * recurre a la fotografía institucional documentada en config/docentes.
+     *
+     * Antes el orden era el inverso, y tenía su motivo: sin disco persistente
+     * las filas de media sobreviven al despliegue y los archivos no, así que
+     * un retrato subido dejaba una imagen rota. Eso ya no hace falta
+     * resolverlo invirtiendo la prioridad, porque ResuelveMedios comprueba
+     * que el archivo siga existiendo antes de usarlo. Lo que sí hacía falta
+     * era que una foto nueva, subida a conciencia, se viera.
      */
     public function fotoPublicaUrl(string $conversion = ''): string
     {
-        $path = config('docentes.fotos_institucionales.'.$this->slug);
-
-        if (filled($path) && is_file(public_path($path))) {
-            return '/'.ltrim($path, '/');
+        if ($this->archivoSubidoDisponible('foto')) {
+            return $this->getFirstMediaUrl('foto', $conversion);
         }
 
-        $media = $this->getFirstMedia('foto');
-
-        if ($media) {
-            $mediaPath = $media->getPath($conversion);
-
-            if (is_file($mediaPath) && filesize($mediaPath) > 0) {
-                return $media->getUrl($conversion);
-            }
+        if (filled($this->foto_url_respaldo)) {
+            return (string) $this->foto_url_respaldo;
         }
 
-        return '';
+        $documentada = config('docentes.fotos_institucionales.'.$this->slug);
+
+        return filled($documentada) && is_file(public_path($documentada))
+            ? '/'.ltrim($documentada, '/')
+            : '';
     }
 
     protected static function booted(): void

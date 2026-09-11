@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasEditorialWorkflow;
+use App\Models\Concerns\ResuelveMedios;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -14,7 +15,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Comunicado extends Model implements HasMedia
 {
-    use HasEditorialWorkflow, InteractsWithMedia;
+    use HasEditorialWorkflow, InteractsWithMedia, ResuelveMedios;
 
     protected $fillable = [
         'titulo',
@@ -23,6 +24,7 @@ class Comunicado extends Model implements HasMedia
         'contenido',
         'publicado',
         'fecha_publicacion',
+        'imagen_url_respaldo',
         'estado_editorial',
     ];
 
@@ -63,6 +65,21 @@ class Comunicado extends Model implements HasMedia
     /**
      * Colección de medios: una sola imagen destacada por comunicado.
      */
+    /**
+     * Imagen publicada: el archivo subido, si no la URL de respaldo del panel.
+     *
+     * La conversión («thumb») solo aplica al archivo subido: una dirección
+     * externa se sirve tal cual, porque Media Library no generó nada de ella.
+     */
+    public function imagenUrl(string $conversion = ''): string
+    {
+        if ($this->archivoSubidoDisponible('imagen')) {
+            return $this->getFirstMediaUrl('imagen', $conversion);
+        }
+
+        return (string) $this->imagen_url_respaldo;
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('imagen')->singleFile();

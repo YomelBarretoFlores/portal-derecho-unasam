@@ -8,11 +8,11 @@
     ];
     [$badge, $etiqueta] = $estilos[$post->tipo] ?? $estilos['noticia'];
 
-    // Imagen destacada subida desde el panel (colección «imagen», conversión «thumb»).
-    // Funciona desde caché (_imagen_url) o en vivo (relación media cargada).
+    // Imagen destacada administrada desde el panel: archivo subido o URL de
+    // respaldo. Funciona desde caché (_imagen_url) o en vivo, con el modelo.
     $imagen = $post->_imagen_url ?? '';
-    if (! $imagen && method_exists($post, 'relationLoaded') && $post->relationLoaded('media')) {
-        $imagen = $post->getFirstMediaUrl('imagen', 'thumb');
+    if (! $imagen && method_exists($post, 'imagenUrl')) {
+        $imagen = $post->imagenUrl('thumb');
     }
 @endphp
 

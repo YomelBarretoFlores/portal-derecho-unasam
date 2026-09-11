@@ -32,6 +32,11 @@ class RevistaPublicacionSinCargasTest extends TestCase
     {
         parent::setUp();
         config()->set('media.uploads_enabled', false);
+
+        // El dominio tiene que estar autorizado o la cabecera CSP bloquearía
+        // la portada en el navegador. Sin esta línea el test comprobaría un
+        // escenario que sale bien en el HTML y mal en la pantalla.
+        config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
     }
 
     public function test_a_full_issue_publishes_and_renders_with_url_fallbacks_only(): void

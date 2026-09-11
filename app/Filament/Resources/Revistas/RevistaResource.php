@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Revistas;
 
 use App\Filament\Actions\PreviewActions;
 use App\Filament\Forms\EditorialStatusSelect;
+use App\Filament\Forms\UrlDeRespaldo;
 use App\Filament\Resources\Revistas\Pages\CreateRevista;
 use App\Filament\Resources\Revistas\Pages\EditRevista;
 use App\Filament\Resources\Revistas\Pages\ListRevistas;
@@ -101,9 +102,8 @@ class RevistaResource extends Resource
                         ->label('PDF de resolución')->collection('resolucion')
                         ->acceptedFileTypes(['application/pdf'])->maxSize(config('media.max_pdf_kb'))
                         ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                        ->helperText(fn (): string => config('media.uploads_enabled')
-                            ? 'Documento institucional aprobado. Solo se admite PDF.'
-                            : 'Las cargas están deshabilitadas en este entorno; el documento existente sigue disponible.'),
+                        ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga('Documento institucional aprobado. Solo se admite PDF.')),
+                    UrlDeRespaldo::archivo('resolucion_url_respaldo', 'URL pública de respaldo de la resolución'),
                 ]),
 
             Section::make('Publicación')
@@ -112,8 +112,11 @@ class RevistaResource extends Resource
                     SpatieMediaLibraryFileUpload::make('logo')
                         ->collection('logo')->image()->maxSize(config('media.max_image_kb'))
                         ->disabled(fn (): bool => ! config('media.uploads_enabled'))
-                        ->helperText('No utilices los escudos institucionales como logo propio de la revista.'),
+                        ->helperText(fn (): string => UrlDeRespaldo::textoDeCarga(
+                            'No utilices los escudos institucionales como logo propio de la revista.',
+                        )),
                     EditorialStatusSelect::make()->columnSpan(2),
+                    UrlDeRespaldo::imagen('logo_url_respaldo', 'URL pública de respaldo del logo'),
                 ]),
         ]);
     }

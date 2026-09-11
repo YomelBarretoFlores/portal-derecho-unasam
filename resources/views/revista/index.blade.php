@@ -49,7 +49,13 @@
             <div class="grid gap-12 border-b border-stone-200 pb-16 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-20">
                 <div>
                     <div class="flex items-center gap-4">
-                        <img src="{{ asset('img/revista/logo-derecho-y-cultura.jpg') }}" alt="Logo oficial de Derecho y Cultura" class="h-20 w-20 shrink-0 border border-stone-200 object-cover">
+                        {{-- El logo sale del panel. Antes era un archivo fijo del
+                             repositorio, así que el campo «Logo» de la ficha de la
+                             revista existía y no servía para nada: se podía subir
+                             uno nuevo y el sitio seguía enseñando el viejo. --}}
+                        <img src="{{ $revista->_logo_url ?: asset(\App\Models\Revista::LOGO_PUBLIC_PATH) }}"
+                             alt="Logo oficial de {{ $revista->nombre_corto ?: 'Derecho y Cultura' }}"
+                             class="h-20 w-20 shrink-0 border border-stone-200 object-cover">
                         <div>
                             <p class="eyebrow">Presentación</p>
                             <p class="mt-1 text-sm text-stone-500">Revista científica institucional · UNASAM</p>
