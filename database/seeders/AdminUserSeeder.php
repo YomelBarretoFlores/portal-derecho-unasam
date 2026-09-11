@@ -15,8 +15,25 @@ class AdminUserSeeder extends Seeder
         $password = config('admin.bootstrap_password');
 
         if (blank($name) || blank($email) || blank($password)) {
+            /*
+             * Que falten las variables solo es un problema cuando NO hay a quién
+             * dejar entrar. Si el portal ya tiene un superadministrador, no hay
+             * nada que crear y exigirlas sobra.
+             *
+             * Antes se lanzaba la excepción sin mirar eso, así que un portal
+             * instalado hace meses —con su cuenta creada y en uso— escupía un
+             * volcado de pila en el registro de errores en CADA despliegue. Un
+             * error que sale siempre y nunca significa nada es peor que ninguno:
+             * entierra los que sí importan y enseña a no leer el registro.
+             */
+            if (User::query()->where('role', User::ROLE_SUPER_ADMIN)->exists()) {
+                $this->command?->info('Ya hay un superadministrador; no hace falta crear ninguno.');
+
+                return;
+            }
+
             if (app()->environment('production')) {
-                throw new \RuntimeException('Define ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD antes de ejecutar seeders en producción.');
+                throw new \RuntimeException('No existe ningún administrador y faltan ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD: nadie podría entrar a /admin.');
             }
 
             $this->command?->warn('Administrador omitido: define ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD para crearlo.');

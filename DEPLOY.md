@@ -63,6 +63,8 @@ Los tres interruptores de manuscritos se ponen en `true` a la vez, y solo despu�
    - `Usuario superadministrador creado: …` (o `El usuario admin ya existe`)
 
    Si en su lugar sale `⚠ NO se creó el usuario administrador`, faltan las variables `ADMIN_*` o la contraseña no cumple los requisitos. El sitio público funciona igual; `/admin` no tendrá con qué entrar.
+
+   En un portal que ya lleva tiempo funcionando la línea será `Ya hay un superadministrador; no hace falta crear ninguno`. Es lo normal: las variables `ADMIN_*` solo hacen falta la primera vez.
 5. Abrir la portada y comprobar que muestra contenido: cifras, accesos, historia. **Si sale vacía, la siembra no se ejecutó**, y el registro del paso 4 dice por qué.
 6. Entrar a `/admin` con la cuenta creada y cambiar la contraseña.
 7. Comprobar que los campos de archivos avisan de que las cargas están deshabilitadas.

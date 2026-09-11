@@ -126,6 +126,40 @@ class InstalacionLimpiaTest extends TestCase
         $this->assertTrue($admin->isSuperAdmin());
     }
 
+    public function test_an_existing_admin_makes_the_variables_unnecessary(): void
+    {
+        // Un portal ya instalado no necesita crear nada. Antes reclamaba las
+        // variables igualmente y dejaba un volcado de pila en el registro de
+        // errores en cada despliegue, enterrando los errores de verdad.
+        User::query()->create([
+            'name' => 'Administradora existente',
+            'email' => 'existente@unasam.edu.pe',
+            'password' => 'Clave-Existente-2026!',
+            'role' => User::ROLE_SUPER_ADMIN,
+            'is_admin' => true,
+        ]);
+
+        config()->set('admin.bootstrap_name', null);
+        config()->set('admin.bootstrap_email', null);
+        config()->set('admin.bootstrap_password', null);
+
+        $this->artisan('db:seed', ['--class' => AdminUserSeeder::class])
+            ->expectsOutputToContain('Ya hay un superadministrador')
+            ->assertSuccessful();
+    }
+
+    public function test_a_fresh_install_without_the_variables_says_nobody_could_log_in(): void
+    {
+        config()->set('admin.bootstrap_name', null);
+        config()->set('admin.bootstrap_email', null);
+        config()->set('admin.bootstrap_password', null);
+        $this->app['env'] = 'production';
+
+        $this->expectExceptionMessage('nadie podría entrar a /admin');
+
+        $this->artisan('db:seed', ['--class' => AdminUserSeeder::class, '--force' => true]);
+    }
+
     public function test_a_weak_admin_password_is_refused_instead_of_silently_accepted(): void
     {
         config()->set('admin.bootstrap_name', 'Administradora del Portal');
