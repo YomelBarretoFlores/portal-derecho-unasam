@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Envíos — '.$revista->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" title="Envíos" subtitle="Presentación pública de manuscritos sin crear una cuenta." />
+<x-page-hero title="Envíos" subtitle="Presentación pública de manuscritos sin crear una cuenta." />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
     @if($revista->introduccion_envios)<div class="prose-editorial max-w-3xl">{{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($revista->introduccion_envios) }}</div>@endif
     <ol class="mt-12 grid gap-px border border-stone-200 bg-stone-200 sm:grid-cols-3 lg:grid-cols-6" aria-label="Flujo editorial">

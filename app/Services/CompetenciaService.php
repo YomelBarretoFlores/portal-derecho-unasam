@@ -11,6 +11,16 @@ class CompetenciaService
      * Estructura por grupo (Generales/Específicas) y plan, compatible con la vista:
      * [['grupo','prefijo','planes'=>[['titulo','destacado','items'=>[['nombre','texto'],...]]]]].
      */
+    /**
+     * Devuelve arrays planos, nunca colecciones anidadas.
+     *
+     * PublicContentCache guarda este resultado en la caché. Con el almacén de
+     * ficheros —o cualquiera que serialice— una Collection anidada volvía como
+     * __PHP_Incomplete_Class, y al recorrerla la vista recibía la cadena
+     * «Illuminate\Support\Collection» donde esperaba un array. Efecto: la
+     * página de competencias respondía 200 la primera vez tras vaciar la caché
+     * y 500 en todas las siguientes, hasta el próximo vaciado.
+     */
     public function grupos(): Collection
     {
         return Competencia::query()->orderBy('orden')->get()
@@ -29,7 +39,7 @@ class CompetenciaService
                             'texto' => $c->texto,
                         ])->all(),
                     ])
-                    ->values(),
+                    ->values()->all(),
             ])
             ->values();
     }

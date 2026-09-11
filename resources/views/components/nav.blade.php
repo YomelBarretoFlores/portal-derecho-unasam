@@ -1,40 +1,7 @@
 @php
-    /**
-     * Arquitectura de información por audiencia.
-     *
-     * Antes el menú reproducía el organigrama —«Programa», «Académico»— y todo lo
-     * que no encajaba caía en un grupo llamado «Más», que es lo que suele pasar
-     * cuando la navegación describe a la institución en lugar de a quien la
-     * consulta. Al reagrupar salieron a la luz dos páginas huérfanas, alcanzables
-     * solo escribiendo la URL: el organigrama y el plan de estudios 2019.
-     *
-     * Las direcciones no cambian: el sitio ya está indexado y publica sitemap.
-     */
-    $grupos = [
-        'La Facultad' => [
-            ['Presentación', route('presentacion')],
-            ['Resumen', route('resumen')],
-            ['Historia', route('historia')],
-            ['Misión y Visión', route('mision')],
-            ['Objetivos', route('objetivos')],
-            ['Organigrama', route('organigrama')],
-            ['Plana docente', route('docentes')],
-        ],
-        'Estudiantes' => [
-            ['Plan de Estudios 2023', route('plan-2023')],
-            ['Plan de Estudios 2019', route('plan-2019')],
-            ['Competencias', route('competencias')],
-            ['Perfil de Ingreso', route('perfil-ingreso')],
-            ['Perfil de Egreso', route('perfil-egreso')],
-            ['Campo Laboral', route('campo-laboral')],
-            ['Documentos', route('documentos')],
-        ],
-        'Investigación' => [
-            ['Revista Derecho y Cultura', route('revista')],
-            ['Blog', route('blog')],
-            ['Estadísticas', route('estadisticas', 'matriculados')],
-        ],
-    ];
+    // La arquitectura vive en App\Support\Navegacion: menú, pie y migas de pan
+    // beben de la misma fuente para que no puedan volver a contradecirse.
+    $grupos = \App\Support\Navegacion::enlaces();
 @endphp
 
 <header

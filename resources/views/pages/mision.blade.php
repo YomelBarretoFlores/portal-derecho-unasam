@@ -4,7 +4,7 @@
 @section('description', 'Misión y visión del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM: el propósito que nos guía y el horizonte al que aspiramos.')
 
 @section('content')
-    <x-page-hero seccion="Programa" title="Misión y Visión"
+    <x-page-hero title="Misión y Visión"
         subtitle="El propósito que nos guía y el horizonte al que aspiramos." />
 
     <section class="mx-auto max-w-7xl px-6 py-20">

@@ -4,7 +4,7 @@
 @section('description', 'Casi cuatro décadas formando abogados al servicio de Áncash y el Perú: hitos y trayectoria del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Programa" title="Historia"
+    <x-page-hero title="Historia"
         subtitle="Casi cuatro décadas formando abogados al servicio de Áncash y el Perú." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

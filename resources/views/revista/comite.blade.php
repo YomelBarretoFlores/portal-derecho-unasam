@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title',$title.' — '.$revista->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" :title="$title" :subtitle="$revista->nombre" />
+<x-page-hero :title="$title" :subtitle="$revista->nombre" />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
 @foreach(\App\Models\RevistaMiembro::GRUPOS as $clave=>$tituloGrupo)
  @php($integrantes=$grupos->get($clave,collect()))

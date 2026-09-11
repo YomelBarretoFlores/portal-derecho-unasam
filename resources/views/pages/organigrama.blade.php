@@ -4,7 +4,7 @@
 @section('description', 'Estructura organizativa del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Institucional" title="{{ $titulo ?: 'Organigrama' }}"
+    <x-page-hero title="{{ $titulo ?: 'Organigrama' }}"
         subtitle="Estructura organizativa del Programa de Estudios de Derecho y Ciencias Políticas." />
 
     <section class="mx-auto max-w-5xl px-6 py-20">

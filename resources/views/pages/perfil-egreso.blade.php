@@ -4,7 +4,7 @@
 @section('description', 'Perfil de egreso del Programa de Derecho de la UNASAM: el profesional que forma el Programa de Estudios de Derecho y Ciencias Políticas.')
 
 @section('content')
-    <x-page-hero seccion="Académico" title="Perfil de Egreso"
+    <x-page-hero title="Perfil de Egreso"
         subtitle="El profesional que forma el Programa de Estudios de Derecho y Ciencias Políticas." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

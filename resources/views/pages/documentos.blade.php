@@ -4,7 +4,7 @@
 @section('description', 'Reglamentos, planes y resoluciones del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Transparencia" title="Documentos Normativos" subtitle="Reglamentos, planes y resoluciones del Programa de Estudios." />
+    <x-page-hero title="Documentos Normativos" subtitle="Reglamentos, planes y resoluciones del Programa de Estudios." />
     <section class="mx-auto max-w-5xl px-6 py-20">
         <form method="get" class="grid gap-3 border-y border-stone-200 bg-paper px-4 py-5 sm:grid-cols-[1fr_16rem_auto] sm:px-5" role="search">
             <input name="q" value="{{ $q }}" type="search" aria-label="Buscar documento" placeholder="Buscar documento…" class="border border-stone-300 bg-white px-4 py-3 text-sm focus:border-navy-800 focus:outline-none">

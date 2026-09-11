@@ -5,7 +5,6 @@
 
 @section('content')
     <x-page-hero
-        seccion="Programa"
         title="Presentación"
         subtitle="Conoce el Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM." />
 

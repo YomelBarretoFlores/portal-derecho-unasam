@@ -4,7 +4,7 @@
 @section('description', 'Avisos y comunicados oficiales del Programa de Estudios de Derecho y Ciencias Políticas.')
 
 @section('content')
-    <x-page-hero seccion="Transparencia" title="Comunicados" subtitle="Avisos y comunicados oficiales del Programa de Estudios." />
+    <x-page-hero title="Comunicados" subtitle="Avisos y comunicados oficiales del Programa de Estudios." />
     <section class="mx-auto max-w-6xl px-6 py-20">
         @if ($comunicados->isEmpty())
             <x-empty-state title="Sin comunicados vigentes" description="Los avisos oficiales aparecerán aquí después de su aprobación y publicación por la Facultad." action="Volver al inicio" :href="route('home')" />

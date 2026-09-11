@@ -4,7 +4,7 @@
 @section('description', 'Perfil de ingreso del Programa de Derecho de la UNASAM: competencias que se esperan del estudiante que inicia el programa (planes 2019 y 2023).')
 
 @section('content')
-    <x-page-hero seccion="Académico" title="Perfil de Ingreso"
+    <x-page-hero title="Perfil de Ingreso"
         subtitle="Competencias que se espera del estudiante que inicia el programa (igual en los planes 2019 y 2023)." />
 
     <section class="mx-auto max-w-7xl px-6 py-20">

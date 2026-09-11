@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Consultar envío — '.$revista->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" title="Consultar mi envío" subtitle="Revisa en qué fase editorial se encuentra tu manuscrito." />
+<x-page-hero title="Consultar mi envío" subtitle="Revisa en qué fase editorial se encuentra tu manuscrito." />
 
 <section class="mx-auto max-w-5xl px-6 py-16 md:py-20">
     <div class="grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start">

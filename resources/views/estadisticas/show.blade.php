@@ -3,7 +3,7 @@
 @section('title', $titulo . ' — Estadísticas Derecho UNASAM')
 
 @section('content')
-    <x-page-hero seccion="Institucional" title="Estadísticas"
+    <x-page-hero title="Estadísticas"
         subtitle="Indicadores académicos históricos del Programa de Derecho y Ciencias Políticas." />
 
     <section class="mx-auto max-w-7xl px-6 py-16"

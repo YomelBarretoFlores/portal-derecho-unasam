@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Archivos — '.$ficha->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" title="Archivos" subtitle="Ediciones anteriores y sus artículos." />
+<x-page-hero title="Archivos" subtitle="Ediciones anteriores y sus artículos." />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
 @if($numeros->isEmpty())
  <x-empty-state title="Aún no hay ediciones anteriores" description="Las ediciones pasarán a este archivo cuando se publique un nuevo número actual." action="Ver número actual" :href="route('revista.actual')" />

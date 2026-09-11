@@ -4,7 +4,7 @@
 @section('description', 'Malla curricular del Plan {{ $plan }} del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Académico" title="Plan de Estudios {{ $plan }}"
+    <x-page-hero title="Plan de Estudios {{ $plan }}"
         :subtitle="$plan === '2023' ? 'Malla curricular vigente del Programa de Derecho y Ciencias Políticas.' : 'Plan curricular 2019 del Programa de Derecho y Ciencias Políticas.'" />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

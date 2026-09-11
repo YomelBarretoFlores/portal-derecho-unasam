@@ -1,6 +1,10 @@
-@props(['title', 'seccion' => 'Programa', 'subtitle' => null, 'variant' => null])
+@props(['title', 'seccion' => null, 'subtitle' => null, 'variant' => null])
 
 @php
+    // Si no se indica sección, se deduce de la ruta actual. Así la miga de pan
+    // nombra el mismo grupo por el que el visitante llegó desde el menú.
+    $seccion ??= \App\Support\Navegacion::grupoDe(request()->route()?->getName()) ?? 'La Facultad';
+
     $breadcrumbSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
@@ -10,9 +14,12 @@
             ['@type' => 'ListItem', 'position' => 3, 'name' => $title, 'item' => url()->current()],
         ],
     ];
+    // La revista lleva cabecera oscura en todas sus secciones: es una
+    // publicación con identidad propia dentro del sitio, como hacen Harvard Law
+    // Review o la propia Derecho PUCP con su cabecera de color.
     $variant ??= match ($seccion) {
-        'Publicaciones' => 'publication',
-        'Académico' => 'academic',
+        'Revista' => 'publication',
+        'Estudiantes' => 'academic',
         default => 'institutional',
     };
 @endphp

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Formatos y plantillas — '.$ficha->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" title="Formatos y plantillas" subtitle="Documentos editables requeridos para presentar un manuscrito." />
+<x-page-hero title="Formatos y plantillas" subtitle="Documentos editables requeridos para presentar un manuscrito." />
 <section class="mx-auto max-w-5xl px-6 py-16 md:py-20">
     <div class="grid gap-5 md:grid-cols-3">
         @foreach($documentos as $documento)
@@ -14,4 +14,6 @@
         @endforeach
     </div>
 </section>
+
+@include('revista.partials.continuar')
 @endsection

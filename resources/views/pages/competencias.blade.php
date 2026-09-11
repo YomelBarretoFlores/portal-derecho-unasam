@@ -4,7 +4,7 @@
 @section('description', 'Competencias generales y específicas que desarrolla el Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Académico" title="Competencias"
+    <x-page-hero title="Competencias"
         subtitle="Capacidades generales y específicas que desarrolla el Programa de Estudios." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

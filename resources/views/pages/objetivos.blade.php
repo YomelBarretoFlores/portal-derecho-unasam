@@ -4,7 +4,7 @@
 @section('description', 'Objetivos educacionales del Programa de Derecho de la UNASAM: logros que se esperan de nuestros egresados según cada plan de estudios.')
 
 @section('content')
-    <x-page-hero seccion="Programa" title="Objetivos Educacionales"
+    <x-page-hero title="Objetivos Educacionales"
         subtitle="Logros que se espera de nuestros egresados, según cada plan de estudios." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

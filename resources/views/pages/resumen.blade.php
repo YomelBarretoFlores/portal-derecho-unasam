@@ -4,7 +4,7 @@
 @section('description', 'Resumen del Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM: currículo flexible y por competencias.')
 
 @section('content')
-    <x-page-hero seccion="Programa" title="Resumen del Programa de Estudios"
+    <x-page-hero title="Resumen del Programa de Estudios"
         subtitle="Programa de Estudio de Derecho y Ciencias Políticas." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">

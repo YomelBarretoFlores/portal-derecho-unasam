@@ -2,7 +2,7 @@
 @section('title','Normas para autores — '.$revista->nombre_corto)
 @section('description','Requisitos oficiales de presentación, evaluación y publicación de manuscritos.')
 @section('content')
-<x-page-hero seccion="Revista" title="Normas para autores" subtitle="Requisitos para la presentación y evaluación de manuscritos." />
+<x-page-hero title="Normas para autores" subtitle="Requisitos para la presentación y evaluación de manuscritos." />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
     <div class="grid gap-10 lg:grid-cols-[1fr_20rem]">
         <div>
@@ -23,4 +23,6 @@
     </div>
     @if($documento?->download_url)<div class="mt-14 border border-stone-200"><iframe title="Normas de publicación completas" src="{{ $documento->download_url }}#view=FitH" class="h-[70vh] min-h-[34rem] w-full"></iframe></div>@endif
 </section>
+
+@include('revista.partials.continuar')
 @endsection

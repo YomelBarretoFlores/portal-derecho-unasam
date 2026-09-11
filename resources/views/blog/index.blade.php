@@ -4,7 +4,7 @@
 @section('description', 'Noticias, opiniones y eventos del Programa de Derecho y Ciencias Políticas de la UNASAM.')
 
 @section('content')
-    <x-page-hero seccion="Publicaciones" title="Blog" subtitle="Noticias, opiniones y eventos del Programa de Derecho y Ciencias Políticas." />
+    <x-page-hero title="Blog" subtitle="Noticias, opiniones y eventos del Programa de Derecho y Ciencias Políticas." />
 
     <section class="mx-auto max-w-7xl px-6 py-16">
         <nav class="flex flex-wrap gap-2" aria-label="Filtrar publicaciones por tipo">

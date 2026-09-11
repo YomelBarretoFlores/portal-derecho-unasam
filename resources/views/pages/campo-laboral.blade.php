@@ -4,7 +4,7 @@
 @section('description', 'Campo laboral del abogado UNASAM: las áreas profesionales donde se desempeñan los egresados del Programa de Derecho y Ciencias Políticas.')
 
 @section('content')
-    <x-page-hero seccion="Programa" title="Campo Laboral"
+    <x-page-hero title="Campo Laboral"
         subtitle="Las áreas profesionales donde se desempeñan nuestros egresados." />
 
     <section class="mx-auto max-w-7xl px-6 py-20">

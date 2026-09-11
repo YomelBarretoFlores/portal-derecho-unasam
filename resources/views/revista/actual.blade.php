@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Número actual — '.$revista->nombre_corto)
 @section('content')
-<x-page-hero seccion="Revista" title="Actual" subtitle="Número vigente de Derecho y Cultura." />
+<x-page-hero title="Actual" subtitle="Número vigente de Derecho y Cultura." />
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
 @if ($numero)
     <div class="grid gap-12 lg:grid-cols-[20rem_minmax(0,1fr)]">

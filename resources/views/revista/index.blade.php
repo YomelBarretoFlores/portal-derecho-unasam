@@ -38,7 +38,6 @@
 
 @section('content')
     <x-page-hero
-        seccion="Publicaciones"
         :title="$nombre"
         :subtitle="$revista?->nombre ?: 'Revista Científica de Derecho y Antropología Jurídica'"
     />
