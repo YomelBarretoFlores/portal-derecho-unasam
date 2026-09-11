@@ -4,11 +4,17 @@
     $active = collect($items)->contains(fn (array $item): bool => url()->current() === $item[1]);
 @endphp
 
-{{-- Dropdown accesible: abre por hover y por teclado (focus/click), cierra con Escape --}}
+{{-- Dropdown accesible: abre por hover (ratón) y por el botón (clic, toque, Enter
+     o Espacio); cierra con Escape devolviendo el foco al disparador.
+
+     Abrir también con @focusin lo dejaba inservible al tocarlo: en un dispositivo
+     táctil el toque enfoca el botón —lo abre— y el clic del mismo gesto lo vuelve
+     a cerrar. Con ratón no se notaba porque @mouseenter ya lo había abierto antes.
+     El cierre por foco se conserva, pero solo cuando el foco sale del bloque. --}}
 <div x-data="{ open: false }"
      @mouseenter="open = true" @mouseleave="open = false"
-     @focusin="open = true" @focusout="open = false"
      @keydown.escape.stop="open = false; $refs.trigger.focus()"
+     @focusout="if (! $el.contains($event.relatedTarget)) open = false"
      class="relative">
     <button x-ref="trigger" type="button" @click="open = !open"
             aria-haspopup="true" :aria-expanded="open"
