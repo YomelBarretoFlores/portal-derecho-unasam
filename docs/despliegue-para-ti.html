@@ -390,13 +390,32 @@ footer p { max-width: 66ch; }
 </header>
 
 <section>
-    <h2>Dos cosas antes de desplegar</h2>
+    <h2>Lo que hay que tener antes de desplegar</h2>
     <p class="sumario">
         El portal no crea su propia base de datos ni se inventa una contraseña de administrador.
         Si faltan, el despliegue termina sin errores y el sitio sale en blanco.
     </p>
 
     <div class="requisitos">
+        <div class="requisito">
+            <span class="marca">0</span>
+            <h3>El repositorio</h3>
+            <p>
+                El código está en
+                <a href="https://github.com/YomelBarretoFlores/portal-derecho-unasam">github.com/YomelBarretoFlores/portal-derecho-unasam</a>.
+            </p>
+            <p>
+                Trae un <code>Dockerfile</code>, así que <strong>no hay que instalar PHP, Composer
+                ni Node</strong> en el servidor: la imagen los lleva dentro, con los estilos y
+                scripts ya compilados.
+            </p>
+            <p>
+                En Render se despliega como <strong>Blueprint</strong> apuntando al repositorio; él
+                lee <code>render.yaml</code> y pide las variables. En cualquier otro servidor con
+                Docker, se construye la imagen y se pasan las mismas variables al contenedor, que
+                escucha en el puerto indicado por <code>PORT</code>.
+            </p>
+        </div>
         <div class="requisito">
             <span class="marca">I</span>
             <h3>Una base de datos PostgreSQL vacía</h3>
@@ -439,7 +458,7 @@ footer p { max-width: 66ch; }
                 <tr><th>Variable</th><th>Qué poner</th></tr>
             </thead>
             <tbody>
-                <tr><td class="var">APP_KEY</td><td>La salida de <code>php artisan key:generate --show</code></td></tr>
+                <tr><td class="var">APP_KEY</td><td>Clave de cifrado. Véase «Cómo generar la APP_KEY», debajo de esta tabla</td></tr>
                 <tr><td class="var">APP_URL</td><td>La dirección pública del sitio, con <code>https://</code></td></tr>
                 <tr><td class="var">DB_CONNECTION</td><td><code>pgsql</code></td></tr>
                 <tr><td class="var">DB_HOST</td><td>Servidor de la base de datos</td></tr>
@@ -456,6 +475,26 @@ footer p { max-width: 66ch; }
             </tbody>
         </table>
     </div>
+
+    <h3 style="margin-top:30px;">Cómo generar la APP_KEY</h3>
+    <p>
+        Es la clave con la que la aplicación cifra las sesiones y las cookies. Hay que generarla
+        una sola vez, antes del primer despliegue, y <strong>no cambiarla después</strong>: al
+        cambiarla, las sesiones abiertas dejan de ser válidas.
+    </p>
+    <p>
+        En cualquier equipo con <code>openssl</code> —Linux y macOS lo traen; en Windows,
+        Git Bash o WSL—:
+    </p>
+<pre>echo "base64:$(openssl rand -base64 32)"</pre>
+    <p>
+        Devuelve algo como <code>base64:qX9v…=</code>. Eso entero es el valor de
+        <code>APP_KEY</code>, incluido el prefijo <code>base64:</code>.
+    </p>
+    <p>
+        Si ya tiene el proyecto instalado en un equipo, <code>php artisan key:generate --show</code>
+        hace lo mismo.
+    </p>
 
     <div class="tabla-contenedor">
         <table>
@@ -535,16 +574,25 @@ footer p { max-width: 66ch; }
                     aparecer estas líneas:
                 </p>
 <pre><span class="com">→ Preparando la aplicación…</span>
+<span class="ok">INFO  Configuration cached successfully.</span>
+<span class="com">→ Planes de consulta…</span>
 <span class="com">→ Contenido institucional…</span>
+<span class="ok">INFO  Seeding database.</span>
 <span class="com">→ Usuario administrador…</span>
 <span class="ok">Usuario superadministrador creado: admin@unasam.edu.pe</span>
-<span class="com">→ Iniciando FrankenPHP en el puerto 10000…</span></pre>
+<span class="com">→ Iniciando FrankenPHP en el puerto 10000…</span>
+<span class="ok">==&gt; Your service is live 🎉</span></pre>
                 <p>Si en su lugar aparece este aviso, faltan las variables o la contraseña no cumple los requisitos:</p>
 <pre><span class="mal">⚠  NO se creó el usuario administrador.</span>
 <span class="mal">⚠  Defina ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD…</span></pre>
                 <p>
                     El sitio público funciona igual; lo que no habrá es forma de entrar al panel.
                     Se corrige definiendo las variables y desplegando otra vez.
+                </p>
+                <p>
+                    En un portal que ya lleva tiempo funcionando la línea será
+                    <code>Ya hay un superadministrador; no hace falta crear ninguno</code>. Es lo
+                    normal: las variables <code>ADMIN_</code> solo hacen falta la primera vez.
                 </p>
             </div>
         </li>
@@ -675,6 +723,45 @@ footer p { max-width: 66ch; }
 </section>
 
 <section>
+    <h2>Después de publicar</h2>
+    <p class="sumario">
+        Tres cosas que conviene dejar resueltas, y que no forman parte del despliegue.
+    </p>
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr><th>Qué</th><th>Por qué</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Copia de seguridad de la base de datos</strong></td>
+                    <td>Todo el contenido del portal vive ahí: textos, comunicados, perfiles docentes, la revista. El contenedor es reemplazable; la base de datos no. Si el proveedor ofrece copias automáticas, actívelas</td>
+                </tr>
+                <tr>
+                    <td><strong>Cambiar la contraseña del administrador</strong></td>
+                    <td>La inicial queda guardada como variable de entorno, visible para cualquiera con acceso al panel del proveedor</td>
+                </tr>
+                <tr>
+                    <td><strong>Copia de los archivos subidos</strong></td>
+                    <td>Solo cuando se habiliten las cargas. Hasta entonces no hay nada que respaldar: los archivos del sitio viajan dentro de la imagen</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="aviso">
+        <span class="titulo">Al desplegar una versión con cambios en la base de datos</span>
+        <p>
+            El arranque descarta solo los planes de consulta antiguos: es la línea
+            <code>→ Planes de consulta…</code>. Si aun así el sitio devolviera 500 con
+            <code>cached plan must not change result type</code>, se repite a mano desde el servidor
+            con <code>php artisan db:limpiar-planes --conexiones=100</code>.
+        </p>
+    </div>
+</section>
+
+<section>
     <h2>Si algo no funciona</h2>
     <p class="sumario">
         Los cuatro casos que aparecen en un despliegue nuevo, y dónde mirar.
@@ -705,6 +792,11 @@ footer p { max-width: 66ch; }
                     <td>Las imágenes no se muestran</td>
                     <td>Su dominio no está autorizado</td>
                     <td>Revisar <code>CSP_IMG_HOSTS</code> y <code>AWS_URL</code>. En el navegador, la consola señala la cabecera de seguridad</td>
+                </tr>
+                <tr>
+                    <td>500 en todo el sitio justo tras actualizar</td>
+                    <td>Planes de consulta antiguos en la base de datos</td>
+                    <td>El arranque lo limpia solo. Si persiste: <code>php artisan db:limpiar-planes --conexiones=100</code></td>
                 </tr>
                 <tr>
                     <td>Los campos de archivo salen en gris</td>
