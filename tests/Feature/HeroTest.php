@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\BlogPost;
 use App\Models\Comunicado;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
@@ -73,6 +74,41 @@ class HeroTest extends TestCase
 
         $this->assertStringContainsString('Único aviso', $html);
         $this->assertStringNotContainsString('aria-label="Siguiente"', $html);
+    }
+
+    public function test_the_mascot_is_absent_until_the_faculty_provides_one(): void
+    {
+        // Sin imagen el hero queda exactamente como estaba: ni hueco reservado,
+        // ni una etiqueta vacía que el navegador pinte como imagen rota.
+        Setting::set('home_hero_mascota_url', '');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('object-bottom', $html);
+    }
+
+    public function test_the_mascot_is_shown_when_it_is_configured(): void
+    {
+        config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
+
+        Setting::set('home_hero_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
+        Setting::set('home_hero_mascota_alt', 'Mascota de la Facultad de Derecho');
+
+        $this->get('/')->assertOk()
+            ->assertSee('https://cdn.unasam.edu.pe/mascota.webp')
+            ->assertSee('Mascota de la Facultad de Derecho');
+    }
+
+    public function test_a_mascot_without_description_is_hidden_from_screen_readers(): void
+    {
+        // Una ilustración sin descripción no aporta nada a quien no la ve;
+        // anunciarla antes del titular estorbaría en vez de ayudar.
+        Setting::set('home_hero_mascota_url', '/img/mascota.webp');
+        Setting::set('home_hero_mascota_alt', '');
+
+        $this->get('/')->assertOk()
+            ->assertSee('/img/mascota.webp')
+            ->assertSee('aria-hidden="true"', escape: false);
     }
 
     public function test_the_hero_photograph_is_described(): void

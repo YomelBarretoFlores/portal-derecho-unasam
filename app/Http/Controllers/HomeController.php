@@ -38,6 +38,10 @@ class HomeController extends Controller
             'home_hero_stat2_label' => 'Áreas del Derecho',
             'home_hero_stat2_valor' => '8',
             'home_hero_stat2_sufijo' => '',
+            // Mascota de la facultad. Vacío mientras no haya imagen: el hero
+            // funciona igual sin ella y no deja hueco.
+            'home_hero_mascota_url' => '',
+            'home_hero_mascota_alt' => '',
             'home_about_eyebrow' => 'El programa',
             'home_about_titulo' => 'Formando profesionales del derecho desde 1986',
             'home_about_cuerpo' => "El Programa de Estudios de Derecho y Ciencias Políticas de la UNASAM forma abogados con sólida base jurídica, sentido ético y compromiso con el desarrollo de la región Áncash y del país.\n\nNuestro plan de estudios combina la formación teórica con la práctica profesional, la investigación jurídica y la responsabilidad social, preparando a los estudiantes para los desafíos del ejercicio del derecho en el siglo XXI.",

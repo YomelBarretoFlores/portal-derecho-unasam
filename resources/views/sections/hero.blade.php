@@ -33,8 +33,34 @@
         <div class="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/75 to-navy-950/25"></div>
     </div>
 
-    <div class="mx-auto max-w-7xl px-6 pb-14 pt-16 sm:pt-20 lg:pb-20 lg:pt-28">
-        <div class="max-w-2xl">
+    <div class="relative mx-auto max-w-7xl px-6 pb-14 pt-16 sm:pt-20 lg:pb-20 lg:pt-28">
+
+        @if (filled($home['home_hero_mascota_url'] ?? ''))
+            {{-- Mascota de la facultad, de pie sobre el patio.
+
+                 Solo desde lg. Por debajo, el titular ya ocupa el ancho entero y
+                 la mascota tendría que encogerse tanto que no se reconocería, o
+                 taparía el texto. Antes que una versión diminuta, ninguna.
+
+                 Va detrás del texto en el orden de apilado y con pointer-events
+                 desactivados: es un elemento de ambiente, y no debe interceptar
+                 un clic dirigido a los botones si alguna vez se solapan.
+            
+                 Sin «alt» administrado se trata como decorativa: un lector de
+                 pantalla no gana nada anunciando una ilustración, y obligarle a
+                 escucharla antes del titular sería peor que omitirla. --}}
+            <img src="{{ $home['home_hero_mascota_url'] }}"
+                 @if (filled($home['home_hero_mascota_alt'] ?? ''))
+                     alt="{{ $home['home_hero_mascota_alt'] }}"
+                 @else
+                     alt="" aria-hidden="true"
+                 @endif
+                 loading="lazy" decoding="async"
+                 class="pointer-events-none absolute bottom-0 right-4 z-0 hidden w-auto select-none object-contain object-bottom drop-shadow-2xl lg:block xl:right-10"
+                 style="height: clamp(19rem, 34vw, 30rem)">
+        @endif
+
+        <div class="relative z-10 max-w-2xl">
             <p class="reveal text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
                 UNASAM · Huaraz, Áncash
             </p>
