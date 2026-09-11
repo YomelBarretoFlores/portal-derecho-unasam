@@ -98,6 +98,11 @@ class SettingSeeder extends Seeder
             'home_hero_mascota_url' => '/img/mascota-derecho.webp',
             'home_hero_mascota_alt' => 'Mascota de la Facultad de Derecho: una coneja con casco romano, capa y camiseta de UNASAM Derecho',
 
+            // Mascota de la página de error: va aparte de la del hero porque
+            // ahí cae desde arriba, y la versión volando encaja mejor que la
+            // de pie. Vaciarla desde el panel la retira.
+            'error404_mascota_url' => '/img/mascota-volando.webp',
+
             // --- Fase 3: Plan de Estudios ---
             'plan_grado' => 'Bachiller en Derecho',
             'plan_titulo_prof' => 'Abogado(a)',

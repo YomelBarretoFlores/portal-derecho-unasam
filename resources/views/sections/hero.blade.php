@@ -78,15 +78,17 @@
                  Sin «alt» administrado se trata como decorativa: un lector de
                  pantalla no gana nada anunciando una ilustración, y obligarle a
                  escucharla antes del titular sería peor que omitirla. --}}
-            <img src="{{ $home['home_hero_mascota_url'] }}"
-                 @if (filled($home['home_hero_mascota_alt'] ?? ''))
-                     alt="{{ $home['home_hero_mascota_alt'] }}"
-                 @else
-                     alt="" aria-hidden="true"
-                 @endif
-                 loading="lazy" decoding="async"
-                 class="pointer-events-none absolute bottom-0 right-4 z-0 hidden w-auto select-none object-contain object-bottom drop-shadow-2xl lg:block xl:right-10"
+            <div class="mascota-cae pointer-events-none absolute bottom-0 right-4 z-0 hidden select-none lg:block xl:right-10"
                  style="height: clamp(19rem, 34vw, 30rem)">
+                <img src="{{ $home['home_hero_mascota_url'] }}"
+                     @if (filled($home['home_hero_mascota_alt'] ?? ''))
+                         alt="{{ $home['home_hero_mascota_alt'] }}"
+                     @else
+                         alt="" aria-hidden="true"
+                     @endif
+                     decoding="async"
+                     class="h-full w-auto object-contain object-bottom drop-shadow-2xl">
+            </div>
         @endif
 
         <div class="relative z-10 max-w-2xl">

@@ -31,11 +31,21 @@
                 Escribe lo que busques. La búsqueda no distingue mayúsculas ni tildes.
             </p>
         @elseif ($resultados->isEmpty())
-            <div class="mt-10 border border-stone-200 bg-paper p-8">
-                <p class="font-serif text-2xl text-navy-900">Sin resultados para «{{ $q }}»</p>
-                <p class="mt-3 leading-relaxed text-stone-600">
-                    Pruebe con menos palabras o con otras. También puede recorrer el portal desde el menú.
-                </p>
+            {{-- La mascota acompaña el vacío, no lo decora: una búsqueda sin
+                 resultados es el momento más seco del portal, y es además el
+                 único sitio de esta página donde no hay contenido con el que
+                 competir. Decorativa y sin animar: aquí el visitante busca
+                 algo, no quiere que le llamen la atención. --}}
+            <div class="mt-10 flex items-center gap-8 border border-stone-200 bg-paper p-8">
+                <div class="min-w-0">
+                    <p class="font-serif text-2xl text-navy-900">Sin resultados para «{{ $q }}»</p>
+                    <p class="mt-3 leading-relaxed text-stone-600">
+                        Pruebe con menos palabras o con otras. También puede recorrer el portal desde el menú.
+                    </p>
+                </div>
+                <img src="{{ asset('img/mascota-leyendo.webp') }}" alt="" aria-hidden="true"
+                     width="640" height="735" loading="lazy" decoding="async"
+                     class="hidden w-28 shrink-0 select-none sm:block lg:w-36">
             </div>
         @else
             <p class="mt-10 text-sm text-stone-500">

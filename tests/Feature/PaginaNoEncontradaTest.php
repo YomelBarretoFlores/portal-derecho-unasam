@@ -27,12 +27,12 @@ class PaginaNoEncontradaTest extends TestCase
     public function test_the_mascot_accompanies_the_not_found_page(): void
     {
         config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
-        Setting::set('home_hero_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
+        Setting::set('error404_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
 
         $this->get('/esta-ruta-no-existe')
             ->assertNotFound()
             ->assertSee('https://cdn.unasam.edu.pe/mascota.webp')
-            ->assertSee('mascota-404');
+            ->assertSee('mascota-cae');
     }
 
     public function test_the_not_found_page_stands_on_its_own_without_a_mascot(): void
@@ -40,11 +40,11 @@ class PaginaNoEncontradaTest extends TestCase
         // Vaciar el campo en el panel tiene que quitarla de verdad, y la página
         // sin ella no puede quedar coja: el enlace de vuelta es lo único que
         // esta página existe para ofrecer.
-        Setting::set('home_hero_mascota_url', '');
+        Setting::set('error404_mascota_url', '');
 
         $html = $this->get('/esta-ruta-no-existe')->assertNotFound()->getContent();
 
-        $this->assertStringNotContainsString('mascota-404', $html);
+        $this->assertStringNotContainsString('mascota-cae', $html);
         $this->assertStringContainsString('Volver al inicio', $html);
     }
 
@@ -53,11 +53,11 @@ class PaginaNoEncontradaTest extends TestCase
         // No aporta nada a quien no la ve: el mensaje entero ya está en el
         // texto de al lado. Anunciarla sería ruido, no accesibilidad.
         config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
-        Setting::set('home_hero_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
+        Setting::set('error404_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
 
         $html = $this->get('/esta-ruta-no-existe')->assertNotFound()->getContent();
 
-        $bloque = Str::before(Str::after($html, 'mascota-404'), '</div>');
+        $bloque = Str::before(Str::after($html, 'mascota-cae'), '</div>');
 
         $this->assertStringContainsString('aria-hidden="true"', Str::before($html, 'mascota.webp'));
         $this->assertStringContainsString('alt=""', $bloque);

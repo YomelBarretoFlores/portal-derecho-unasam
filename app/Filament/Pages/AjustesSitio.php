@@ -67,6 +67,7 @@ class AjustesSitio extends Page
             'home_hero_stat1_label', 'home_hero_stat1_valor', 'home_hero_stat1_sufijo',
             'home_hero_stat2_label', 'home_hero_stat2_valor', 'home_hero_stat2_sufijo',
             'home_hero_foto_url', 'home_hero_mascota_url', 'home_hero_mascota_alt',
+            'error404_mascota_url',
             'home_about_eyebrow', 'home_about_titulo', 'home_about_cuerpo', 'home_about_cita',
             'home_accesos_eyebrow', 'home_accesos_titulo',
             'home_stats_eyebrow', 'home_stats_titulo', 'home_stats_narrativa',
@@ -167,6 +168,11 @@ class AjustesSitio extends Page
                             ->maxLength(120)
                             ->helperText('Para quien navega con lector de pantalla. Si lo deja vacío, '
                                 .'la imagen se trata como decorativa y el lector la omite.')
+                            ->columnSpanFull(),
+                        UrlDeRespaldo::imagen('error404_mascota_url', 'Mascota de la página de error')
+                            ->helperText('Acompaña la página que ve quien llega por un enlace roto. '
+                                .'Va aparte de la del hero porque ahí la mascota cae desde arriba, y la '
+                                .'versión volando encaja mejor que la de pie. Déjelo vacío para no mostrarla.')
                             ->columnSpanFull(),
                     ]),
 

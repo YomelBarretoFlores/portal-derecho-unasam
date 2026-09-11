@@ -383,28 +383,37 @@
     to { transform: scaleY(1); }
 }
 
-/* ---- Mascota del 404: entra una vez y luego respira. ----
-   Es el único sitio del portal donde una ilustración puede llevar la voz
-   cantante: no compite con contenido oficial —no hay ninguno— y quien llega
-   ya venía frustrado por un enlace roto. En el resto del sitio la mascota
-   acompaña desde una esquina y se queda quieta: PRODUCT.md pide confianza y
-   respeto, no entusiasmo, y una ilustración en movimiento junto a la plana
-   docente o a la revista diría lo contrario.
-   El flotar es de 10 px en 6 s: se percibe como que está viva, no como que
-   pide atención. */
-.mascota-404 {
-    animation: mascota-entra 0.7s var(--ease-smooth) both;
+/* ---- Mascota de la facultad: cae al cargar y luego flota. ----
+   Dos animaciones en dos elementos a propósito. Si la caída y el flotar
+   compartieran elemento, la segunda pisaría la «transform» de la primera y la
+   mascota daría un salto seco al terminar de aterrizar. El envoltorio cae; la
+   imagen de dentro flota, con el retardo justo para arrancar donde la caída
+   acaba.
+
+   La caída no rebasa la línea de suelo: baja, rebota dos veces cada vez menos
+   y se queda. Un rebote por debajo del borde la haría desaparecer contra el
+   recorte de la sección, como si se hundiera.
+
+   El flotar es de 10 px en 6 s: se lee como que está viva, no como que reclama
+   atención. Fuera de la portada y del 404 la mascota se queda quieta —
+   PRODUCT.md pide confianza y respeto, no entusiasmo. */
+.mascota-cae {
+    animation: mascota-cae 1.05s cubic-bezier(0.33, 0, 0.2, 1) both;
 }
-.mascota-404 img {
-    animation: mascota-flota 6s ease-in-out 0.7s infinite;
+.mascota-cae img {
+    animation: mascota-flota 6s ease-in-out 1.05s infinite;
 }
-@keyframes mascota-entra {
-    from { opacity: 0; transform: translateY(18px) scale(0.96); }
-    to { opacity: 1; transform: none; }
+@keyframes mascota-cae {
+    0%   { opacity: 0; transform: translateY(-130%); }
+    55%  { opacity: 1; transform: translateY(0); }
+    72%  { transform: translateY(-9%); }
+    86%  { transform: translateY(0); }
+    94%  { transform: translateY(-2.5%); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes mascota-flota {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50%      { transform: translateY(-10px); }
 }
 
 /* ---- View Transitions (Livewire wire:navigate) ---- */
@@ -440,8 +449,8 @@
     .marquee-track {
         animation: none !important;
     }
-    .mascota-404,
-    .mascota-404 img {
+    .mascota-cae,
+    .mascota-cae img {
         animation: none !important;
         transform: none !important;
     }

@@ -4,16 +4,16 @@
 @section('robots', 'noindex, nofollow')
 
 @php
-    // La mascota se toma del mismo ajuste que alimenta la portada: la facultad
-    // la sube una sola vez y aparece en los dos sitios. Si el campo está vacío
-    // —o la facultad decide retirarla— esta página vuelve sola a ser solo
-    // texto, que es como estaba y como debe seguir funcionando.
+    // Clave propia, no la del hero: aquí la mascota cae desde arriba y la
+    // versión volando encaja; la de pie, cayendo del cielo, no. Si el campo
+    // está vacío —o la facultad decide retirarla— esta página vuelve sola a
+    // ser solo texto, que es como estaba y como debe seguir funcionando.
     // El try/catch no es adorno: esta plantilla también se dibuja cuando algo
     // va mal. Si la base de datos no responde, una consulta aquí convertiría
     // un 404 honesto en un 500, y el visitante dejaría de ver siquiera el
     // enlace para volver al inicio.
     try {
-        $mascota = (string) \App\Models\Setting::get('home_hero_mascota_url', '');
+        $mascota = (string) \App\Models\Setting::get('error404_mascota_url', '');
     } catch (\Throwable) {
         $mascota = '';
     }
@@ -38,7 +38,7 @@
         @if (filled($mascota))
             {{-- Decorativa: el mensaje ya está completo en el texto de al lado, así
                  que anunciarla a un lector de pantalla solo estorbaría. --}}
-            <div class="mascota-404 w-48 shrink-0 sm:w-56 lg:w-72" aria-hidden="true">
+            <div class="mascota-cae w-48 shrink-0 sm:w-56 lg:w-72" aria-hidden="true">
                 <img src="{{ $mascota }}" alt="" width="288" height="288" class="w-full" decoding="async">
             </div>
         @endif
