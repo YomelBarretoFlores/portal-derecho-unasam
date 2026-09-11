@@ -34,6 +34,10 @@ class ArticulosTable
                     ->label('Fecha')
                     ->date('d/m/Y')
                     ->sortable(),
+                TextColumn::make('orden')
+                    ->label('Orden')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('descargas')
                     ->label('Descargas')
                     ->numeric()

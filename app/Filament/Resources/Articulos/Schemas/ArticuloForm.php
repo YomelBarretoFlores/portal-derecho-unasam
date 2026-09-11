@@ -64,6 +64,12 @@ class ArticuloForm
                     ->label('Descargas')
                     ->numeric()
                     ->default(0),
+                TextInput::make('orden')
+                    ->label('Orden')
+                    ->numeric()
+                    ->default(0)
+                    ->minValue(0)
+                    ->helperText('Ordena el artículo dentro de su número y decide cuáles se destacan en la portada (menor primero).'),
                 Textarea::make('resumen')
                     ->label('Resumen')
                     ->rows(5)
