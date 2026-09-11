@@ -102,6 +102,16 @@ class InstalacionLimpiaTest extends TestCase
         $this->assertSame('draft', $revista->estado_editorial);
     }
 
+    public function test_clearing_query_plans_is_harmless_outside_postgresql(): void
+    {
+        // El arranque lo ejecuta siempre, y en desarrollo o en la suite la base
+        // es SQLite. Tiene que salir sin hacer nada y sin fallar, o rompería el
+        // despliegue por un problema que ahí no existe.
+        $this->artisan('db:limpiar-planes')
+            ->expectsOutputToContain('No es PostgreSQL')
+            ->assertSuccessful();
+    }
+
     public function test_the_admin_account_is_created_from_environment_variables(): void
     {
         config()->set('admin.bootstrap_name', 'Administradora del Portal');

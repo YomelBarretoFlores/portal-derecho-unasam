@@ -6,7 +6,7 @@
 
 El servicio usa el Dockerfile, Node 22 para compilar los assets y FrankenPHP/PHP 8.4 para ejecutar Laravel.
 
-En cada arranque, `docker/entrypoint.sh` cachea configuración, rutas y vistas, aplica las migraciones pendientes, **siembra el contenido institucional**, **crea la cuenta de administrador** si están definidas sus variables, y levanta el servidor.
+En cada arranque, `docker/entrypoint.sh` cachea configuración, rutas y vistas, aplica las migraciones pendientes, descarta los planes de consulta que el pooler guardaba de antes, **siembra el contenido institucional**, **crea la cuenta de administrador** si están definidas sus variables, y levanta el servidor.
 
 ## Lo que hay que preparar ANTES de desplegar
 
@@ -85,6 +85,7 @@ La siembra se repite en cada despliegue y es inofensiva: cada bloque solo actúa
 | No se puede entrar a `/admin` | No se creó la cuenta | Buscar `⚠ NO se creó el usuario administrador` |
 | Las imágenes no se ven | El dominio no está autorizado | Revisar `CSP_IMG_HOSTS` y `AWS_URL`; en el navegador, la consola señala la cabecera CSP |
 | Los campos de archivo salen en gris | Es lo esperado | `MEDIA_UPLOADS_ENABLED=false` mientras no haya almacenamiento persistente |
+| 500 en todo el sitio justo tras una migración, con `cached plan must not change result type` | El pooler conserva planes de consulta de antes de migrar | El arranque ya lo limpia. Si persiste: `php artisan db:limpiar-planes --conexiones=100` |
 
 Para comprobar el almacenamiento desde el servidor:
 

@@ -19,6 +19,16 @@ php artisan view:cache
 # Ejecutar migraciones pendientes contra la base de datos (PostgreSQL)
 php artisan migrate --force
 
+# Descartar los planes de consulta que el pooler guarda de antes de migrar.
+#
+# Sin esto, una migración que añada una columna deja el sitio entero en 500 con
+# «cached plan must not change result type», y redesplegar no lo arregla: los
+# planes viven en el servidor, no en el contenedor. Ver el comando para el
+# detalle. Si falla, no se impide el arranque: el aviso queda en el registro y
+# se puede repetir a mano con más conexiones.
+echo "→ Planes de consulta…"
+php artisan db:limpiar-planes || echo "⚠  Quedan planes obsoletos. Repita: php artisan db:limpiar-planes --conexiones=100"
+
 # Contenido institucional inicial.
 #
 # Sin esto, un despliegue nuevo levanta con las tablas creadas y vacías: el
