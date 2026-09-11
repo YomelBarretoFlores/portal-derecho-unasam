@@ -12,6 +12,7 @@ use App\Models\User;
 use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\ContenidoInstitucionalSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -57,6 +58,62 @@ class InstalacionLimpiaTest extends TestCase
         $this->get(route('historia'))->assertOk();
         $this->get(route('objetivos'))->assertOk();
         $this->get(route('competencias'))->assertOk();
+    }
+
+    /**
+     * Responder 200 no es lo mismo que tener contenido.
+     *
+     * En el despliegue anterior el sitio se publicó y varias secciones salieron
+     * en blanco. Una comprobación de códigos de estado lo habría dado por bueno:
+     * una página vacía responde 200 tan contenta. Aquí se mira lo que de verdad
+     * llega al visitante.
+     */
+    public function test_after_seeding_the_fixed_pages_actually_show_their_content(): void
+    {
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        $paginas = [
+            'presentacion' => 'presentacion_titulo',
+            'mision' => 'mision',
+            'resumen' => 'resumen_titulo',
+            'historia' => 'historia_trayectoria_titulo',
+            'perfil-egreso' => 'perfil_egreso_2023',
+            'perfil-ingreso' => 'perfil_ingreso_especifico',
+        ];
+
+        foreach ($paginas as $ruta => $clave) {
+            $esperado = (string) Setting::get($clave);
+
+            $this->assertNotSame('', $esperado, "La clave «{$clave}» quedó vacía tras sembrar.");
+
+            // Se compara contra las primeras palabras: el texto puede llevar
+            // saltos de línea o acentos que la vista escapa de otra manera.
+            $trozo = Str::of($esperado)->stripTags()->squish()->limit(40, '')->toString();
+
+            $this->get(route($ruta))
+                ->assertOk()
+                ->assertSee($trozo, escape: false);
+        }
+    }
+
+    public function test_after_seeding_the_list_pages_are_not_empty(): void
+    {
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        // Estas páginas se alimentan de tablas, no de ajustes: si el bloque
+        // correspondiente del seeder no corriera, saldrían con su mensaje de
+        // «sin contenido» y el sitio parecería a medio hacer.
+        foreach (['objetivos', 'competencias', 'campo-laboral', 'organigrama', 'documentos'] as $ruta) {
+            $respuesta = $this->get(route($ruta))->assertOk();
+
+            $this->assertDoesNotMatchRegularExpression(
+                '/a[úu]n no hay|sin contenido|en revisi[óo]n/i',
+                $respuesta->getContent(),
+                "La página «{$ruta}» sale vacía tras sembrar.",
+            );
+        }
+
+        $this->get(route('estadisticas', ['tipo' => 'matriculados']))->assertOk();
     }
 
     public function test_running_the_seeder_twice_does_not_duplicate_content(): void
