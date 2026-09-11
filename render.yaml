@@ -36,7 +36,27 @@ services:
       - key: LOG_LEVEL
         value: error
 
-      # --- Base de datos (Neon) ---
+      # --- Cuenta de administrador inicial ---
+      #
+      # SIN ESTAS TRES VARIABLES NO SE PUEDE ENTRAR A /admin. El despliegue no
+      # falla —el sitio público arranca igual— pero no habrá ninguna cuenta con
+      # la que iniciar sesión, y el aviso queda en el registro de despliegue.
+      #
+      # La contraseña exige 12 caracteres como mínimo, con mayúscula,
+      # minúscula, número y símbolo. Cámbiela desde el panel tras el primer
+      # acceso: aquí queda guardada como variable de entorno.
+      - key: ADMIN_NAME
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      # --- Base de datos (PostgreSQL) ---
+      # Obligatoria. Sin ella la aplicación no arranca. Vale cualquier
+      # PostgreSQL 14 o superior: Neon, Supabase, Render PostgreSQL o un
+      # servidor de la universidad. El portal NO crea la base de datos: hay
+      # que crearla antes y pegar aquí sus datos de conexión.
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_PORT

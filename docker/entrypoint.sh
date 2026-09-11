@@ -16,8 +16,33 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Ejecutar migraciones pendientes contra la base de datos (Neon)
+# Ejecutar migraciones pendientes contra la base de datos (PostgreSQL)
 php artisan migrate --force
+
+# Contenido institucional inicial.
+#
+# Sin esto, un despliegue nuevo levanta con las tablas creadas y vacías: el
+# sitio responde 200 y no muestra absolutamente nada. Ya pasó una vez, y desde
+# fuera parecía un problema de base de datos.
+#
+# Es seguro repetirlo en cada despliegue: cada bloque solo actúa si su tabla
+# está vacía, y los ajustes solo crean las claves que falten. No pisa nada de
+# lo que se haya editado desde el panel.
+echo "→ Contenido institucional…"
+php artisan db:seed --force --class=Database\\Seeders\\ContenidoInstitucionalSeeder
+
+# Usuario administrador inicial.
+#
+# Va aparte y tolera el fallo a propósito. Necesita ADMIN_NAME, ADMIN_EMAIL y
+# ADMIN_PASSWORD; si faltan, es mejor un portal en pie sin cuenta creada que un
+# contenedor que no arranca. El aviso queda en el registro de despliegue.
+echo "→ Usuario administrador…"
+if ! php artisan db:seed --force --class=Database\\Seeders\\AdminUserSeeder; then
+    echo "⚠  NO se creó el usuario administrador."
+    echo "⚠  Defina ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD (mínimo 12 caracteres,"
+    echo "⚠  con mayúscula, minúscula, número y símbolo) y vuelva a desplegar."
+    echo "⚠  El sitio público funciona; /admin no tendrá con qué entrar."
+fi
 
 # Enlace público de almacenamiento para los medios subidos (Spatie)
 php artisan storage:link || true

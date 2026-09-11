@@ -1,39 +1,92 @@
 # Despliegue en Render
 
-El servicio usa el Dockerfile, Node 22 para compilar assets y FrankenPHP/PHP 8.4 para ejecutar Laravel. docker/entrypoint.sh cachea configuración, rutas y vistas, aplica migraciones y arranca el servidor.
+El servicio usa el Dockerfile, Node 22 para compilar los assets y FrankenPHP/PHP 8.4 para ejecutar Laravel.
+
+En cada arranque, `docker/entrypoint.sh` cachea configuración, rutas y vistas, aplica las migraciones pendientes, **siembra el contenido institucional**, **crea la cuenta de administrador** si están definidas sus variables, y levanta el servidor.
+
+## Lo que hay que preparar ANTES de desplegar
+
+El portal no crea su propia base de datos ni se inventa una contraseña de administrador. Sin estos dos pasos previos el despliegue termina sin errores y el sitio sale en blanco.
+
+### 1. Una base de datos PostgreSQL
+
+Versión 14 o superior. Sirve cualquiera: Neon, Supabase, Render PostgreSQL o un servidor de la universidad. Hay que crearla vacía y anotar cinco datos: servidor, puerto, nombre, usuario y contraseña.
+
+No hace falta crear ninguna tabla ni importar ningún volcado: las tablas las crean las migraciones en el primer arranque.
+
+Si el proveedor exige TLS —Neon lo exige—, `DB_SSLMODE=require`.
+
+### 2. La contraseña del primer administrador
+
+La elige quien despliega y se pasa en `ADMIN_PASSWORD`. Debe tener **12 caracteres como mínimo, con mayúscula, minúscula, número y símbolo**; si no los cumple, la cuenta no se crea. Conviene cambiarla desde el panel después del primer acceso, porque queda guardada como variable de entorno.
 
 ## Variables obligatorias
 
 | Variable | Descripción |
 |---|---|
-| APP_KEY | Resultado de php artisan key:generate --show |
-| APP_URL | URL HTTPS pública |
-| DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD | PostgreSQL/Neon |
-| DB_PERSISTENT | false en producción |
-| TRUSTED_PROXIES | IP o CIDR real del proxy, separado por comas |
-| SESSION_SECURE_COOKIE | true |
-| MEDIA_UPLOADS_ENABLED | false en Render |
-| SUBMISSIONS_ENABLED | false hasta aprobar privacidad y almacenamiento |
-| SUBMISSIONS_DISK | Disco privado persistente; `local` solo en desarrollo |
-| SUBMISSIONS_PRIVACY_APPROVED | false mientras la declaración esté en preparación |
-| SUBMISSIONS_STORAGE_PERSISTENT | false en Render sin volumen u object storage |
+| APP_KEY | Salida de `php artisan key:generate --show` |
+| APP_URL | URL HTTPS pública del sitio |
+| DB_CONNECTION | `pgsql` |
+| DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD | Datos de la base PostgreSQL creada arriba |
+| DB_SSLMODE | `require` si el proveedor exige TLS |
+| DB_PERSISTENT | `false` en producción |
+| ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD | Cuenta de administrador inicial |
+| TRUSTED_PROXIES | IP o CIDR real del proxy, separadas por comas. **Nunca `*`**: Laravel lo rechaza en producción |
+| SESSION_SECURE_COOKIE | `true` |
 
-Para activar la recepción, configura un disco privado persistente —por ejemplo S3 o un servicio compatible—, verifica una carga y descarga autenticada, y recién entonces establece los tres interruptores en `true`. `SUBMISSIONS_DISK=public` es rechazado por la aplicación.
+### Variables de archivos
 
-No uses TRUSTED_PROXIES=*. Laravel rechazará esa configuración en producción.
+| Variable | Valor | Descripción |
+|---|---|---|
+| MEDIA_DISK | `public` o `medios` | Disco del servidor, o proveedor compatible con S3 |
+| MEDIA_UPLOADS_ENABLED | `false` | Ponerlo en `true` solo con almacenamiento que sobreviva a un despliegue |
+| CSP_IMG_HOSTS | vacío | Dominios externos autorizados a servir imágenes, separados por comas |
+| SUBMISSIONS_DISK | `local` o `manuscritos` | Disco **privado**. `public` lo rechaza la aplicación |
+| SUBMISSIONS_ENABLED | `false` | Recepción pública de manuscritos |
+| SUBMISSIONS_PRIVACY_APPROVED | `false` | Hasta que la declaración de privacidad esté aprobada |
+| SUBMISSIONS_STORAGE_PERSISTENT | `false` | Declaración manual de que el disco persiste |
+
+Los tres interruptores de manuscritos se ponen en `true` a la vez, y solo después de configurar un disco privado persistente y comprobar una carga y una descarga autenticadas. Detalle en «Almacenamiento», más abajo.
 
 ## Primera publicación
 
-1. Crear un respaldo de la base y de storage/app/public.
-2. Configurar las variables del Blueprint render.yaml.
-3. Desplegar y comprobar /up.
-4. Revisar que las migraciones hayan finalizado.
-5. Confirmar en los logs que `content:cache:warm` terminó correctamente.
-6. Crear el superadministrador desde un entorno seguro con AdminUserSeeder y variables temporales.
-7. Entrar a /admin y verificar el acceso con la cuenta administrativa creada.
-8. Confirmar que los campos de archivos indican que las cargas están deshabilitadas.
-9. Confirmar que `/revista/envios` no muestra el formulario en Render.
-10. Al habilitarlo en una infraestructura persistente, enviar un manuscrito de prueba y comprobar la campana de notificaciones y el contador de **Envíos de manuscritos** en Filament.
+1. Crear la base de datos PostgreSQL vacía.
+2. Rellenar las variables del Blueprint `render.yaml`, incluidas las tres `ADMIN_*`.
+3. Desplegar y comprobar que `/up` responde.
+4. **Leer el registro del despliegue.** Tienen que aparecer estas tres líneas:
+   - `→ Contenido institucional…`
+   - `→ Usuario administrador…`
+   - `Usuario superadministrador creado: …` (o `El usuario admin ya existe`)
+
+   Si en su lugar sale `⚠ NO se creó el usuario administrador`, faltan las variables `ADMIN_*` o la contraseña no cumple los requisitos. El sitio público funciona igual; `/admin` no tendrá con qué entrar.
+5. Abrir la portada y comprobar que muestra contenido: cifras, accesos, historia. **Si sale vacía, la siembra no se ejecutó**, y el registro del paso 4 dice por qué.
+6. Entrar a `/admin` con la cuenta creada y cambiar la contraseña.
+7. Comprobar que los campos de archivos avisan de que las cargas están deshabilitadas.
+8. Comprobar que `/revista/envios` no muestra el formulario mientras los tres interruptores estén en `false`.
+
+### Qué contenido aparece solo, y cuál no
+
+La siembra crea la **base institucional**: textos del sitio, historia, misión y visión, objetivos, competencias, áreas laborales, perfil de ingreso, documentos normativos, organigrama, estadísticas, accesos y la ficha de la revista.
+
+**No** crea contenido editorial: comunicados, entradas de blog, perfiles docentes, números ni artículos. Eso se carga desde `/admin`, que es su única fuente de verdad. Véase `docs/CARGA_INICIAL_CMS.md`.
+
+La siembra se repite en cada despliegue y es inofensiva: cada bloque solo actúa si su tabla está vacía, y los ajustes solo crean las claves que falten. **Nunca pisa lo editado desde el panel.**
+
+## Si el sitio sale en blanco
+
+| Síntoma | Causa probable | Comprobación |
+|---|---|---|
+| El sitio no responde, error 500 | La base de datos no conecta | Revisar `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `DB_SSLMODE` en el registro |
+| Responde, pero sin contenido | No se ejecutó la siembra | Buscar `→ Contenido institucional…` en el registro del despliegue |
+| No se puede entrar a `/admin` | No se creó la cuenta | Buscar `⚠ NO se creó el usuario administrador` |
+| Las imágenes no se ven | El dominio no está autorizado | Revisar `CSP_IMG_HOSTS` y `AWS_URL`; en el navegador, la consola señala la cabecera CSP |
+| Los campos de archivo salen en gris | Es lo esperado | `MEDIA_UPLOADS_ENABLED=false` mientras no haya almacenamiento persistente |
+
+Para comprobar el almacenamiento desde el servidor:
+
+```bash
+php artisan almacenamiento:verificar
+```
 
 ## Archivos y copias de seguridad
 
