@@ -29,6 +29,11 @@ class VerificarAlmacenamiento extends Command
         $this->info('Verificación de almacenamiento del portal');
         $this->newLine();
 
+        $this->line('<options=bold>Modo configurado</>');
+        $this->line('  Medios      : '.$this->describirModo($mediaDisk));
+        $this->line('  Manuscritos : '.$this->describirModo($submissionsDisk));
+        $this->newLine();
+
         $ok = $this->verificarDisco(
             'Medios públicos',
             $mediaDisk,
@@ -181,6 +186,26 @@ class VerificarAlmacenamiento extends Command
             : "  <fg=yellow>●</> {$variableInterruptor}=false (deshabilitado en este entorno)");
 
         return $ok;
+    }
+
+    /**
+     * Traduce el nombre del disco a la infraestructura que representa.
+     *
+     * Quien administra el servidor no tiene por qué saber qué significa
+     * «medios» o «local»; lo que necesita saber es si los archivos acabarán en
+     * el disco de la máquina o en un bucket, porque son dos cosas que se
+     * respaldan y se vigilan de maneras distintas.
+     */
+    private function describirModo(string $disco): string
+    {
+        $driver = (string) config("filesystems.disks.{$disco}.driver");
+
+        return match ($driver) {
+            'local' => "«{$disco}» — disco del propio servidor (necesita volumen persistente)",
+            's3' => "«{$disco}» — proveedor compatible con S3 (bucket externo)",
+            '' => "«{$disco}» — NO DEFINIDO en config/filesystems.php",
+            default => "«{$disco}» — driver {$driver}",
+        };
     }
 
     private function esRutaWeb(string $root): bool
