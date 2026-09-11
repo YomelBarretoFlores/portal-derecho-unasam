@@ -41,7 +41,23 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            /*
+             * Ruta RELATIVA a propósito, no absoluta a partir de APP_URL.
+             *
+             * Los archivos de este disco se sirven desde el mismo dominio que
+             * la página, así que «/storage/…» siempre es correcto. Construirla
+             * con APP_URL ataba cada imagen subida a que esa variable estuviera
+             * bien puesta: con APP_URL=http://localhost —el valor que trae
+             * Laravel de fábrica— los retratos apuntaban al puerto 80 y salían
+             * rotos, tanto en desarrollo como en un servidor recién instalado.
+             * El archivo estaba bien subido; solo la dirección era falsa.
+             *
+             * Las direcciones absolutas que sí hacen falta —og:image, para que
+             * las redes sociales resuelvan la miniatura— se absolutizan en la
+             * plantilla, que es donde hay una petición de la que deducir el
+             * dominio de verdad.
+             */
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

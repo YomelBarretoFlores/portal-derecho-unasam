@@ -9,6 +9,7 @@ use App\Models\Docente;
 use App\Models\Organigrama;
 use App\Models\Revista;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -49,6 +50,32 @@ class MediosAdministrablesTest extends TestCase
             'estado_editorial' => EditorialStatus::Published->value,
             ...$extra,
         ]);
+    }
+
+    public function test_uploaded_files_do_not_depend_on_app_url_being_right(): void
+    {
+        // Con la dirección construida a partir de APP_URL, el valor que Laravel
+        // trae de fábrica —http://localhost— hacía que cada retrato subido
+        // apuntara al puerto 80. El archivo estaba bien; la dirección era
+        // falsa, y salía roto en desarrollo y en un servidor recién instalado.
+        config()->set('app.url', 'http://localhost');
+
+        $this->assertSame('/storage', config('filesystems.disks.public.url'));
+        $this->assertStringStartsWith('/storage/', Storage::disk('public')->url('7/retrato.webp'));
+    }
+
+    public function test_the_open_graph_image_is_still_absolute(): void
+    {
+        // Una og:image relativa la descartan las redes sociales, así que esa sí
+        // tiene que resolverse contra el dominio de la petición.
+        $this->revista();
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        preg_match('/property="og:image" content="([^"]+)"/', $html, $m);
+
+        $this->assertNotEmpty($m, 'No se encontró la etiqueta og:image.');
+        $this->assertStringStartsWith('http', $m[1]);
     }
 
     public function test_the_journal_logo_comes_from_the_admin_panel(): void

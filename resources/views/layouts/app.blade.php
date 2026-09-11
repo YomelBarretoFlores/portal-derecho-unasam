@@ -25,7 +25,10 @@
     <meta property="og:title" content="@yield('title', $ajustes['seo_title'] ?? 'Derecho y Ciencias Políticas — UNASAM')">
     <meta property="og:description" content="@yield('description', $ajustes['seo_description'] ?? 'Programa de Estudios de Derecho y Ciencias Políticas de la Universidad Nacional Santiago Antúnez de Mayolo — Huaraz, Áncash, Perú.')">
     <meta property="og:url" content="@yield('canonical', url()->current())">
-    <meta property="og:image" content="@yield('og_image', asset('img/escudo-unasam.png'))">
+    {{-- url()->to() convierte una ruta relativa en absoluta usando el dominio
+         de la petición. Las redes sociales descartan una og:image relativa, y
+         las imágenes del panel se sirven con ruta relativa a propósito. --}}
+    <meta property="og:image" content="{{ url()->to($__env->yieldContent('og_image', asset('img/escudo-unasam.png'))) }}">
     <link rel="icon" href="{{ asset('img/escudo-unasam.png') }}">
 
     {{-- Tipografía: Outfit (cuerpo/UI) + EB Garamond (títulos) — Bunny Fonts, sin rastreo --}}
