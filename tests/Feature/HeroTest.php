@@ -81,7 +81,7 @@ class HeroTest extends TestCase
         // sin alt, quien usa lector de pantalla no recibe nada de la portada.
         $html = $this->get(route('home'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('campus-fdccpp', $html);
+        $this->assertStringContainsString('campus-derecho', $html);
         $this->assertMatchesRegularExpression('/alt="Patio de la Facultad[^"]+Cordillera Blanca[^"]*"/u', $html);
     }
 }

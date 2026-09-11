@@ -37,8 +37,10 @@
     @if ($variant === 'institutional')
         <div class="absolute inset-y-0 right-0 hidden w-[38%] lg:block">
             <picture>
-                <source srcset="{{ asset('img/campus-fdccpp.webp') }}" type="image/webp">
-                <img src="{{ asset('img/campus-fdccpp.jpg') }}" alt="" class="h-full w-full object-cover opacity-20" aria-hidden="true">
+                {{-- Aquí va al 20 % de opacidad como textura de fondo, así que
+                     basta con la versión pequeña en cualquier pantalla. --}}
+                <source srcset="{{ asset('img/campus-derecho-800.webp') }}" type="image/webp">
+                <img src="{{ asset('img/campus-derecho.jpg') }}" alt="" loading="lazy" decoding="async" class="h-full w-full object-cover opacity-20" aria-hidden="true">
             </picture>
             <div class="absolute inset-0 bg-gradient-to-r from-paper via-paper/80 to-paper/20"></div>
         </div>

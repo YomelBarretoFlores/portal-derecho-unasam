@@ -13,12 +13,18 @@
 <section class="relative isolate overflow-hidden bg-navy-950">
 
     <div class="absolute inset-0 -z-10">
+        {{-- Dos anchos: el móvil no tiene por qué descargar una panorámica de
+             2400 px para pintarla en 400. El respaldo JPEG existe para
+             navegadores sin WebP, que a estas alturas son casi ninguno, así que
+             va comprimido más corto. --}}
         <picture>
-            <source srcset="{{ asset('img/campus-fdccpp.webp') }}" type="image/webp">
-            <img src="{{ asset('img/campus-fdccpp.jpg') }}"
-                 alt="Patio de la Facultad de Derecho y Ciencias Políticas de la UNASAM, con el escudo institucional en mosaico y la Cordillera Blanca al fondo"
+            <source type="image/webp"
+                    srcset="{{ asset('img/campus-derecho-800.webp') }} 1200w, {{ asset('img/campus-derecho.webp') }} 2400w"
+                    sizes="100vw">
+            <img src="{{ asset('img/campus-derecho.jpg') }}"
+                 alt="Patio de la Facultad de Derecho y Ciencias Políticas de la UNASAM: los tres niveles del claustro alrededor de la fuente, con la Cordillera Blanca al fondo"
                  fetchpriority="high" decoding="async"
-                 class="h-full w-full object-cover" style="object-position: 50% 38%">
+                 class="h-full w-full object-cover" style="object-position: 50% 42%">
         </picture>
         {{-- Dos velos: uno parejo que garantiza el contraste del texto blanco
              sobre cualquier zona de la foto, y otro direccional que oscurece el
