@@ -7,6 +7,7 @@ use App\Filament\Resources\RevistaDocumentos\Pages\CreateRevistaDocumento;
 use App\Filament\Resources\RevistaDocumentos\Pages\EditRevistaDocumento;
 use App\Filament\Resources\RevistaDocumentos\Pages\ListRevistaDocumentos;
 use App\Filament\Tables\EditorialStatusColumn;
+use App\Models\Revista;
 use App\Models\RevistaDocumento;
 use App\Rules\SafeUrl;
 use BackedEnum;
@@ -30,6 +31,8 @@ class RevistaDocumentoResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $modelLabel = 'documento de revista';
 
     protected static ?string $pluralModelLabel = 'Documentos y formatos';
@@ -37,7 +40,7 @@ class RevistaDocumentoResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('revista_id')->relationship('revista', 'nombre')->required()->preload(),
+            Select::make('revista_id')->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(),
             Select::make('categoria')->options(RevistaDocumento::CATEGORIAS)->required(),
             TextInput::make('titulo')->required()->maxLength(255)->columnSpanFull(),
             Textarea::make('descripcion')->columnSpanFull(),

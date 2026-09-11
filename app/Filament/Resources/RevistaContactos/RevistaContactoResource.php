@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RevistaContactos;
 use App\Filament\Resources\RevistaContactos\Pages\CreateRevistaContacto;
 use App\Filament\Resources\RevistaContactos\Pages\EditRevistaContacto;
 use App\Filament\Resources\RevistaContactos\Pages\ListRevistaContactos;
+use App\Models\Revista;
 use App\Models\RevistaContacto;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -25,13 +26,15 @@ class RevistaContactoResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 8;
+
     protected static ?string $modelLabel = 'contacto';
 
     protected static ?string $pluralModelLabel = 'Contactos';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([Select::make('revista_id')->relationship('revista', 'nombre')->required()->preload(), Select::make('tipo')->options(RevistaContacto::TIPOS)->required(), TextInput::make('nombre')->required(), TextInput::make('cargo'), TextInput::make('email')->email(), TextInput::make('telefono'), TextInput::make('orden')->numeric()->default(0), Toggle::make('visible')->default(true)]);
+        return $schema->components([Select::make('revista_id')->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(), Select::make('tipo')->options(RevistaContacto::TIPOS)->required(), TextInput::make('nombre')->required(), TextInput::make('cargo'), TextInput::make('email')->email(), TextInput::make('telefono'), TextInput::make('orden')->numeric()->default(0), Toggle::make('visible')->default(true)]);
     }
 
     public static function table(Table $table): Table

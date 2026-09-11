@@ -13,7 +13,10 @@ class RevistaDocumento extends Model implements HasMedia
 {
     use HasEditorialWorkflow, InteractsWithMedia;
 
-    public const CATEGORIAS = ['norma' => 'Normas', 'formato' => 'Formatos y plantillas', 'politica' => 'Políticas editoriales', 'informativo' => 'Documentos informativos'];
+    // Solo estas dos categorías tienen salida pública: /revista/normas-para-autores
+    // y /revista/formatos-y-plantillas. Las políticas editoriales se editan como
+    // texto enriquecido en la ficha de la revista (contenido_politicas).
+    public const CATEGORIAS = ['norma' => 'Normas', 'formato' => 'Formatos y plantillas'];
 
     protected $table = 'revista_documentos';
 

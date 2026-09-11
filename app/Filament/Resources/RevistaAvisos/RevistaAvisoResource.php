@@ -7,6 +7,7 @@ use App\Filament\Resources\RevistaAvisos\Pages\CreateRevistaAviso;
 use App\Filament\Resources\RevistaAvisos\Pages\EditRevistaAviso;
 use App\Filament\Resources\RevistaAvisos\Pages\ListRevistaAvisos;
 use App\Filament\Tables\EditorialStatusColumn;
+use App\Models\Revista;
 use App\Models\RevistaAviso;
 use App\Rules\SafeUrl;
 use BackedEnum;
@@ -30,6 +31,8 @@ class RevistaAvisoResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 7;
+
     protected static ?string $modelLabel = 'aviso';
 
     protected static ?string $pluralModelLabel = 'Avisos de la revista';
@@ -37,12 +40,13 @@ class RevistaAvisoResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('revista_id')->relationship('revista', 'nombre')->required()->preload(),
+            Select::make('revista_id')->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(),
             TextInput::make('titulo')->required()->columnSpanFull(), TextInput::make('slug')->required()->unique(ignoreRecord: true)->columnSpanFull(),
             Textarea::make('resumen')->columnSpanFull(), RichEditor::make('contenido')->columnSpanFull(),
             DateTimePicker::make('fecha_publicacion'), DateTimePicker::make('fecha_caducidad'),
             TextInput::make('enlace')->rule(new SafeUrl)->columnSpanFull(),
             SpatieMediaLibraryFileUpload::make('adjunto')->collection('adjunto')->maxSize(config('media.max_pdf_kb'))->disabled(fn (): bool => ! config('media.uploads_enabled')),
+            TextInput::make('adjunto_url_respaldo')->label('URL pública de respaldo del adjunto')->rule(new SafeUrl)->columnSpanFull(),
             EditorialStatusSelect::make(),
         ]);
     }

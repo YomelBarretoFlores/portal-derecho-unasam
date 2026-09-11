@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RevistaLineasInvestigacion;
 use App\Filament\Resources\RevistaLineasInvestigacion\Pages\CreateRevistaLineaInvestigacion;
 use App\Filament\Resources\RevistaLineasInvestigacion\Pages\EditRevistaLineaInvestigacion;
 use App\Filament\Resources\RevistaLineasInvestigacion\Pages\ListRevistaLineasInvestigacion;
+use App\Models\Revista;
 use App\Models\RevistaLineaInvestigacion;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -28,13 +29,15 @@ class RevistaLineaInvestigacionResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $modelLabel = 'línea de investigación';
 
     protected static ?string $pluralModelLabel = 'Líneas de investigación';
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([Select::make('revista_id')->relationship('revista', 'nombre')->required()->preload(), TextInput::make('nombre')->required(), Textarea::make('descripcion')->columnSpanFull(), TextInput::make('orden')->numeric()->default(0), Toggle::make('activa')->default(true)]);
+        return $schema->components([Select::make('revista_id')->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(), TextInput::make('nombre')->required(), Textarea::make('descripcion')->columnSpanFull(), TextInput::make('orden')->numeric()->default(0), Toggle::make('activa')->default(true)]);
     }
 
     public static function table(Table $table): Table

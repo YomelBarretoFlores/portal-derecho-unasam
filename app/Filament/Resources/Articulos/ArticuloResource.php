@@ -23,9 +23,11 @@ class ArticuloResource extends Resource
 
     protected static ?string $modelLabel = 'artículo';
 
-    protected static ?string $pluralModelLabel = 'Revista';
+    protected static ?string $pluralModelLabel = 'Artículos';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Contenido del sitio';
+    protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

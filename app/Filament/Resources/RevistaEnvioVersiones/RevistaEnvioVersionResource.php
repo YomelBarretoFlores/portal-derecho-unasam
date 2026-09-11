@@ -35,6 +35,16 @@ class RevistaEnvioVersionResource extends Resource
         return false;
     }
 
+    /**
+     * Las versiones se gestionan desde el envío que las originó
+     * (VersionesRelationManager); esta resource solo conserva su página de
+     * edición para los enlaces directos.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([

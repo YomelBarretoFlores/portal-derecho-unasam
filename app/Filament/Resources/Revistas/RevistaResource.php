@@ -31,6 +31,8 @@ class RevistaResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'revista';
 
     protected static ?string $pluralModelLabel = 'Revista';

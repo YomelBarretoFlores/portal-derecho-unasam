@@ -7,8 +7,11 @@ use App\Filament\Forms\EditorialStatusSelect;
 use App\Filament\Resources\RevistaNumeros\Pages\CreateRevistaNumero;
 use App\Filament\Resources\RevistaNumeros\Pages\EditRevistaNumero;
 use App\Filament\Resources\RevistaNumeros\Pages\ListRevistaNumeros;
+use App\Filament\Resources\RevistaNumeros\RelationManagers\ArticulosRelationManager;
 use App\Filament\Tables\EditorialStatusColumn;
+use App\Models\Revista;
 use App\Models\RevistaNumero;
+use App\Rules\SafeUrl;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -33,6 +36,8 @@ class RevistaNumeroResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'número';
 
     protected static ?string $pluralModelLabel = 'Números';
@@ -40,7 +45,7 @@ class RevistaNumeroResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Select::make('revista_id')->label('Revista')->relationship('revista', 'nombre')->required()->preload(),
+            Select::make('revista_id')->label('Revista')->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(),
             TextInput::make('volumen')->required()->maxLength(30),
             TextInput::make('numero')->label('Número')->required()->maxLength(30),
             TextInput::make('titulo')->required()->live(onBlur: true)
@@ -49,7 +54,9 @@ class RevistaNumeroResource extends Resource
                         $set('slug', Str::slug((string) $state));
                     }
                 })->columnSpanFull(),
-            TextInput::make('slug')->required()->unique(ignoreRecord: true)->columnSpanFull(),
+            TextInput::make('slug')->required()->unique(ignoreRecord: true)->columnSpanFull()
+                ->notIn(fn (): array => RevistaNumero::slugsReservados())
+                ->validationMessages(['not_in' => 'Ese slug ya lo usa una página fija de la revista; elige otro.']),
             TextInput::make('subtitulo')->label('Subtítulo')->columnSpanFull(),
             Textarea::make('descripcion')->label('Descripción')->columnSpanFull(),
             DatePicker::make('fecha_publicacion')->label('Fecha de publicación')
@@ -62,6 +69,11 @@ class RevistaNumeroResource extends Resource
             SpatieMediaLibraryFileUpload::make('numero_pdf')->label('PDF del número')->collection('numero_pdf')
                 ->acceptedFileTypes(['application/pdf'])->maxSize(config('media.max_pdf_kb'))
                 ->disabled(fn (): bool => ! config('media.uploads_enabled')),
+            TextInput::make('portada_url_respaldo')->label('URL pública de respaldo de la portada')
+                ->rule(new SafeUrl)->columnSpanFull()
+                ->helperText('Se usa cuando las cargas de archivos están deshabilitadas en el entorno.'),
+            TextInput::make('pdf_url_respaldo')->label('URL pública de respaldo del PDF del número')
+                ->rule(new SafeUrl)->columnSpanFull(),
             EditorialStatusSelect::make(),
         ]);
     }
@@ -83,6 +95,11 @@ class RevistaNumeroResource extends Resource
             PreviewActions::published(),
             EditAction::make(),
         ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [ArticulosRelationManager::class];
     }
 
     public static function getPages(): array

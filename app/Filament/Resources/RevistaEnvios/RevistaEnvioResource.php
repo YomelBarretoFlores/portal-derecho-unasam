@@ -4,6 +4,7 @@ namespace App\Filament\Resources\RevistaEnvios;
 
 use App\Filament\Resources\RevistaEnvios\Pages\EditRevistaEnvio;
 use App\Filament\Resources\RevistaEnvios\Pages\ListRevistaEnvios;
+use App\Filament\Resources\RevistaEnvios\RelationManagers\VersionesRelationManager;
 use App\Models\RevistaEnvio;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -25,6 +26,8 @@ class RevistaEnvioResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-inbox-arrow-down';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
+
+    protected static ?int $navigationSort = 9;
 
     protected static ?string $modelLabel = 'envío';
 
@@ -99,6 +102,11 @@ class RevistaEnvioResource extends Resource
                     ->url(fn (RevistaEnvio $record): string => 'mailto:'.$record->email_institucional.'?subject='.rawurlencode('Revista Derecho y Cultura · '.$record->codigo_seguimiento).'&body='.rawurlencode("Estimado/a {$record->nombres}:\n\nRespecto de su envío {$record->codigo_seguimiento}:\n\n")),
                 EditAction::make()->label('Gestionar'),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [VersionesRelationManager::class];
     }
 
     public static function getPages(): array

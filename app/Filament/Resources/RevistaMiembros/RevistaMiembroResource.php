@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RevistaMiembros;
 use App\Filament\Resources\RevistaMiembros\Pages\CreateRevistaMiembro;
 use App\Filament\Resources\RevistaMiembros\Pages\EditRevistaMiembro;
 use App\Filament\Resources\RevistaMiembros\Pages\ListRevistaMiembros;
+use App\Models\Revista;
 use App\Models\RevistaMiembro;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -27,6 +28,8 @@ class RevistaMiembroResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Revista Derecho y Cultura';
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $modelLabel = 'integrante';
 
     protected static ?string $pluralModelLabel = 'Equipo editorial';
@@ -38,7 +41,7 @@ class RevistaMiembroResource extends Resource
                 ->columns(2)
                 ->schema([
                     Select::make('revista_id')->label('Revista')
-                        ->relationship('revista', 'nombre')->required()->preload(),
+                        ->relationship('revista', 'nombre')->default(fn () => Revista::query()->value('id'))->required()->preload(),
                     Select::make('grupo')->label('Función editorial')
                         ->options(RevistaMiembro::GRUPOS)->required(),
                     TextInput::make('grado')->placeholder('Dra., Dr., PhD., Mag., Est.'),
