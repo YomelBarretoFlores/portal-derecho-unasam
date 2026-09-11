@@ -102,31 +102,34 @@ class PublicContentCache
      *
      * @return array<int, array<string, mixed>>
      */
-    private function destacados(int $limite = 3): array
+    private function destacados(int $limite = 4): array
     {
         $comunicados = Comunicado::query()->publicados()->latest('fecha_publicacion')->limit($limite)
-            ->get(['titulo', 'slug', 'fecha_publicacion'])
+            ->get(['titulo', 'slug', 'resumen', 'fecha_publicacion'])
             ->map(fn (Comunicado $c): array => [
                 'etiqueta' => 'Comunicado',
                 'titulo' => $c->titulo,
+                'resumen' => (string) $c->resumen,
                 'fecha' => $c->fecha_publicacion?->toDateString(),
                 'url' => route('comunicados.show', $c->slug, absolute: false),
             ]);
 
         $entradas = BlogPost::query()->publicados()->latest('fecha')->limit($limite)
-            ->get(['tipo', 'titulo', 'slug', 'fecha'])
+            ->get(['tipo', 'titulo', 'slug', 'extracto', 'fecha'])
             ->map(fn (BlogPost $p): array => [
                 'etiqueta' => filled($p->tipo) ? ucfirst((string) $p->tipo) : 'Blog',
                 'titulo' => $p->titulo,
+                'resumen' => (string) $p->extracto,
                 'fecha' => $p->fecha?->toDateString(),
                 'url' => route('blog.show', $p->slug, absolute: false),
             ]);
 
         $avisos = RevistaAviso::query()->publicados()->latest('fecha_publicacion')->limit($limite)
-            ->get(['titulo', 'slug', 'fecha_publicacion'])
+            ->get(['titulo', 'slug', 'resumen', 'fecha_publicacion'])
             ->map(fn (RevistaAviso $a): array => [
                 'etiqueta' => 'Revista',
                 'titulo' => $a->titulo,
+                'resumen' => (string) $a->resumen,
                 'fecha' => $a->fecha_publicacion?->toDateString(),
                 'url' => route('revista.avisos', absolute: false),
             ]);

@@ -7,6 +7,7 @@ use App\Models\Comunicado;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -33,27 +34,57 @@ class HeroTest extends TestCase
         ]);
     }
 
-    public function test_the_hero_strip_lists_the_latest_published_items(): void
+    public function test_the_newest_item_leads_the_hero(): void
     {
         $this->comunicado('Convocatoria de prácticas', '2026-01-10');
         BlogPost::query()->create([
             'tipo' => 'noticia', 'titulo' => 'Nueva biblioteca jurídica', 'slug' => 'nueva-biblioteca',
-            'extracto' => 'E.', 'contenido' => '<p>C.</p>', 'autor' => 'Redacción',
-            'fecha' => '2026-02-20', 'publicado' => true, 'estado_editorial' => 'published',
+            'extracto' => 'La facultad estrena sala de lectura.', 'contenido' => '<p>C.</p>',
+            'autor' => 'Redacción', 'fecha' => '2026-02-20', 'publicado' => true,
+            'estado_editorial' => 'published',
         ]);
 
         $html = $this->get(route('home'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Lo último', $html);
+        // El hero cuenta lo último publicado, con su resumen y su enlace: es la
+        // diferencia entre abrir diciendo qué pasa y abrir repitiendo el nombre
+        // de la facultad, que ya está en la barra de arriba.
         $this->assertStringContainsString('Nueva biblioteca jurídica', $html);
-        $this->assertStringContainsString('Convocatoria de prácticas', $html);
+        $this->assertStringContainsString('La facultad estrena sala de lectura.', $html);
+        $this->assertStringContainsString('Leer más', $html);
 
-        // Lo más reciente primero: la entrada de febrero antes del comunicado de enero.
-        $this->assertLessThan(
-            strpos($html, 'Convocatoria de prácticas'),
-            strpos($html, 'Nueva biblioteca jurídica'),
-            'La tira no está ordenada por fecha descendente.',
-        );
+        // Y la tira empieza en el siguiente: repetir el mismo titular a diez
+        // centímetros haría parecer que hay menos contenido del que hay.
+        // (Más abajo sí reaparece, en la sección de blog, y ahí corresponde.)
+        // Str::between() corta por el ÚLTIMO delimitador, así que se llevaba la
+        // página entera. Aquí hace falta el primer cierre de sección.
+        $tira = Str::before(Str::after($html, 'Lo último'), '</section>');
+
+        $this->assertStringNotContainsString('Nueva biblioteca jurídica', $tira);
+        $this->assertStringContainsString('Convocatoria de prácticas', $tira);
+    }
+
+    public function test_without_published_content_the_hero_falls_back_to_the_identity(): void
+    {
+        // Instalación nueva: todavía no hay nada publicado. Abrir con un hueco
+        // sería peor que abrir con el nombre de la facultad.
+        $html = $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertStringContainsString('Derecho y Ciencias Políticas', $html);
+        $this->assertStringContainsString('Conoce el programa', $html);
+    }
+
+    public function test_the_programme_figures_left_the_hero_for_the_text_that_explains_them(): void
+    {
+        $html = $this->get(route('home'))->assertOk()->getContent();
+
+        $hero = strpos($html, 'hero-title');
+        $cifras = strpos($html, 'AÑOS DE TRAYECTORIA') ?: strpos($html, 'Años de trayectoria');
+        $programa = strpos($html, 'home_about_titulo') ?: strpos($html, 'Formando profesionales');
+
+        $this->assertNotFalse($cifras, 'Las cifras del programa desaparecieron de la portada.');
+        $this->assertGreaterThan($hero, $cifras, 'Las cifras siguen dentro del hero.');
+        $this->assertGreaterThan($programa, $cifras, 'Las cifras deben acompañar al texto que las explica.');
     }
 
     public function test_the_hero_strip_disappears_when_there_is_nothing_published(): void
@@ -66,13 +97,17 @@ class HeroTest extends TestCase
         $this->assertStringNotContainsString('Lo último', $html);
     }
 
-    public function test_the_strip_has_no_controls_with_a_single_item(): void
+    public function test_a_single_published_item_leaves_no_empty_strip(): void
     {
+        // Con una sola publicación, esa encabeza el hero y no queda nada para
+        // la tira. Mostrarla vacía, o repetir ahí el mismo titular, haría
+        // parecer que el sitio tiene menos contenido del que tiene.
         $this->comunicado('Único aviso', '2026-03-01');
 
         $html = $this->get(route('home'))->assertOk()->getContent();
 
-        $this->assertStringContainsString('Único aviso', $html);
+        $this->assertSame(1, substr_count($html, 'Único aviso'));
+        $this->assertStringNotContainsString('Lo último', $html);
         $this->assertStringNotContainsString('aria-label="Siguiente"', $html);
     }
 

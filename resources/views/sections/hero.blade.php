@@ -26,11 +26,28 @@
                  fetchpriority="high" decoding="async"
                  class="h-full w-full object-cover" style="object-position: 50% 42%">
         </picture>
-        {{-- Dos velos: uno parejo que garantiza el contraste del texto blanco
-             sobre cualquier zona de la foto, y otro direccional que oscurece el
-             lado del titular sin apagar la imagen entera. --}}
-        <div class="absolute inset-0 bg-navy-950/55"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/75 to-navy-950/25"></div>
+        {{-- El velo oscurece SOLO donde hay texto.
+
+             Antes eran dos capas superpuestas —un velo plano del 55 % más un
+             degradado— que sumaban un 66 % incluso en el lado derecho, donde no
+             hay nada que proteger. La fotografía quedaba apagada de punta a
+             punta: se veía apenas un tercio de ella.
+
+             Ahora es un solo degradado que aguanta el 83 % hasta donde termina
+             la columna de texto y cae en picado después. Medido contra el píxel
+             más claro que hay detrás del texto, el subtítulo —que es el color
+             más débil, blanco al 75 %— queda en 6,0:1, por encima del 4,5:1 que
+             exige la AA. A la derecha la foto se ve al 75-90 %.
+
+             En pantallas pequeñas el texto ocupa el ancho entero, así que ahí
+             el velo tiene que ser parejo: un degradado lateral dejaría el final
+             de cada línea sin fondo que la sostenga. --}}
+        <div class="absolute inset-0 bg-navy-950/80 lg:hidden"></div>
+        <div class="absolute inset-0 hidden lg:block" style="background: linear-gradient(to right,
+                 rgba(15,34,64,0.92) 0%,
+                 rgba(15,34,64,0.82) 55%,
+                 rgba(15,34,64,0.25) 80%,
+                 rgba(15,34,64,0.05) 100%)"></div>
     </div>
 
     <div class="relative mx-auto max-w-7xl px-6 pb-14 pt-16 sm:pt-20 lg:pb-20 lg:pt-28">
@@ -60,34 +77,63 @@
                  style="height: clamp(19rem, 34vw, 30rem)">
         @endif
 
+        @php
+            // Lo que encabeza el hero es lo último que la facultad ha publicado.
+            // No hay un campo «destacado» aparte: publicar ya es destacar, y un
+            // interruptor más sería una cosa más que se olvida de mover.
+            $principal = collect($destacados)->first();
+        @endphp
+
         <div class="relative z-10 max-w-2xl">
-            <p class="reveal text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
-                UNASAM · Huaraz, Áncash
-            </p>
+            @if ($principal)
+                {{-- Hero editorial: el sitio abre contando qué pasa, no repitiendo
+                     cómo se llama. El nombre de la facultad ya está en la barra de
+                     arriba y en el escudo; volver a escribirlo aquí gastaba el
+                     espacio más visible del portal en información que el visitante
+                     acaba de leer. --}}
+                <p class="reveal flex flex-wrap items-baseline gap-x-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
+                    {{ $principal->etiqueta }}
+                    @if ($principal->fecha)
+                        <span class="font-normal normal-case tracking-normal text-white/65">
+                            {{ $principal->fecha->translatedFormat('d \d\e F \d\e Y') }}
+                        </span>
+                    @endif
+                </p>
 
-            <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
-                {{ $home['home_hero_titulo'] }}
-            </h1>
+                <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
+                    {{ $principal->titulo }}
+                </h1>
 
-            <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-white/75" data-reveal-delay="0.16">
-                {{ $home['home_hero_subtitulo'] }}
-            </p>
+                @if (filled($principal->resumen ?? ''))
+                    <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-white/80" data-reveal-delay="0.16">
+                        {{ $principal->resumen }}
+                    </p>
+                @endif
 
-            <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.24">
-                <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
-                <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
-            </div>
-
-            <div class="reveal mt-12 grid max-w-md grid-cols-2 divide-x divide-white/15 border-t border-white/15 pt-7" data-reveal-delay="0.32">
-                <div class="px-3 text-left first:pl-0 sm:px-6">
-                    <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat1_label'] }}</div>
-                    <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat1_valor'] }}" data-count-suffix="{{ $home['home_hero_stat1_sufijo'] }}">{{ $home['home_hero_stat1_valor'] }}{{ $home['home_hero_stat1_sufijo'] }}</div>
+                <div class="reveal mt-8" data-reveal-delay="0.24">
+                    <x-button :href="$principal->url" variant="light">Leer más</x-button>
                 </div>
-                <div class="px-3 text-left sm:px-6">
-                    <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat2_label'] }}</div>
-                    <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat2_valor'] }}" data-count-suffix="{{ $home['home_hero_stat2_sufijo'] }}">{{ $home['home_hero_stat2_valor'] }}{{ $home['home_hero_stat2_sufijo'] }}</div>
+            @else
+                {{-- Respaldo para una instalación nueva, antes de que se publique
+                     nada. Sin él la portada abriría con un hueco, que es peor que
+                     abrir con la identidad. --}}
+                <p class="reveal text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
+                    UNASAM · Huaraz, Áncash
+                </p>
+
+                <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
+                    {{ $home['home_hero_titulo'] }}
+                </h1>
+
+                <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-white/80" data-reveal-delay="0.16">
+                    {{ $home['home_hero_subtitulo'] }}
+                </p>
+
+                <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.24">
+                    <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
+                    <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
