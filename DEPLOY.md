@@ -31,6 +31,15 @@ Y para que se mantenga al día sin que nadie intervenga:
 */5 * * * * /opt/portal-derecho/docker/actualizar.sh >> /var/log/portal-derecho.log 2>&1
 ```
 
+**No edite archivos versionados en el servidor.** `docker/actualizar.sh` sincroniza con `git reset --hard`, así que cualquier cambio hecho ahí desaparece en la siguiente actualización —y el fallo aparece horas después, sin relación aparente con la causa. Lo que necesite ajustar va en archivos que git ignora:
+
+| Archivo | Qué configura | Quién lo lee |
+|---|---|---|
+| `portal.env` | La aplicación: base de datos, administrador, archivos | El contenedor |
+| `.env` | El despliegue: `PORTAL_BIND`, `PORTAL_PUERTO` | Docker Compose |
+
+Por defecto el puerto se publica solo en `127.0.0.1`, para que nadie pueda saltarse el proxy de la institución y llegar al sitio sin cifrar. Si no hay proxy delante, un `.env` con `PORTAL_BIND=0.0.0.0` lo expone a la red.
+
 El script no abre ningún puerto ni recibe conexiones: es el servidor quien consulta GitHub. Por eso se prefiere a un *webhook*, que exigiría exponer un punto de entrada más. Solo escribe en el registro cuando hay una actualización de verdad, y comprueba que el sitio responda en `/up` antes de darla por buena.
 
 ## Lo que hay que preparar ANTES de desplegar

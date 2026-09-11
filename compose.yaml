@@ -2,8 +2,12 @@
 #
 # Despliegue en un servidor propio. Para Render se usa render.yaml.
 #
-#   1. Crear «portal.env» junto a este archivo, con las variables de entorno.
-#      Contiene contraseñas: chmod 600. Está ignorado por git a propósito.
+#   1. Crear «portal.env» junto a este archivo, con las variables de entorno
+#      de la APLICACIÓN. Contiene contraseñas: chmod 600. Ignorado por git.
+#
+#      Opcionalmente, un «.env» junto a este archivo para ajustar el
+#      DESPLIEGUE (dónde se publica el puerto). Son cosas distintas:
+#      portal.env entra en el contenedor, .env lo lee Docker Compose.
 #   2. docker compose up -d --build
 #   3. docker compose logs -f   ← el arranque explica qué hizo y qué faltó
 #
@@ -17,10 +21,22 @@ services:
     restart: unless-stopped
 
     # El contenedor sirve HTTP plano; el certificado lo pone el proxy de la
-    # institución. Se publica solo en la interfaz local para que nadie pueda
-    # saltarse ese proxy: quítese el «127.0.0.1:» si no hay proxy delante.
+    # institución. Por eso se publica solo en la interfaz local: así nadie
+    # puede saltarse ese proxy y llegar al sitio sin cifrar.
+    #
+    # Si NO hay proxy delante y el contenedor debe atender directamente desde
+    # la red, cree un archivo «.env» junto a este y ponga:
+    #
+    #     PORTAL_BIND=0.0.0.0
+    #     PORTAL_PUERTO=8080
+    #
+    # NO edite este archivo para cambiarlo. docker/actualizar.sh sincroniza el
+    # repositorio con «git reset --hard», así que cualquier cambio hecho aquí
+    # se perdería en la siguiente actualización y el sitio dejaría de responder
+    # sin motivo aparente. El archivo «.env» está fuera del control de versiones
+    # justamente para eso.
     ports:
-      - "127.0.0.1:8080:8080"
+      - "${PORTAL_BIND:-127.0.0.1}:${PORTAL_PUERTO:-8080}:8080"
 
     # Sin este volumen, todo lo que se suba desde el panel —portadas, PDF,
     # retratos— desaparece en la siguiente actualización. Es también el motivo
