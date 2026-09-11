@@ -1,8 +1,15 @@
-# Asistente de IA y skills (no versionar)
+# Directorios de trabajo del asistente (no versionar).
 /.claude/
 /.agents/
 /.impeccable/
-CLAUDE.md
+
+# CLAUDE.md SÍ se versiona en este repositorio: es el puntero que lleva a
+# PRODUCT.md y DESIGN.md, y dejarlo fuera significaba que en otra máquina no
+# existía ninguno de los tres. La negación hace falta porque el .gitignore
+# global del usuario (~/.gitignore_global) lo excluye en todos sus
+# repositorios; el .gitignore del proyecto tiene prioridad sobre el global,
+# así que este ajuste no altera esa configuración personal.
+!CLAUDE.md
 
 *.log
 .DS_Store
