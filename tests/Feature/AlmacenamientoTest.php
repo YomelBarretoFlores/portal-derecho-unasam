@@ -14,6 +14,30 @@ class AlmacenamientoTest extends TestCase
 {
     use RefreshDatabase;
 
+    private bool $enlaceCreadoPorElTest = false;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // El comando exige el enlace public/storage, que en producción crea
+        // docker/entrypoint.sh pero no existe en un checkout limpio ni en CI.
+        // El test crea su propia precondición en lugar de depender del entorno.
+        if (! file_exists(public_path('storage'))) {
+            @symlink(storage_path('app/public'), public_path('storage'));
+            $this->enlaceCreadoPorElTest = is_link(public_path('storage'));
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->enlaceCreadoPorElTest && is_link(public_path('storage'))) {
+            @unlink(public_path('storage'));
+        }
+
+        parent::tearDown();
+    }
+
     public function test_the_command_reports_both_disks_and_succeeds_when_they_are_correct(): void
     {
         config()->set('submissions.disk', 'local');
@@ -23,6 +47,26 @@ class AlmacenamientoTest extends TestCase
             ->expectsOutputToContain('Manuscritos recibidos')
             ->expectsOutputToContain('PERSISTENCIA')
             ->assertSuccessful();
+    }
+
+    public function test_the_command_fails_when_the_public_storage_link_is_missing(): void
+    {
+        // Sin el enlace, los medios se guardan pero el visitante recibe 404.
+        // Es justo el paso que se olvida en un despliegue nuevo.
+        if (! is_link(public_path('storage'))) {
+            $this->markTestSkipped('public/storage no es un enlace simbólico en este entorno.');
+        }
+
+        $destino = readlink(public_path('storage'));
+        unlink(public_path('storage'));
+
+        try {
+            $this->artisan('almacenamiento:verificar')
+                ->expectsOutputToContain('Falta el enlace public/storage')
+                ->assertFailed();
+        } finally {
+            symlink($destino, public_path('storage'));
+        }
     }
 
     public function test_the_command_fails_when_manuscripts_would_sit_on_a_public_disk(): void
