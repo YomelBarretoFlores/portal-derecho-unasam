@@ -25,14 +25,14 @@
                                 <div class="flex items-center gap-3">
                                     <h3 class="text-lg font-semibold text-navy-700">{{ $plan['titulo'] }}</h3>
                                     @if ($plan['destacado'])
-                                        <span class="rounded-none bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
+                                        <span class=" bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
                                     @endif
                                 </div>
 
                                 <div class="mt-5 space-y-4">
                                     @foreach ($plan['items'] as $i => $item)
-                                        <div class="flex gap-5 rounded-2xl border border-stone-200 bg-white p-6">
-                                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy-900 font-sans text-xs font-semibold text-white">{{ $grupo['prefijo'] }}{{ $i + 1 }}</span>
+                                        <div class="flex gap-5 border border-stone-200 bg-white p-6">
+                                            <span class="flex h-11 w-11 shrink-0 items-center justify-center bg-navy-900 font-sans text-xs font-semibold text-white">{{ $grupo['prefijo'] }}{{ $i + 1 }}</span>
                                             <div class="pt-0.5">
                                                 @if (! empty($item['nombre']))
                                                     <p class="font-semibold text-navy-900">{{ $item['nombre'] }}</p>

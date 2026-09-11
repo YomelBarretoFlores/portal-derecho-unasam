@@ -39,7 +39,7 @@
 
     <div class="flex grow flex-col {{ $horizontal ? 'p-7 md:p-10' : ($featured ? 'p-8' : 'p-6') }}">
         <div class="flex items-center gap-3">
-            <span class="rounded-none px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide {{ $badge }}">{{ $etiqueta }}</span>
+            <span class=" px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide {{ $badge }}">{{ $etiqueta }}</span>
             <time datetime="{{ $post->fecha->toDateString() }}" class="text-xs text-stone-500">{{ $post->fecha->translatedFormat('d M Y') }}</time>
         </div>
         <h3 class="mt-3 font-semibold leading-snug text-navy-900 {{ $horizontal ? 'text-2xl md:text-3xl' : ($featured ? 'text-2xl' : 'text-lg') }}">

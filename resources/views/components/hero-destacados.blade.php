@@ -18,7 +18,7 @@
          class="relative border-t border-white/15 bg-navy-950">
         <div class="mx-auto flex max-w-7xl items-center gap-6 px-6 py-4">
 
-            <p class="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/45 lg:block">
+            <p class="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60 lg:block">
                 Lo último
             </p>
 
@@ -33,7 +33,7 @@
                                 <span class="block text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-300">
                                     {{ $item->etiqueta }}
                                     @if ($item->fecha)
-                                        <span class="font-normal tracking-normal text-white/45"> · {{ $item->fecha->translatedFormat('d M Y') }}</span>
+                                        <span class="font-normal tracking-normal text-white/60"> · {{ $item->fecha->translatedFormat('d M Y') }}</span>
                                     @endif
                                 </span>
                                 <span class="mt-1 block truncate text-sm text-white/80 transition-colors group-hover:text-white lg:whitespace-normal lg:[display:-webkit-box] lg:[-webkit-box-orient:vertical] lg:[-webkit-line-clamp:2] lg:overflow-hidden">

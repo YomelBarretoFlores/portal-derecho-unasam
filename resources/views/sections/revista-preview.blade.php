@@ -17,15 +17,15 @@
         @if ($featured && $revistaNumero)
         <div class="mt-12 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start">
             {{-- Featured --}}
-            <article class="reveal card-hover flex flex-col rounded-2xl border border-stone-200 bg-white p-8">
-                <span class="w-fit rounded-none bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">{{ $featured->categoria }}</span>
+            <article class="reveal card-hover flex flex-col border border-stone-200 bg-white p-8">
+                <span class="w-fit bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">{{ $featured->categoria }}</span>
                 <h3 class="mt-4 text-2xl font-semibold leading-snug text-navy-900">{{ $featured->titulo }}</h3>
                 <p class="mt-3 grow text-[15px] leading-relaxed text-stone-500">{{ Str::limit($featured->resumen, 240) }}</p>
                 <p class="mt-4 text-sm text-stone-600">{{ implode(' · ', $featured->autores) }} — pp. {{ $featured->paginas }}</p>
                 @php $pdfUrl = $featured->_pdf_url ?? ''; @endphp
                 @if ($pdfUrl)
                     <div class="mt-5 flex gap-2">
-                        <a href="{{ $pdfUrl }}" target="_blank" rel="noopener" class="rounded-lg border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
+                        <a href="{{ $pdfUrl }}" target="_blank" rel="noopener" class=" border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
                     </div>
                 @endif
                 <a href="{{ route('revista.articulo', [$revistaNumero->slug, $featured->slug]) }}" wire:navigate.hover class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Leer artículo <x-ui-icon name="arrow-right" /></a>
@@ -34,7 +34,7 @@
             {{-- Lista --}}
             <div class="stagger-children flex flex-col gap-4">
                 @foreach ($resto as $art)
-                    <article class="reveal card-hover rounded-2xl border border-stone-200 bg-white p-5">
+                    <article class="reveal card-hover border border-stone-200 bg-white p-5">
                         <span class="text-[11px] font-semibold uppercase tracking-wide text-navy-600">{{ $art->categoria }}</span>
                         <h4 class="mt-1.5 font-semibold leading-snug text-navy-900"><a href="{{ route('revista.articulo', [$revistaNumero->slug, $art->slug]) }}" wire:navigate.hover>{{ $art->titulo }}</a></h4>
                         <p class="mt-1 text-xs text-stone-500">{{ implode(' · ', $art->autores) }}</p>

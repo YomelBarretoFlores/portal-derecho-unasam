@@ -29,7 +29,7 @@
 
             {{-- Sidebar datos --}}
             <aside class="reveal" data-reveal-delay="0.12">
-                <div class="rounded-2xl border border-stone-200 bg-paper p-7">
+                <div class=" border border-stone-200 bg-paper p-7">
                     <h3 class="text-lg font-semibold text-navy-900">Datos del programa</h3>
                     <dl class="mt-5 space-y-4 font-sans text-sm">
                         @foreach ($datos as [$k, $v])

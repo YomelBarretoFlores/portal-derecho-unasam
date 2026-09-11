@@ -17,14 +17,14 @@
                     <div class="flex items-center gap-3">
                         <h2 class="text-2xl font-semibold text-navy-900">{{ $plan['titulo'] }}</h2>
                         @if ($plan['destacado'])
-                            <span class="rounded-none bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
+                            <span class=" bg-navy-50 px-3 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-navy-700">Vigente</span>
                         @endif
                     </div>
 
                     <ol class="mt-6 space-y-4">
                         @foreach ($plan['objetivos'] as $i => $texto)
-                            <li class="flex gap-5 rounded-2xl border border-stone-200 bg-white p-6">
-                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-sm font-semibold text-white">OE{{ $i + 1 }}</span>
+                            <li class="flex gap-5 border border-stone-200 bg-white p-6">
+                                <span class="flex h-12 w-12 shrink-0 items-center justify-center bg-navy-900 text-sm font-semibold text-white">OE{{ $i + 1 }}</span>
                                 <p class="pt-1 font-sans leading-relaxed text-stone-600">{{ $texto }}</p>
                             </li>
                         @endforeach

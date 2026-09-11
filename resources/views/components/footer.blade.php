@@ -76,7 +76,7 @@
             @foreach ($mapa as $titulo => $enlaces)
                 <nav aria-label="{{ $titulo }}">
                     <div class="accent-line mb-3"></div>
-                    <h4 class="text-xs font-semibold uppercase tracking-[0.14em] text-white/40">{{ $titulo }}</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">{{ $titulo }}</h4>
                     <ul class="mt-4 space-y-2.5 text-sm text-white/60">
                         @foreach ($enlaces as [$texto, $url])
                             <li><a href="{{ $url }}" wire:navigate.hover class="transition hover:text-white">{{ $texto }}</a></li>
@@ -86,9 +86,9 @@
             @endforeach
         </div>
 
-        <div class="mt-10 flex flex-col justify-between gap-2 border-t border-white/10 pt-5 text-xs text-white/45 sm:flex-row sm:items-center">
+        <div class="mt-10 flex flex-col justify-between gap-2 border-t border-white/10 pt-5 text-xs text-white/60 sm:flex-row sm:items-center">
             <p>© {{ date('Y') }} UNASAM — {{ $ajustes['footer_marca'] }}.</p>
-            <p class="tracking-wide text-white/50">{{ $ajustes['lema'] }}</p>
+            <p class="tracking-wide text-white/60">{{ $ajustes['lema'] }}</p>
         </div>
     </div>
 </footer>

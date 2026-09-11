@@ -25,14 +25,14 @@
 
         {{-- Sidebar --}}
         <div class="stagger-children space-y-4">
-            <div class="reveal rounded-2xl bg-navy-900 p-7 text-white">
+            <div class="reveal bg-navy-900 p-7 text-white">
                 <div class="accent-line"></div>
                 <p class="mt-4 text-xl italic leading-relaxed text-white/90">
                     {{ $home['home_about_cita'] }}
                 </p>
             </div>
             @foreach ([['Misión y Visión', 'Nuestro propósito y horizonte', route('mision')], ['Plan de Estudios 2023', 'Malla curricular vigente', route('plan-2023')], ['Objetivos Educacionales', 'Lo que buscamos lograr', route('objetivos')]] as [$titulo, $desc, $url])
-                <a href="{{ $url }}" wire:navigate.hover class="reveal card-hover flex items-center justify-between rounded-2xl border border-stone-200 bg-white p-5">
+                <a href="{{ $url }}" wire:navigate.hover class="reveal card-hover flex items-center justify-between border border-stone-200 bg-white p-5">
                     <div>
                         <h3 class="text-base font-semibold text-navy-900">{{ $titulo }}</h3>
                         <p class="text-sm text-stone-500">{{ $desc }}</p>

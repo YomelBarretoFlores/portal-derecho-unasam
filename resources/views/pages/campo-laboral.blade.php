@@ -14,7 +14,7 @@
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($areas as $i => $area)
                 <x-reveal :delay="$i * 0.05">
-                    <div class="card-hover h-full rounded-2xl border border-stone-200 bg-white p-6">
+                    <div class="card-hover h-full border border-stone-200 bg-white p-6">
                         <h3 class="text-lg font-semibold text-navy-900">{{ $area->titulo }}</h3>
                         <p class="mt-2 font-sans text-sm leading-relaxed text-stone-500">{{ $area->descripcion }}</p>
                     </div>

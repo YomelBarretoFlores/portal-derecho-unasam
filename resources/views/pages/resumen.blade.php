@@ -21,14 +21,14 @@
 
         {{-- Marco legal --}}
         <div class="reveal mt-10 space-y-5" data-reveal-delay="0.1">
-            <blockquote class="rounded-2xl border-l-4 border-navy-300 bg-paper p-6">
+            <blockquote class=" border-l-4 border-navy-300 bg-paper p-6">
                 <p class="font-sans text-[15px] leading-relaxed text-stone-600">
                     <span class="font-semibold text-navy-900">Ley Universitaria N.º 30220, artículo 40.º (Diseño Curricular):</span>
                     {{ $cita1 }}
                 </p>
             </blockquote>
 
-            <blockquote class="rounded-2xl border-l-4 border-navy-700 bg-paper p-6">
+            <blockquote class=" border-l-4 border-navy-700 bg-paper p-6">
                 <p class="font-sans text-[15px] leading-relaxed text-stone-600">
                     <span class="font-semibold text-navy-900">Artículo 79.º — De la Actualización del Currículo (2015):</span>
                     {{ $cita2 }}

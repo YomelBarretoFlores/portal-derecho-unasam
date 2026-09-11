@@ -224,7 +224,7 @@ class AccesibilidadTest extends TestCase
         // Solo se vigilan estas dos clases porque son las verificadas sobre fondo
         // claro. Los tonos claros de dorado (gold-300/400) se usan sobre navy-950,
         // donde rinden 8.77:1, así que prohibirlos en bloque daría falsos positivos.
-        // El contraste sobre fondos oscuros sigue siendo revisión manual.
+        // Los fondos oscuros los cubre el test siguiente.
         $prohibidas = ['text-stone-400', 'text-gold-500'];
         $exentas = ['acceso-card.blade.php'];  // el § dorado es decorativo (aria-hidden)
 
@@ -274,5 +274,37 @@ class AccesibilidadTest extends TestCase
         $this->assertStringContainsString('data-sin-js', $html,
             'Falta la navegación de respaldo para quien no tiene JavaScript.');
         $this->assertStringContainsString('data-mobile-menu-toggle', $html);
+    }
+
+    public function test_no_view_uses_a_text_colour_that_fails_aa_on_dark_backgrounds(): void
+    {
+        // Blanco con opacidad sobre los dos navy de marca (medido):
+        //   navy-900 #17335c   white/40 3.36  white/45 3.83  white/50 4.37  ← incumplen
+        //                      white/55 4.94  white/60 5.56  white/65 6.29  ← cumplen
+        //   navy-950 #0f2240   white/45 4.26  ← incumple ·  white/55 5.72  ← cumple
+        //
+        // El mínimo seguro para texto es 55 %. Por debajo solo caben elementos
+        // decorativos, que van marcados con aria-hidden y a los que WCAG pide
+        // 3:1 por ser contenido no textual.
+        $prohibidas = ['text-white/25', 'text-white/30', 'text-white/35',
+            'text-white/40', 'text-white/45', 'text-white/50'];
+
+        $infractores = [];
+        foreach (glob(resource_path('views').'/{,*/,*/*/}*.blade.php', GLOB_BRACE) as $vista) {
+            foreach (file($vista) ?: [] as $numero => $linea) {
+                if (str_contains($linea, 'aria-hidden')) {
+                    continue;  // decorativo: no lo lee nadie
+                }
+
+                foreach ($prohibidas as $clase) {
+                    if (str_contains($linea, $clase)) {
+                        $infractores[] = basename($vista).':'.($numero + 1).' → '.$clase;
+                    }
+                }
+            }
+        }
+
+        $this->assertSame([], $infractores,
+            "Texto por debajo de 4.5:1 sobre navy (o decorativo sin aria-hidden):\n".implode("\n", $infractores));
     }
 }

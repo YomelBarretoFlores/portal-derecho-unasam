@@ -32,7 +32,7 @@
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 -translate-y-1"
          class="absolute left-0 top-full z-50 min-w-56 pt-2">
-        <div role="menu" aria-label="{{ $label }}" class="overflow-hidden rounded-none border border-stone-200 bg-white py-2 shadow-card-lg">
+        <div role="menu" aria-label="{{ $label }}" class="overflow-hidden border border-stone-200 bg-white py-2 shadow-card-lg">
             @foreach ($items as [$texto, $url])
                 <a href="{{ $url }}" wire:navigate.hover role="menuitem" @click="open = false"
                    class="block px-4 py-2.5 text-sm text-stone-600 transition-colors duration-150 hover:bg-stone-50 hover:text-navy-900">

@@ -7,7 +7,7 @@
     }
 @endphp
 
-<article class="card-hover group flex h-full flex-col overflow-hidden rounded-none border border-stone-200 bg-white">
+<article class="card-hover group flex h-full flex-col overflow-hidden border border-stone-200 bg-white">
     {{-- Foto / fallback iniciales --}}
     <div class="aspect-[4/5] overflow-hidden bg-stone-50 p-2">
         @if ($foto)

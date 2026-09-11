@@ -124,7 +124,12 @@
     .bg-navy-900 a:focus-visible,
     .bg-navy-900 button:focus-visible,
     .bg-navy-950 a:focus-visible,
-    footer a:focus-visible {
+    /* Los botones sobre navy-950 no estaban contemplados: el anillo salía en
+       navy-600 sobre navy-950, prácticamente invisible. Afecta a las flechas
+       de la tira del hero, que son button y no enlace. */
+    .bg-navy-950 button:focus-visible,
+    footer a:focus-visible,
+    footer button:focus-visible {
         outline-color: rgba(255, 255, 255, 0.9);
     }
 }
@@ -263,14 +268,8 @@
     .rule {
         @apply h-px w-10 bg-stone-300;
     }
-    .rule-t {
-        @apply border-t border-stone-300;
-    }
     .accent-line {
         @apply h-px w-12 bg-gold-400;
-    }
-    .section-divider {
-        @apply mx-auto h-px w-16 bg-stone-200;
     }
 
     /* ---- Cifra editorial 01/02 ----

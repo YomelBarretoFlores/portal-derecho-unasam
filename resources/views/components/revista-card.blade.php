@@ -4,8 +4,8 @@
     $numeroSlug = $numero?->slug ?? (isset($articulo->numero) ? $articulo->numero?->slug : null);
 @endphp
 
-<article class="card-hover flex h-full flex-col rounded-none border border-stone-200 bg-white p-7">
-    <span class="w-fit rounded-none bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">
+<article class="card-hover flex h-full flex-col border border-stone-200 bg-white p-7">
+    <span class="w-fit bg-navy-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-700">
         {{ $articulo->categoria }}
     </span>
     <h3 class="mt-4 text-xl font-semibold leading-snug text-navy-900">
@@ -32,7 +32,7 @@
     @if ($pdfUrl)
         <div class="mt-5 flex gap-2">
             <a href="{{ $pdfUrl }}" target="_blank" rel="noopener"
-               class="rounded-none border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
+               class=" border border-navy-900 px-4 py-1.5 text-xs font-semibold text-navy-900 transition hover:bg-navy-900 hover:text-white">PDF</a>
         </div>
     @endif
     @if ($numeroSlug)

@@ -11,7 +11,7 @@
         {{-- Metadatos: pares clave/valor en una lista de definición. --}}
         <dl class="reveal grid gap-4 sm:grid-cols-3">
             @foreach ([['Grado académico', $grado], ['Título profesional', $tituloProf], ['Modalidad', $modalidad]] as [$k, $v])
-                <div class="rounded-2xl border border-stone-200 bg-paper p-5 text-center">
+                <div class=" border border-stone-200 bg-paper p-5 text-center">
                     <dt class="font-sans text-xs uppercase tracking-wide text-stone-500">{{ $k }}</dt>
                     <dd class="mt-1 font-semibold text-navy-900">{{ $v }}</dd>
                 </div>
@@ -35,13 +35,13 @@
 
                 <div class="mt-6 space-y-4">
                     @foreach ($ciclos as $numCiclo => $cursos)
-                        <div class="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+                        <div class="overflow-hidden border border-stone-200 bg-white">
                             <button type="button" @click="abierto = (abierto === {{ $numCiclo }} ? null : {{ $numCiclo }}); todos = false"
                                     :aria-expanded="(todos || abierto === {{ $numCiclo }}).toString()"
                                     aria-controls="ciclo-{{ $numCiclo }}"
                                     class="flex w-full items-center justify-between px-5 py-4 text-left">
                                 <span class="flex items-center gap-3">
-                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-900 text-xs font-semibold text-white">{{ $cursos->first()->ciclo_romano }}</span>
+                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center bg-navy-900 text-xs font-semibold text-white">{{ $cursos->first()->ciclo_romano }}</span>
                                     <span class="font-semibold text-navy-900">Ciclo {{ $cursos->first()->ciclo_romano }}</span>
                                     <span class="font-sans text-xs text-stone-500">{{ $cursos->count() }} curso(s)</span>
                                 </span>
@@ -57,7 +57,7 @@
                                                 <td class="px-5 py-3 text-navy-900">{{ $curso->nombre }}</td>
                                                 <td class="px-5 py-3 text-right">
                                                     @if ($curso->tipo)
-                                                        <span class="rounded-none bg-navy-50 px-2.5 py-0.5 text-[11px] font-medium text-navy-700">{{ $curso->tipo }}</span>
+                                                        <span class=" bg-navy-50 px-2.5 py-0.5 text-[11px] font-medium text-navy-700">{{ $curso->tipo }}</span>
                                                     @endif
                                                 </td>
                                                 <td class="w-20 px-5 py-3 text-right text-stone-500">
@@ -84,8 +84,8 @@
             <div class="mt-6 space-y-3">
                 @if ($pdfUrl)
                     <a href="{{ $pdfUrl }}" target="_blank" rel="noopener"
-                       class="card-hover flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-5">
-                        <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-50 text-navy-700">
+                       class="card-hover flex items-center gap-4 border border-stone-200 bg-white p-5">
+                        <span class="flex h-12 w-12 items-center justify-center bg-navy-50 text-navy-700">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 4H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg>
                         </span>
                         <div class="grow">
@@ -98,8 +98,8 @@
 
                 @if ($sgaUrl)
                     <a href="{{ $sgaUrl }}" target="_blank" rel="noopener"
-                       class="card-hover flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-5">
-                        <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-50 text-navy-700">
+                       class="card-hover flex items-center gap-4 border border-stone-200 bg-white p-5">
+                        <span class="flex h-12 w-12 items-center justify-center bg-navy-50 text-navy-700">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 6.25v11.5m5.75-5.75H6.25"/></svg>
                         </span>
                         <div class="grow">
