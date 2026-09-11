@@ -1,22 +1,34 @@
 @php
+    /**
+     * El mapa del pie refleja la misma arquitectura que el menú («La Facultad»,
+     * «Estudiantes», «Investigación»); antes usaba una agrupación distinta
+     * —Formación / Publicaciones / Institucional— que obligaba al lector a
+     * aprenderse dos mapas del mismo sitio.
+     *
+     * Aquí no caben todas las páginas: el pie recoge las principales de cada
+     * grupo. La cobertura completa la garantiza el menú, y NavegacionTest
+     * comprueba que ninguna página pública quede fuera de ambos.
+     */
     $mapa = [
-        'Formación' => [
+        'La Facultad' => [
             ['Presentación', route('presentacion')],
-            ['Plan de Estudios 2023', route('plan-2023')],
-            ['Competencias', route('competencias')],
-            ['Personal Docente', route('docentes')],
-        ],
-        'Publicaciones' => [
-            ['Revista Derecho y Cultura', route('revista')],
-            ['Blog', route('blog')],
-            ['Comunicados', route('comunicados')],
-            ['Documentos', route('documentos')],
-        ],
-        'Institucional' => [
             ['Historia', route('historia')],
             ['Misión y Visión', route('mision')],
-            ['Estadísticas', route('estadisticas', 'matriculados')],
             ['Organigrama', route('organigrama')],
+            ['Plana docente', route('docentes')],
+        ],
+        'Estudiantes' => [
+            ['Plan de Estudios 2023', route('plan-2023')],
+            ['Competencias', route('competencias')],
+            ['Perfil de Egreso', route('perfil-egreso')],
+            ['Campo Laboral', route('campo-laboral')],
+            ['Documentos', route('documentos')],
+        ],
+        'Investigación' => [
+            ['Revista Derecho y Cultura', route('revista')],
+            ['Blog', route('blog')],
+            ['Estadísticas', route('estadisticas', 'matriculados')],
+            ['Comunicados', route('comunicados')],
         ],
     ];
 @endphp

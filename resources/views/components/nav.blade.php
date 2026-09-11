@@ -1,23 +1,39 @@
 @php
-    $programa = [
-        ['Presentación', route('presentacion')],
-        ['Resumen', route('resumen')],
-        ['Historia', route('historia')],
-        ['Misión y Visión', route('mision')],
-        ['Objetivos', route('objetivos')],
-        ['Campo Laboral', route('campo-laboral')],
-    ];
-    $academico = [
-        ['Plan de Estudios 2023', route('plan-2023')],
-        ['Competencias', route('competencias')],
-        ['Perfil de Ingreso', route('perfil-ingreso')],
-        ['Perfil de Egreso', route('perfil-egreso')],
-    ];
-    $mas = [
-        ['Estadísticas', route('estadisticas', 'matriculados')],
-        ['Personal Docente', route('docentes')],
-        ['Comunicados', route('comunicados')],
-        ['Documentos', route('documentos')],
+    /**
+     * Arquitectura de información por audiencia.
+     *
+     * Antes el menú reproducía el organigrama —«Programa», «Académico»— y todo lo
+     * que no encajaba caía en un grupo llamado «Más», que es lo que suele pasar
+     * cuando la navegación describe a la institución en lugar de a quien la
+     * consulta. Al reagrupar salieron a la luz dos páginas huérfanas, alcanzables
+     * solo escribiendo la URL: el organigrama y el plan de estudios 2019.
+     *
+     * Las direcciones no cambian: el sitio ya está indexado y publica sitemap.
+     */
+    $grupos = [
+        'La Facultad' => [
+            ['Presentación', route('presentacion')],
+            ['Resumen', route('resumen')],
+            ['Historia', route('historia')],
+            ['Misión y Visión', route('mision')],
+            ['Objetivos', route('objetivos')],
+            ['Organigrama', route('organigrama')],
+            ['Plana docente', route('docentes')],
+        ],
+        'Estudiantes' => [
+            ['Plan de Estudios 2023', route('plan-2023')],
+            ['Plan de Estudios 2019', route('plan-2019')],
+            ['Competencias', route('competencias')],
+            ['Perfil de Ingreso', route('perfil-ingreso')],
+            ['Perfil de Egreso', route('perfil-egreso')],
+            ['Campo Laboral', route('campo-laboral')],
+            ['Documentos', route('documentos')],
+        ],
+        'Investigación' => [
+            ['Revista Derecho y Cultura', route('revista')],
+            ['Blog', route('blog')],
+            ['Estadísticas', route('estadisticas', 'matriculados')],
+        ],
     ];
 @endphp
 
@@ -47,13 +63,11 @@
         <div class="hidden items-center gap-1 lg:flex">
             <x-nav-link :href="route('home')">Inicio</x-nav-link>
 
-            <x-nav-dropdown label="Programa" :items="$programa" />
-            <x-nav-dropdown label="Académico" :items="$academico" />
+            @foreach ($grupos as $label => $items)
+                <x-nav-dropdown :label="$label" :items="$items" />
+            @endforeach
 
-            <x-nav-link :href="route('revista')">Revista</x-nav-link>
-            <x-nav-link :href="route('blog')">Blog</x-nav-link>
-
-            <x-nav-dropdown label="Más" :items="$mas" />
+            <x-nav-link :href="route('comunicados')">Comunicados</x-nav-link>
         </div>
 
         {{-- CTA + toggle móvil --}}
@@ -81,8 +95,7 @@
         <div class="space-y-1 px-6 py-5">
             <a href="{{ route('home') }}" wire:navigate.hover @click="mobile = false" class="block py-2 font-medium text-navy-900">Inicio</a>
 
-            {{-- Desplegables Programa y Académico --}}
-            @foreach (['Programa' => $programa, 'Académico' => $academico] as $label => $items)
+            @foreach ($grupos as $label => $items)
                 <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
                     <button @click="open = !open" :aria-expanded="open" class="flex w-full items-center justify-between py-2 font-medium text-navy-900">
                         {{ $label }}
@@ -96,24 +109,7 @@
                 </div>
             @endforeach
 
-            {{-- Enlaces directos (igual que en desktop): Revista y Blog --}}
-            <a href="{{ route('revista') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Revista</a>
-            <a href="{{ route('blog') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Blog</a>
-
-            {{-- Desplegable Más --}}
-            @foreach (['Más' => $mas] as $label => $items)
-                <div x-data="{ open: false }" class="border-t border-stone-100 pt-1">
-                    <button @click="open = !open" :aria-expanded="open" class="flex w-full items-center justify-between py-2 font-medium text-navy-900">
-                        {{ $label }}
-                        <svg class="h-4 w-4 transition" :class="open && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-                    </button>
-                    <div x-show="open" x-cloak class="pl-3">
-                        @foreach ($items as [$texto, $url])
-                            <a href="{{ $url }}" wire:navigate.hover @click="mobile = false" class="block py-1.5 text-sm text-stone-600 hover:text-navy-900">{{ $texto }}</a>
-                        @endforeach
-                    </div>
-                </div>
-            @endforeach
+            <a href="{{ route('comunicados') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Comunicados</a>
 
             <a href="https://unasam.edu.pe" target="_blank" rel="noopener" @click="mobile = false" class="btn btn-sm btn-primary mt-3 w-full">Portal UNASAM <x-ui-icon name="external-link" class="h-3.5 w-3.5" /></a>
         </div>
@@ -132,10 +128,11 @@
     <nav data-sin-js aria-label="Navegación principal sin JavaScript"
          class="flex gap-5 overflow-x-auto border-t border-stone-200 bg-paper px-6 py-3 text-sm font-medium text-navy-900 lg:hidden">
         <a href="{{ route('home') }}">Inicio</a>
-        <a href="{{ route('presentacion') }}">Programa</a>
+        <a href="{{ route('presentacion') }}">La Facultad</a>
         <a href="{{ route('plan-2023') }}">Plan de estudios</a>
         <a href="{{ route('revista') }}">Revista</a>
         <a href="{{ route('blog') }}">Blog</a>
         <a href="{{ route('docentes') }}">Docentes</a>
+        <a href="{{ route('comunicados') }}">Comunicados</a>
     </nav>
 </header>
