@@ -121,6 +121,29 @@ class HeroTest extends TestCase
             ->assertSee('aria-hidden="true"', escape: false);
     }
 
+    public function test_the_hero_photograph_can_be_replaced_from_the_panel(): void
+    {
+        config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
+        Setting::set('home_hero_foto_url', 'https://cdn.unasam.edu.pe/patio-2027.jpg');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('https://cdn.unasam.edu.pe/patio-2027.jpg', $html);
+        $this->assertStringNotContainsString('campus-derecho', $html);
+    }
+
+    public function test_without_a_configured_photograph_the_optimised_one_is_served(): void
+    {
+        // Vacío no es un hueco: vuelve la que viaja con la aplicación, que sí
+        // está servida en dos anchos y con respaldo para navegadores viejos.
+        Setting::set('home_hero_foto_url', '');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringContainsString('campus-derecho-800.webp', $html);
+        $this->assertStringContainsString('campus-derecho.jpg', $html);
+    }
+
     public function test_the_hero_photograph_is_described(): void
     {
         // Es la única fotografía institucional del sitio y ocupa el hero entero:

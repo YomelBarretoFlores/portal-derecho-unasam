@@ -66,7 +66,7 @@ class AjustesSitio extends Page
             'home_hero_titulo', 'home_hero_subtitulo', 'home_hero_cta1', 'home_hero_cta2',
             'home_hero_stat1_label', 'home_hero_stat1_valor', 'home_hero_stat1_sufijo',
             'home_hero_stat2_label', 'home_hero_stat2_valor', 'home_hero_stat2_sufijo',
-            'home_hero_mascota_url', 'home_hero_mascota_alt',
+            'home_hero_foto_url', 'home_hero_mascota_url', 'home_hero_mascota_alt',
             'home_about_eyebrow', 'home_about_titulo', 'home_about_cuerpo', 'home_about_cita',
             'home_accesos_eyebrow', 'home_accesos_titulo',
             'home_stats_eyebrow', 'home_stats_titulo', 'home_stats_narrativa',
@@ -155,6 +155,10 @@ class AjustesSitio extends Page
                         TextInput::make('home_hero_stat2_label')->label('Cifra 2 — etiqueta'),
                         TextInput::make('home_hero_stat2_valor')->label('Cifra 2 — valor'),
                         TextInput::make('home_hero_stat2_sufijo')->label('Cifra 2 — sufijo'),
+                        UrlDeRespaldo::imagen('home_hero_foto_url', 'Fotografía de fondo')
+                            ->helperText('Déjelo vacío para usar la fotografía del patio que viene con el portal, '
+                                .'que está optimizada en varios tamaños. Una imagen propia debe ser apaisada y '
+                                .'de al menos 2000 px de ancho.'),
                         UrlDeRespaldo::imagen('home_hero_mascota_url', 'Mascota — imagen')
                             ->helperText('Aparece de pie a la derecha del hero, solo en pantallas grandes. '
                                 .'Use un PNG o WebP con fondo transparente. Déjelo vacío para no mostrarla.'),

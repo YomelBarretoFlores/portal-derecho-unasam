@@ -38,6 +38,12 @@ class HomeController extends Controller
             'home_hero_stat2_label' => 'Áreas del Derecho',
             'home_hero_stat2_valor' => '8',
             'home_hero_stat2_sufijo' => '',
+            // Fotografía de fondo del hero. Vacío = la que viaja con la
+            // aplicación, servida en dos anchos y con respaldo JPEG. Al poner
+            // una dirección se usa esa, tal cual: de una imagen externa no
+            // podemos generar las versiones optimizadas.
+            'home_hero_foto_url' => '',
+
             // Mascota de la facultad.
             //
             // El valor por defecto queda VACÍO a propósito, aunque el archivo

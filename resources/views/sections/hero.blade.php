@@ -13,6 +13,16 @@
 <section class="relative isolate overflow-hidden bg-navy-950">
 
     <div class="absolute inset-0 -z-10">
+        @if (filled($home['home_hero_foto_url'] ?? ''))
+            {{-- Fotografía puesta desde el panel. Se sirve tal cual: de una
+                 imagen que no controlamos no podemos generar las versiones
+                 optimizadas, así que el aviso de tamaño está en el propio
+                 campo del formulario. --}}
+            <img src="{{ $home['home_hero_foto_url'] }}"
+                 alt="Fotografía de la Facultad de Derecho y Ciencias Políticas de la UNASAM"
+                 fetchpriority="high" decoding="async"
+                 class="h-full w-full object-cover" style="object-position: 50% 42%">
+        @else
         {{-- Dos anchos: el móvil no tiene por qué descargar una panorámica de
              2400 px para pintarla en 400. El respaldo JPEG existe para
              navegadores sin WebP, que a estas alturas son casi ninguno, así que
@@ -26,6 +36,7 @@
                  fetchpriority="high" decoding="async"
                  class="h-full w-full object-cover" style="object-position: 50% 42%">
         </picture>
+        @endif
         {{-- El velo oscurece SOLO donde hay texto.
 
              Antes eran dos capas superpuestas —un velo plano del 55 % más un

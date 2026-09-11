@@ -92,6 +92,8 @@ class SettingSeeder extends Seeder
             'seo_title' => 'Derecho y Ciencias Políticas — UNASAM',
             'seo_description' => 'Programa de Estudios de Derecho y Ciencias Políticas de la Universidad Nacional Santiago Antúnez de Mayolo — Huaraz, Áncash, Perú.',
 
+            'home_hero_foto_url' => '',
+
             // Mascota del hero.
             'home_hero_mascota_url' => '/img/mascota-derecho.webp',
             'home_hero_mascota_alt' => 'Mascota de la Facultad de Derecho: una coneja con casco romano, capa y camiseta de UNASAM Derecho',
