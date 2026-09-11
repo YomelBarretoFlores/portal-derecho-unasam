@@ -7,8 +7,17 @@ CLAUDE.md
 *.log
 .DS_Store
 .env
-.env.backup
-.env.production
+# Cualquier variante de .env, salvo el ejemplo. Sin esto, un «cp .env
+# .env.bak» antes de un «git add -A» publicaría las credenciales de la base
+# de datos en un repositorio abierto.
+.env.*
+!.env.example
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*.orig
+*~
 .phpactor.json
 .phpunit.result.cache
 /.codex

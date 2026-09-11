@@ -4,7 +4,7 @@ Portal institucional y CMS para el Programa de Estudios de Derecho y Ciencias Po
 
 ## Stack
 
-- PHP 8.3+ y Laravel 13
+- PHP 8.3+ y Laravel 13 (la CI compila y prueba con 8.4)
 - Filament 5 con autenticación administrativa por correo y contraseña
 - Blade, Livewire, Tailwind CSS 4 y Vite 8
 - Spatie Media Library sobre almacenamiento público local
