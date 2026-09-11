@@ -13,23 +13,6 @@
                     <p>{{ $parrafo }}</p>
                 @endforeach
             </div>
-            {{-- Las cifras vivían en el hero, encima de la fotografía, como dos
-                 contadores grandes. Ahí eran decoración: nadie llega a la
-                 portada a saber cuántas áreas del derecho hay. Aquí sostienen el
-                 párrafo que acaban de leer, que es lo que un dato debe hacer. --}}
-            <dl class="mt-10 flex flex-wrap gap-x-14 gap-y-6 border-t border-stone-200 pt-7">
-                @foreach ([['home_hero_stat1_label', 'home_hero_stat1_valor', 'home_hero_stat1_sufijo'],
-                           ['home_hero_stat2_label', 'home_hero_stat2_valor', 'home_hero_stat2_sufijo']] as [$etiqueta, $valor, $sufijo])
-                    @if (filled($home[$valor] ?? ''))
-                        <div>
-                            <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy-700">{{ $home[$etiqueta] }}</dt>
-                            <dd class="num-editorial mt-2 text-4xl font-semibold tracking-tight"
-                                data-count="{{ $home[$valor] }}" data-count-suffix="{{ $home[$sufijo] }}">{{ $home[$valor] }}{{ $home[$sufijo] }}</dd>
-                        </div>
-                    @endif
-                @endforeach
-            </dl>
-
             <div class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
                 @foreach ([['Presentación', route('presentacion')], ['Historia', route('historia')], ['Campo Laboral', route('campo-laboral')]] as [$texto, $url])
                     <a href="{{ $url }}" wire:navigate.hover class="link-arrow group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">

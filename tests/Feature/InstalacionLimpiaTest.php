@@ -43,7 +43,13 @@ class InstalacionLimpiaTest extends TestCase
         $this->assertSame(0, Objetivo::count());
         $this->assertSame(0, Competencia::count());
         $this->assertSame(0, Acceso::count());
-        $this->assertSame(0, Setting::count());
+
+        // Los textos del sitio tampoco existen. No se mira el total de la tabla
+        // «settings»: la migración 000015 deja ahí la ruta de la mascota, que
+        // es una referencia a un archivo de la aplicación, no contenido
+        // redactado. Lo que importa es que la prosa no está.
+        $this->assertNull(Setting::get('mision'));
+        $this->assertNull(Setting::get('presentacion_titulo'));
     }
 
     public function test_the_institutional_seeder_fills_the_site(): void
@@ -154,6 +160,18 @@ class InstalacionLimpiaTest extends TestCase
 
             $formulario->assertFormSet([$clave => $valor]);
         }
+    }
+
+    public function test_the_mascot_is_configured_on_a_fresh_install(): void
+    {
+        // El archivo viaja con la aplicación, pero el ajuste que lo señala
+        // tiene que quedar puesto o la portada abriría sin ella.
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        $this->assertSame('/img/mascota-derecho.webp', Setting::get('home_hero_mascota_url'));
+        $this->assertNotSame('', (string) Setting::get('home_hero_mascota_alt'));
+
+        $this->get('/')->assertOk()->assertSee('/img/mascota-derecho.webp');
     }
 
     public function test_running_the_seeder_twice_does_not_duplicate_content(): void

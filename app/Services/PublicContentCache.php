@@ -102,7 +102,7 @@ class PublicContentCache
      *
      * @return array<int, array<string, mixed>>
      */
-    private function destacados(int $limite = 4): array
+    private function destacados(int $limite = 3): array
     {
         $comunicados = Comunicado::query()->publicados()->latest('fecha_publicacion')->limit($limite)
             ->get(['titulo', 'slug', 'resumen', 'fecha_publicacion'])

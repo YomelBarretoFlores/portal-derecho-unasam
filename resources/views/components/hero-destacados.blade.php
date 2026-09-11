@@ -1,10 +1,7 @@
 @props(['destacados'])
 
 @php
-    // El primero encabeza el hero, así que aquí se omite: repetirlo a diez
-    // centímetros de distancia haría parecer que el sitio tiene menos
-    // contenido del que tiene.
-    $items = collect($destacados)->skip(1)->take(3)->values();
+    $items = collect($destacados)->take(3)->values();
 @endphp
 
 @if ($items->isNotEmpty())

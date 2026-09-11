@@ -38,8 +38,14 @@ class HomeController extends Controller
             'home_hero_stat2_label' => 'Áreas del Derecho',
             'home_hero_stat2_valor' => '8',
             'home_hero_stat2_sufijo' => '',
-            // Mascota de la facultad. Vacío mientras no haya imagen: el hero
-            // funciona igual sin ella y no deja hueco.
+            // Mascota de la facultad.
+            //
+            // El valor por defecto queda VACÍO a propósito, aunque el archivo
+            // viaje con la aplicación. Si aquí pusiera la ruta, vaciar el campo
+            // en el panel no serviría de nada: el valor por defecto volvería a
+            // aparecer, y el texto de ayuda —«déjelo vacío para no mostrarla»—
+            // sería mentira. La ruta se carga una sola vez en la base, con la
+            // migración 000015, y a partir de ahí manda el panel.
             'home_hero_mascota_url' => '',
             'home_hero_mascota_alt' => '',
             'home_about_eyebrow' => 'El programa',

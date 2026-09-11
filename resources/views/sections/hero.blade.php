@@ -77,63 +77,34 @@
                  style="height: clamp(19rem, 34vw, 30rem)">
         @endif
 
-        @php
-            // Lo que encabeza el hero es lo último que la facultad ha publicado.
-            // No hay un campo «destacado» aparte: publicar ya es destacar, y un
-            // interruptor más sería una cosa más que se olvida de mover.
-            $principal = collect($destacados)->first();
-        @endphp
-
         <div class="relative z-10 max-w-2xl">
-            @if ($principal)
-                {{-- Hero editorial: el sitio abre contando qué pasa, no repitiendo
-                     cómo se llama. El nombre de la facultad ya está en la barra de
-                     arriba y en el escudo; volver a escribirlo aquí gastaba el
-                     espacio más visible del portal en información que el visitante
-                     acaba de leer. --}}
-                <p class="reveal flex flex-wrap items-baseline gap-x-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
-                    {{ $principal->etiqueta }}
-                    @if ($principal->fecha)
-                        <span class="font-normal normal-case tracking-normal text-white/65">
-                            {{ $principal->fecha->translatedFormat('d \d\e F \d\e Y') }}
-                        </span>
-                    @endif
-                </p>
+            <p class="reveal text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
+                UNASAM · Huaraz, Áncash
+            </p>
 
-                <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
-                    {{ $principal->titulo }}
-                </h1>
+            <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
+                {{ $home['home_hero_titulo'] }}
+            </h1>
 
-                @if (filled($principal->resumen ?? ''))
-                    <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-white/80" data-reveal-delay="0.16">
-                        {{ $principal->resumen }}
-                    </p>
-                @endif
+            <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-white/80" data-reveal-delay="0.16">
+                {{ $home['home_hero_subtitulo'] }}
+            </p>
 
-                <div class="reveal mt-8" data-reveal-delay="0.24">
-                    <x-button :href="$principal->url" variant="light">Leer más</x-button>
+            <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.24">
+                <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
+                <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
+            </div>
+
+            <div class="reveal mt-12 grid max-w-md grid-cols-2 divide-x divide-white/15 border-t border-white/15 pt-7" data-reveal-delay="0.32">
+                <div class="px-3 text-left first:pl-0 sm:px-6">
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat1_label'] }}</div>
+                    <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat1_valor'] }}" data-count-suffix="{{ $home['home_hero_stat1_sufijo'] }}">{{ $home['home_hero_stat1_valor'] }}{{ $home['home_hero_stat1_sufijo'] }}</div>
                 </div>
-            @else
-                {{-- Respaldo para una instalación nueva, antes de que se publique
-                     nada. Sin él la portada abriría con un hueco, que es peor que
-                     abrir con la identidad. --}}
-                <p class="reveal text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-300 sm:text-xs">
-                    UNASAM · Huaraz, Áncash
-                </p>
-
-                <h1 class="reveal hero-title mt-5 text-display text-white" data-reveal-delay="0.08">
-                    {{ $home['home_hero_titulo'] }}
-                </h1>
-
-                <p class="reveal mt-6 max-w-lg text-lg leading-relaxed text-white/80" data-reveal-delay="0.16">
-                    {{ $home['home_hero_subtitulo'] }}
-                </p>
-
-                <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.24">
-                    <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
-                    <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
+                <div class="px-3 text-left sm:px-6">
+                    <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-gold-300 sm:text-xs">{{ $home['home_hero_stat2_label'] }}</div>
+                    <div class="stat-outline mt-3 text-3xl font-bold tracking-tight sm:text-5xl" data-count="{{ $home['home_hero_stat2_valor'] }}" data-count-suffix="{{ $home['home_hero_stat2_sufijo'] }}">{{ $home['home_hero_stat2_valor'] }}{{ $home['home_hero_stat2_sufijo'] }}</div>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 
