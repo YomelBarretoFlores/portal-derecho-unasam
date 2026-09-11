@@ -37,11 +37,28 @@ class Setting extends Model
     }
 
     /**
-     * Crea o actualiza una clave e invalida la caché.
+     * Crea o actualiza una clave. La caché la invalidan los hooks de abajo.
      */
     public static function set(string $clave, mixed $valor): void
     {
         static::query()->updateOrCreate(['clave' => $clave], ['valor' => $valor]);
+    }
+
+    public static function olvidarCache(): void
+    {
         Cache::forget(self::CACHE_KEY);
+    }
+
+    /**
+     * La invalidación vive en los eventos del modelo, no en set(), para que
+     * ninguna vía de escritura pueda saltársela: un seeder, un updateOrCreate
+     * directo o un futuro recurso de Filament invalidan igual. Al ser una caché
+     * rememberForever, una escritura sin invalidar dejaría el pie de página, la
+     * navegación y el SEO congelados de forma indefinida.
+     */
+    protected static function booted(): void
+    {
+        static::saved(static fn () => static::olvidarCache());
+        static::deleted(static fn () => static::olvidarCache());
     }
 }

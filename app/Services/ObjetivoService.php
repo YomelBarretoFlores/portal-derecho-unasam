@@ -16,7 +16,9 @@ class ObjetivoService
             ->groupBy('plan')
             ->map(fn ($items, $plan) => [
                 'titulo' => $plan,
-                'destacado' => (bool) $items->first()->vigente,
+                // Cualquier fila marcada como vigente marca el plan: el panel ofrece el
+                // interruptor en todas, así que leer solo la primera lo volvía decorativo.
+                'destacado' => $items->contains(fn ($item): bool => (bool) $item->vigente),
                 'objetivos' => $items->pluck('texto')->all(),
             ])
             ->values();

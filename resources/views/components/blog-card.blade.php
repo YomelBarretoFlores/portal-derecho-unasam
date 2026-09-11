@@ -40,15 +40,15 @@
     <div class="flex grow flex-col {{ $horizontal ? 'p-7 md:p-10' : ($featured ? 'p-8' : 'p-6') }}">
         <div class="flex items-center gap-3">
             <span class="rounded-none px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide {{ $badge }}">{{ $etiqueta }}</span>
-            <time datetime="{{ $post->fecha->toDateString() }}" class="text-xs text-stone-400">{{ $post->fecha->translatedFormat('d M Y') }}</time>
+            <time datetime="{{ $post->fecha->toDateString() }}" class="text-xs text-stone-500">{{ $post->fecha->translatedFormat('d M Y') }}</time>
         </div>
         <h3 class="mt-3 font-semibold leading-snug text-navy-900 {{ $horizontal ? 'text-2xl md:text-3xl' : ($featured ? 'text-2xl' : 'text-lg') }}">
             <a href="{{ route('blog.show', $post->slug) }}" wire:navigate.hover class="transition hover:text-navy-600">{{ $post->titulo }}</a>
         </h3>
         <p class="mt-3 leading-relaxed text-stone-500 {{ ($featured || $horizontal) ? 'text-[15px]' : 'grow text-sm' }}">{{ $post->extracto }}</p>
-        <div class="mt-4 flex items-center justify-between border-t border-stone-100 pt-4 text-xs text-stone-400 {{ $featured ? 'mt-6' : '' }}">
+        <div class="mt-4 flex items-center justify-between border-t border-stone-100 pt-4 text-xs text-stone-500 {{ $featured ? 'mt-6' : '' }}">
             <span>{{ $post->autor }}</span>
-            <span>{{ $post->tiempo_lectura }} de lectura</span>
+            @if (filled($post->tiempo_lectura))<span>{{ $post->tiempo_lectura }} de lectura</span>@endif
         </div>
         <a href="{{ route('blog.show', $post->slug) }}" wire:navigate.hover class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-navy-700">Leer publicación <x-ui-icon name="arrow-right" /></a>
     </div>

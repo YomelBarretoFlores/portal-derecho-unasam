@@ -10,6 +10,9 @@
     <section class="mx-auto max-w-4xl px-6 py-20">
 
         {{-- Línea de tiempo de hitos institucionales (resoluciones) --}}
+        @if (collect($hitos)->isEmpty())
+            <x-empty-state title="Trayectoria institucional" description="Los hitos de la historia del programa se publicarán conforme se documenten sus resoluciones." />
+        @else
         <ol class="relative border-l-2 border-stone-200 pl-8">
             @foreach ($hitos as $i => $hito)
                 <li class="reveal relative mb-10 last:mb-0" @if ($i) data-reveal-delay="{{ $i * 0.05 }}" @endif>
@@ -20,6 +23,7 @@
                 </li>
             @endforeach
         </ol>
+        @endif
 
         {{-- Reseña descriptiva --}}
         <div class="reveal mt-16 max-w-3xl border-t border-stone-200 pt-12">

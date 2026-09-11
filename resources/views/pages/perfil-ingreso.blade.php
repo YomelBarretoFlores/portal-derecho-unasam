@@ -14,6 +14,9 @@
             <h2 class="mt-4 text-2xl font-semibold text-navy-900">Perfil de ingreso del área</h2>
         </div>
 
+        @if (collect($areas)->isEmpty())
+            <x-empty-state title="Perfil de ingreso" description="Las áreas del perfil de ingreso se publicarán próximamente." />
+        @else
         <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ($areas as $i => $area)
                 <x-reveal :delay="$i * 0.08">
@@ -32,6 +35,7 @@
                 </x-reveal>
             @endforeach
         </div>
+        @endif
 
         {{-- Perfil de ingreso específico --}}
         <div class="reveal mt-14 max-w-3xl" data-reveal-delay="0.05">

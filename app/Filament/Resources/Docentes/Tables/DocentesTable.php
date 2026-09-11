@@ -33,6 +33,14 @@ class DocentesTable
                     ->searchable()
                     ->toggleable(),
                 EditorialStatusColumn::make(),
+                // Deriva de estado_editorial pero gobierna la visibilidad pública:
+                // el editor debe poder auditarla, aunque no editarla.
+                TextColumn::make('estado_revision')
+                    ->label('Revisión')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => Docente::ESTADOS_REVISION[$state] ?? '—')
+                    ->color(fn (?string $state): string => $state === 'verified' ? 'success' : 'gray')
+                    ->toggleable(),
                 TextColumn::make('orden')
                     ->label('Orden')
                     ->sortable(),

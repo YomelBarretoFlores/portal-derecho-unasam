@@ -12,7 +12,7 @@
         <dl class="reveal grid gap-4 sm:grid-cols-3">
             @foreach ([['Grado académico', $grado], ['Título profesional', $tituloProf], ['Modalidad', $modalidad]] as [$k, $v])
                 <div class="rounded-2xl border border-stone-200 bg-paper p-5 text-center">
-                    <dt class="font-sans text-xs uppercase tracking-wide text-stone-400">{{ $k }}</dt>
+                    <dt class="font-sans text-xs uppercase tracking-wide text-stone-500">{{ $k }}</dt>
                     <dd class="mt-1 font-semibold text-navy-900">{{ $v }}</dd>
                 </div>
             @endforeach
@@ -43,9 +43,9 @@
                                 <span class="flex items-center gap-3">
                                     <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-navy-900 text-xs font-semibold text-white">{{ $cursos->first()->ciclo_romano }}</span>
                                     <span class="font-semibold text-navy-900">Ciclo {{ $cursos->first()->ciclo_romano }}</span>
-                                    <span class="font-sans text-xs text-stone-400">{{ $cursos->count() }} curso(s)</span>
+                                    <span class="font-sans text-xs text-stone-500">{{ $cursos->count() }} curso(s)</span>
                                 </span>
-                                <svg class="h-5 w-5 text-stone-400 transition" :class="(todos || abierto === {{ $numCiclo }}) && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+                                <svg class="h-5 w-5 text-stone-500 transition" :class="(todos || abierto === {{ $numCiclo }}) && 'rotate-180'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
                             </button>
                             <div x-show="todos || abierto === {{ $numCiclo }}" x-cloak
                                  id="ciclo-{{ $numCiclo }}" role="region" class="overflow-x-auto">
@@ -110,6 +110,11 @@
                     </a>
                 @endif
             </div>
+
+            <p class="mt-8 border-t border-stone-200 pt-6 font-sans text-sm text-stone-600">
+                ¿Ingresaste antes de 2023?
+                <a href="{{ route('plan-2019') }}" wire:navigate.hover class="font-semibold text-navy-700 underline underline-offset-2">Consulta el Plan de Estudios 2019</a>.
+            </p>
         </div>
     </section>
 @endsection

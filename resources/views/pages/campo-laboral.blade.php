@@ -8,6 +8,9 @@
         subtitle="Las áreas profesionales donde se desempeñan nuestros egresados." />
 
     <section class="mx-auto max-w-7xl px-6 py-20">
+        @if (collect($areas)->isEmpty())
+            <x-empty-state title="Campo laboral" description="Las áreas de desempeño profesional se publicarán próximamente." />
+        @else
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($areas as $i => $area)
                 <x-reveal :delay="$i * 0.05">
@@ -18,5 +21,6 @@
                 </x-reveal>
             @endforeach
         </div>
+        @endif
     </section>
 @endsection

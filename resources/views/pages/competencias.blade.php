@@ -8,6 +8,9 @@
         subtitle="Capacidades generales y específicas que desarrolla el Programa de Estudios." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">
+        @if (collect($grupos)->isEmpty())
+            <x-empty-state title="Competencias" description="Las competencias generales y específicas se publicarán conforme se aprueben." />
+        @else
         <div class="space-y-16">
             @foreach ($grupos as $grupo)
                 <div>
@@ -45,5 +48,6 @@
                 </div>
             @endforeach
         </div>
+        @endif
     </section>
 @endsection

@@ -85,7 +85,7 @@
                     ] as $label => $value)
                         @if ($value)
                             <div class="bg-white p-5">
-                                <dt class="font-sans text-xs font-semibold uppercase tracking-widest text-stone-400">{{ $label }}</dt>
+                                <dt class="font-sans text-xs font-semibold uppercase tracking-widest text-stone-500">{{ $label }}</dt>
                                 <dd class="mt-2 text-base font-medium leading-relaxed text-navy-900">{{ $value }}</dd>
                             </div>
                         @endif
@@ -103,7 +103,12 @@
                         <ul class="mt-5 space-y-4">
                             @foreach ($docente->publicaciones as $publicacion)
                                 <li class="border-l-2 border-gold-500 pl-5 text-base leading-relaxed text-stone-600">
-                                    <span class="font-medium text-navy-900">{{ $publicacion['titulo'] ?? '' }}</span>
+                                    @if (! empty($publicacion['url']))
+                                        <a href="{{ $publicacion['url'] }}" target="_blank" rel="noopener"
+                                           class="font-medium text-navy-900 underline underline-offset-2 transition hover:text-navy-600">{{ $publicacion['titulo'] ?? '' }}</a>
+                                    @else
+                                        <span class="font-medium text-navy-900">{{ $publicacion['titulo'] ?? '' }}</span>
+                                    @endif
                                     @if (! empty($publicacion['anio'])) <span>({{ $publicacion['anio'] }})</span> @endif
                                 </li>
                             @endforeach

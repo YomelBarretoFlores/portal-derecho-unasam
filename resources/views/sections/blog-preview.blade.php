@@ -3,6 +3,7 @@
 <section class="mx-auto max-w-7xl px-6 py-20">
     <div class="reveal flex flex-wrap items-end justify-between gap-4">
         <div>
+            <p class="eyebrow">{{ $home['home_blog_eyebrow'] }}</p>
             <h2 class="text-3xl font-semibold tracking-tight text-navy-900 md:text-4xl">{{ $home['home_blog_titulo'] }}</h2>
         </div>
         <a href="{{ route('blog') }}" wire:navigate.hover class="link-arrow group inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">

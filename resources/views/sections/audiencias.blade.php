@@ -41,7 +41,7 @@
         {{-- Encabezado a un lado (composición asimétrica) --}}
         <div class="reveal lg:pt-2">
             <p class="eyebrow">Orientación y recursos</p>
-            <h2 class="mt-3 font-serif text-3xl text-navy-900 md:text-4xl">Explora el programa</h2>
+            <h2 class="mt-3 font-serif text-3xl text-navy-900 md:text-4xl">{{ $home['home_accesos_titulo'] }}</h2>
             <p class="mt-3 max-w-xs leading-relaxed text-stone-500">
                 Encuentra información según tu relación con la comunidad universitaria.
             </p>
@@ -76,7 +76,7 @@
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div>
                     <p class="eyebrow">Recursos destacados</p>
-                    <h3 class="mt-2 font-serif text-2xl font-semibold text-navy-900">Accesos directos</h3>
+                    <h3 class="mt-2 font-serif text-2xl font-semibold text-navy-900">{{ $home['home_accesos_eyebrow'] }}</h3>
                 </div>
                 <p class="max-w-md text-sm leading-6 text-stone-500">Enlaces administrados desde el portal para consultas académicas frecuentes.</p>
             </div>

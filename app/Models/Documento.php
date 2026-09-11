@@ -40,10 +40,6 @@ class Documento extends Model implements HasMedia
      */
     public function getEnlaceAttribute(): ?string
     {
-        if (array_key_exists('_enlace', $this->getAttributes())) {
-            return $this->getAttributes()['_enlace'] ?: $this->url;
-        }
-
         $media = $this->getFirstMedia('archivo');
 
         return $media?->getUrl() ?: $this->url;

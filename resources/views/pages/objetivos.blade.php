@@ -8,6 +8,9 @@
         subtitle="Logros que se espera de nuestros egresados, según cada plan de estudios." />
 
     <section class="mx-auto max-w-4xl px-6 py-20">
+        @if (collect($planes)->isEmpty())
+            <x-empty-state title="Objetivos educacionales" description="Los objetivos por plan de estudios se publicarán conforme se aprueben." />
+        @else
         <div class="space-y-14">
             @foreach ($planes as $plan)
                 <div class="reveal">
@@ -29,5 +32,6 @@
                 </div>
             @endforeach
         </div>
+        @endif
     </section>
 @endsection
