@@ -108,6 +108,20 @@ Las credenciales del bucket de manuscritos caen a las `AWS_*` de arriba si se de
 
 **`AWS_URL` no es opcional.** Además de formar los enlaces, alimenta la cabecera `Content-Security-Policy`. Sin ella las imágenes se guardan correctamente en el bucket y aun así el navegador se niega a mostrarlas, sin error visible en la página.
 
+### Imágenes alojadas fuera del portal
+
+La cabecera `Content-Security-Policy` declara `img-src 'self'`: el navegador **bloquea toda imagen servida desde otro dominio**. Es deliberado, y es lo que impide que alguien cuele contenido ajeno en las páginas del portal.
+
+El dominio del bucket de medios entra solo, deducido de `AWS_URL`. Para cualquier otro —el repositorio institucional, por ejemplo— hay que declararlo:
+
+```
+CSP_IMG_HOSTS=repositorio.unasam.edu.pe,otro.dominio.edu.pe
+```
+
+Nunca `*`: el portal lo descarta, igual que descarta los orígenes sin cifrar.
+
+Cuando se pega en el panel la URL de una portada alojada en un dominio no autorizado, **el formulario la rechaza en el momento** y dice qué dominios admite. Sin esa comprobación el registro se guardaba sin queja y la portada salía como un hueco en la página, sin nada que apuntara a la causa.
+
 Deben ser **dos buckets distintos**: el de medios con lectura pública, el de manuscritos con acceso denegado por completo. Compartir un bucket público para los dos expondría los manuscritos. El portal rechaza `SUBMISSIONS_DISK=medios` por ese motivo.
 
 ### Verificación

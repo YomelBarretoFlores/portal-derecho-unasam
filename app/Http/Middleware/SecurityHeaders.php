@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\OrigenesDeImagen;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Vite;
@@ -20,13 +21,22 @@ class SecurityHeaders
 
         [$viteOrigin, $viteWebSocketOrigin] = $this->viteDevelopmentOrigins();
 
+        // Dominios desde los que se sirven imágenes del portal: el bucket de
+        // medios, si lo hay, y los declarados en CSP_IMG_HOSTS. Sin esto, una
+        // portada alojada fuera se descarga bien y el navegador se niega a
+        // pintarla, sin más rastro que un aviso en la consola.
+        $origenesDeImagen = implode(' ', array_filter([
+            ...OrigenesDeImagen::permitidos(),
+            $viteOrigin,
+        ]));
+
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
             "base-uri 'self'",
             "object-src 'none'",
             "frame-ancestors 'none'",
             "form-action 'self'",
-            trim("img-src 'self' data: blob: {$viteOrigin}"),
+            trim("img-src 'self' data: blob: {$origenesDeImagen}"),
             "font-src 'self' https://fonts.bunny.net",
             trim("style-src 'self' 'unsafe-inline' https://fonts.bunny.net {$viteOrigin}"),
             trim("script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin}"),

@@ -11,6 +11,7 @@ use App\Filament\Resources\RevistaNumeros\RelationManagers\ArticulosRelationMana
 use App\Filament\Tables\EditorialStatusColumn;
 use App\Models\Revista;
 use App\Models\RevistaNumero;
+use App\Rules\ImagenVisible;
 use App\Rules\SafeUrl;
 use BackedEnum;
 use Filament\Actions\EditAction;
@@ -70,8 +71,8 @@ class RevistaNumeroResource extends Resource
                 ->acceptedFileTypes(['application/pdf'])->maxSize(config('media.max_pdf_kb'))
                 ->disabled(fn (): bool => ! config('media.uploads_enabled')),
             TextInput::make('portada_url_respaldo')->label('URL pública de respaldo de la portada')
-                ->rule(new SafeUrl)->columnSpanFull()
-                ->helperText('Se usa cuando las cargas de archivos están deshabilitadas en el entorno.'),
+                ->rule(new SafeUrl)->rule(new ImagenVisible)->columnSpanFull()
+                ->helperText('Se usa cuando las cargas de archivos están deshabilitadas en el entorno. Debe estar en un dominio autorizado: si no, el navegador la bloquea y la portada no se ve.'),
             TextInput::make('pdf_url_respaldo')->label('URL pública de respaldo del PDF del número')
                 ->rule(new SafeUrl)->columnSpanFull(),
             EditorialStatusSelect::make(),

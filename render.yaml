@@ -103,6 +103,10 @@ services:
         sync: false           # vacío en AWS S3; obligatorio en el resto
       - key: AWS_URL
         sync: false           # URL pública de lectura del bucket de medios
+      # Dominios externos autorizados a servir imágenes, separados por comas.
+      # Solo hace falta si se alojan portadas fuera del portal y del bucket.
+      - key: CSP_IMG_HOSTS
+        sync: false
 
       # --- Recepción de manuscritos ---
       # El disco de manuscritos NUNCA debe ser público: son originales inéditos
