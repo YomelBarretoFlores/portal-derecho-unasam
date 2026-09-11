@@ -7,8 +7,31 @@
     <ol class="mt-12 grid gap-px border border-stone-200 bg-stone-200 sm:grid-cols-3 lg:grid-cols-6" aria-label="Flujo editorial">
         @foreach(['Envío','Verificación editorial','Respuesta por correo','Corrección','Revisión por pares','Decisión'] as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<x-ui-icon name="arrow-right" class="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 bg-white text-navy-500 lg:block" />@endunless</li>@endforeach
     </ol>
-    <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a></div>
-    @if(session('submission_success'))<div class="mt-10 border-l-4 border-green-600 bg-green-50 p-6" role="status"><h2 class="text-xl">Envío recibido</h2><p class="mt-2">Guarda tu código de seguimiento: <strong>{{ session('submission_success') }}</strong>. El equipo responderá por correo institucional.</p></div>@endif
+    <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a><a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar mi envío</a></div>
+    @if(session('submission_success'))
+        <div class="mt-10 border-2 border-navy-900 bg-white" role="status" x-data="{ copiado: false }">
+            <div class="border-b border-stone-200 bg-paper px-7 py-5">
+                <p class="eyebrow">Envío recibido correctamente</p>
+                <h2 class="mt-2 text-2xl">Guarda tu código de seguimiento</h2>
+            </div>
+            <div class="px-7 py-7">
+                <p class="font-mono text-3xl font-bold tracking-wider text-navy-900 md:text-4xl" id="codigo-seguimiento">{{ session('submission_success') }}</p>
+                <div class="mt-5 flex flex-wrap gap-3 print:hidden">
+                    <button type="button" class="btn btn-primary"
+                            x-on:click="navigator.clipboard.writeText('{{ session('submission_success') }}').then(() => { copiado = true; setTimeout(() => copiado = false, 2500) })">
+                        <span x-show="! copiado">Copiar código</span>
+                        <span x-show="copiado" x-cloak>Copiado</span>
+                    </button>
+                    <button type="button" class="btn btn-ghost" x-on:click="window.print()">Imprimir</button>
+                    <a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar estado</a>
+                </div>
+                <p class="mt-6 border-t border-stone-200 pt-5 leading-relaxed">
+                    <strong>Sin este código no podrás enviar tu versión corregida</strong> ni consultar el estado de tu manuscrito. Anótalo o imprímelo antes de cerrar esta página.
+                </p>
+                <p class="mt-3 text-sm leading-relaxed text-stone-600">El equipo editorial revisará tu envío y se comunicará contigo por tu correo institucional.</p>
+            </div>
+        </div>
+    @endif
     @if(session('correction_success'))<div class="mt-10 border-l-4 border-green-600 bg-green-50 p-6" role="status">La versión corregida fue recibida correctamente.</div>@endif
     @if(!$submissionsEnabled)
         <div class="editorial-empty mt-12"><p class="eyebrow">Recepción de manuscritos</p><h2 class="mt-3 text-3xl">Recepción en línea cerrada</h2><p class="mt-4 max-w-3xl leading-relaxed">Actualmente no se reciben manuscritos mediante el portal. Consulta las normas para autores y los formatos oficiales antes de preparar una propuesta editorial.</p></div>
@@ -30,10 +53,10 @@
                     @foreach([['manuscrito','Manuscrito DOCX','.docx'],['carta','Carta DOCX o PDF','.docx,.pdf'],['declaracion','Declaración DOCX o PDF','.docx,.pdf'],['constancia_estilo','Constancia de estilo PDF','.pdf']] as [$name,$label,$accept])<label><span class="text-sm font-semibold text-navy-900">{{ $label }}</span><input type="file" name="{{ $name }}" accept="{{ $accept }}" required class="mt-2 block w-full border border-stone-300 bg-white p-3 text-sm"></label>@endforeach
                 </fieldset>
                 <label class="flex gap-3"><input type="checkbox" name="consentimiento" value="1" required class="mt-1"><span class="text-sm leading-relaxed">Declaro que he leído las normas y autorizo el tratamiento de mis datos para gestionar este envío editorial.</span></label>
-                @if($errors->any())<div class="border-l-4 border-red-600 bg-red-50 p-5" role="alert"><p class="font-semibold text-red-900">Revisa los datos:</p><ul class="mt-2 list-disc pl-5 text-sm">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+                @if($errors->getBag('default')->any())<div class="border-l-4 border-red-600 bg-red-50 p-5" role="alert" tabindex="-1" x-data x-init="$el.focus()"><p class="font-semibold text-red-900">Revisa los datos:</p><ul class="mt-2 list-disc pl-5 text-sm">@foreach($errors->getBag('default')->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
                 <button class="btn btn-primary" type="submit">Enviar manuscrito</button>
             </form>
-            <aside class="h-fit border-t-2 border-navy-900 bg-paper p-6"><h2 class="text-2xl">Enviar corrección</h2><p class="mt-3 text-sm leading-relaxed">Usa el código recibido y el mismo correo institucional.</p><form method="post" action="{{ route('revista.envios.correction') }}" enctype="multipart/form-data" class="mt-6 space-y-4">@csrf<input name="website_correction" tabindex="-1" autocomplete="off" class="hidden"><label class="block text-sm font-semibold">Código<input name="codigo_seguimiento" required class="mt-2 w-full border border-stone-300 bg-white px-3 py-2"></label><label class="block text-sm font-semibold">Correo institucional<input type="email" name="email_institucional_correccion" required class="mt-2 w-full border border-stone-300 bg-white px-3 py-2"></label><label class="block text-sm font-semibold">DOCX corregido<input type="file" name="manuscrito_corregido" accept=".docx" required class="mt-2 block w-full border border-stone-300 bg-white p-2"></label><label class="block text-sm font-semibold">Nota opcional<textarea name="nota_autor" rows="3" class="mt-2 w-full border border-stone-300 bg-white p-2"></textarea></label><button class="btn btn-ghost w-full" type="submit">Enviar corrección</button></form></aside>
+            <aside id="correccion" class="h-fit border-t-2 border-navy-900 bg-paper p-6"><h2 class="text-2xl">Enviar corrección</h2><p class="mt-3 text-sm leading-relaxed">Usa el código recibido y el mismo correo institucional.</p><form method="post" action="{{ route('revista.envios.correction') }}" enctype="multipart/form-data" class="mt-6 space-y-4">@csrf<input name="website_correction" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true"><label class="block text-sm font-semibold">Código<input name="codigo_seguimiento" required class="mt-2 w-full border border-stone-300 bg-white px-3 py-2"></label><label class="block text-sm font-semibold">Correo institucional<input type="email" name="email_institucional_correccion" required class="mt-2 w-full border border-stone-300 bg-white px-3 py-2"></label><label class="block text-sm font-semibold">DOCX corregido<input type="file" name="manuscrito_corregido" accept=".docx" required class="mt-2 block w-full border border-stone-300 bg-white p-2"></label><label class="block text-sm font-semibold">Nota opcional<textarea name="nota_autor" rows="3" class="mt-2 w-full border border-stone-300 bg-white p-2"></textarea></label>@if($errors->getBag('correccion')->any())<div class="border-l-4 border-red-600 bg-red-50 p-4" role="alert" tabindex="-1" x-data x-init="$el.focus()"><p class="text-sm font-semibold text-red-900">Revisa la corrección:</p><ul class="mt-2 list-disc pl-5 text-sm">@foreach($errors->getBag('correccion')->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif<button class="btn btn-ghost w-full" type="submit">Enviar corrección</button></form></aside>
         </div>
     @endif
 </section>

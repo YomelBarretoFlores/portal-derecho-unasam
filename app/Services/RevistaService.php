@@ -21,16 +21,6 @@ class RevistaService
             ->first();
     }
 
-    public function numeros(?string $q = null): LengthAwarePaginator
-    {
-        return RevistaNumero::query()->publicados()->with('media')
-            ->when($q, fn ($query) => $query->where(fn ($search) => $search
-                ->where('titulo', 'like', "%{$q}%")
-                ->orWhere('descripcion', 'like', "%{$q}%")))
-            ->orderByDesc('fecha_publicacion')->orderByDesc('orden')
-            ->paginate(12)->withQueryString();
-    }
-
     public function articulos(RevistaNumero $numero, ?string $q = null, ?string $categoria = null): LengthAwarePaginator
     {
         return Articulo::query()->publicados()

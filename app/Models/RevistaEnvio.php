@@ -10,6 +10,15 @@ class RevistaEnvio extends Model
 {
     public const ESTADOS = ['recibido' => 'Recibido', 'verificacion_documental' => 'Verificación documental', 'observado' => 'Observado', 'correccion_recibida' => 'Corrección recibida', 'revision_editorial' => 'Revisión editorial', 'revision_pares' => 'Revisión por pares', 'aceptado' => 'Aceptado', 'rechazado' => 'Rechazado', 'publicado' => 'Publicado'];
 
+    /**
+     * Estados en los que el autor todavía puede subir una versión corregida.
+     * Fuera de esta lista el envío ya salió del circuito de correcciones
+     * (aceptado, rechazado o publicado) y no debe volver a la cola editorial.
+     *
+     * @var array<int, string>
+     */
+    public const ESTADOS_ADMITEN_CORRECCION = ['observado'];
+
     public const TIPOS = ['articulo_original' => 'Artículo original', 'revision' => 'Revisión', 'ensayo' => 'Ensayo', 'resena' => 'Reseña'];
 
     protected $table = 'revista_envios';

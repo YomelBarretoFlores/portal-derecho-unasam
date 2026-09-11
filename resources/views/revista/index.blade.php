@@ -151,18 +151,20 @@
                 <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($numeros as $numero)
                         @php
+                            // Esta vista recibe stdClass desde la caché pública y modelos
+                            // Eloquent desde la vista previa del panel.
                             $portadaUrl = $numero->_portada_url ?? '';
-                            if (! $portadaUrl && method_exists($numero, 'getFirstMediaUrl')) {
-                                $portadaUrl = $numero->getFirstMediaUrl('portada');
+                            if (! $portadaUrl && $numero instanceof \App\Models\RevistaNumero) {
+                                $portadaUrl = $numero->portada_url;
                             }
                         @endphp
                         <article class="card-hover border border-stone-200 bg-white">
                             @if ($portadaUrl)<img src="{{ $portadaUrl }}" alt="Portada de {{ $numero->titulo }}" class="aspect-[4/5] w-full object-cover">@endif
                             <div class="p-6">
                                 <p class="text-xs font-semibold uppercase tracking-wider text-navy-600">Vol. {{ $numero->volumen }} · Núm. {{ $numero->numero }}</p>
-                                <h3 class="mt-3 text-2xl leading-tight"><a href="{{ route('revista.numero', $numero) }}" wire:navigate.hover>{{ $numero->titulo }}</a></h3>
+                                <h3 class="mt-3 text-2xl leading-tight"><a href="{{ route('revista.numero', $numero->slug) }}" wire:navigate.hover>{{ $numero->titulo }}</a></h3>
                                 @if ($numero->descripcion)<p class="mt-3 text-sm leading-relaxed text-stone-500">{{ \Illuminate\Support\Str::limit($numero->descripcion, 170) }}</p>@endif
-                                @if($numero->fecha_publicacion)<time class="mt-5 block text-xs text-stone-400">{{ $numero->fecha_publicacion->translatedFormat('F Y') }}</time>@endif
+                                @if($numero->fecha_publicacion)<time class="mt-5 block text-xs text-stone-500">{{ $numero->fecha_publicacion->translatedFormat('F Y') }}</time>@endif
                             </div>
                         </article>
                     @endforeach

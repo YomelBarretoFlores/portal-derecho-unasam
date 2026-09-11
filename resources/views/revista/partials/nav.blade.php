@@ -6,21 +6,52 @@
                 ['revista.comite-editorial', 'Comité editorial'], ['revista.comite-cientifico', 'Comité científico'],
                 ['revista.avisos', 'Avisos'], ['revista.envios', 'Envíos'],
             ];
+            $acercaDe = [
+                ['revista.normas', 'Normas para autores'], ['revista.formatos', 'Formatos y plantillas'],
+                ['revista.sobre', 'Sobre la revista'], ['revista.indexacion', 'Indexación'],
+                ['revista.contacto', 'Contacto'], ['revista.privacidad', 'Declaración de privacidad'],
+                ['revista.preservacion', 'Preservación digital'], ['revista.envios.consulta', 'Consultar mi envío'],
+            ];
+            $acercaDeActivo = collect($acercaDe)->contains(fn (array $item): bool => request()->routeIs($item[0]));
         @endphp
         @foreach ($links as [$routeName, $label])
-            <a href="{{ route($routeName) }}" wire:navigate.hover @class([
+            <a href="{{ route($routeName) }}" wire:navigate.hover
+               @if (request()->routeIs($routeName)) aria-current="page" @endif
+               @class([
                 'shrink-0 border px-3 py-2 font-medium transition-colors',
                 'border-navy-900 bg-navy-900 text-white' => request()->routeIs($routeName),
                 'border-transparent text-stone-600 hover:border-stone-300 hover:text-navy-900' => ! request()->routeIs($routeName),
             ])>{{ $label }}</a>
         @endforeach
-        <details class="group relative shrink-0">
-            <summary class="flex cursor-pointer list-none items-center gap-1.5 border border-transparent px-3 py-2 font-medium text-stone-600 hover:border-stone-300 hover:text-navy-900">Acerca de <x-ui-icon name="chevron-down" class="h-3.5 w-3.5 transition group-open:rotate-180" /></summary>
-            <div class="fixed left-6 right-6 top-32 z-40 mt-1 border border-stone-200 bg-white p-2 shadow-card-lg lg:absolute lg:left-auto lg:right-0 lg:top-auto lg:min-w-64">
-                @foreach ([['revista.sobre','Sobre la revista'],['revista.indexacion','Indexación'],['revista.contacto','Contacto'],['revista.privacidad','Declaración de privacidad'],['revista.preservacion','Preservación digital']] as [$routeName,$label])
-                    <a class="block px-3 py-2 text-stone-600 hover:bg-paper hover:text-navy-900" href="{{ route($routeName) }}" wire:navigate.hover>{{ $label }}</a>
-                @endforeach
+
+        {{-- Desplegable accesible: mismo patrón que x-nav-dropdown (foco y Escape). --}}
+        <div x-data="{ open: false }"
+             @focusin="open = true" @focusout="open = false"
+             @keydown.escape.stop="open = false; $refs.trigger.focus()"
+             @click.outside="open = false"
+             class="relative shrink-0">
+            <button x-ref="trigger" type="button" @click="open = ! open"
+                    aria-haspopup="true" :aria-expanded="open"
+                    @if ($acercaDeActivo) aria-current="page" @endif
+                    @class([
+                        'flex items-center gap-1.5 border px-3 py-2 font-medium transition-colors',
+                        'border-navy-900 bg-navy-900 text-white' => $acercaDeActivo,
+                        'border-transparent text-stone-600 hover:border-stone-300 hover:text-navy-900' => ! $acercaDeActivo,
+                    ])>
+                Acerca de
+                <x-ui-icon name="chevron-down" class="h-3.5 w-3.5 transition" ::class="open && 'rotate-180'" />
+            </button>
+
+            <div x-show="open" x-cloak
+                 class="fixed left-6 right-6 top-32 z-40 mt-1 border border-stone-200 bg-white p-2 shadow-card-lg lg:absolute lg:left-auto lg:right-0 lg:top-auto lg:min-w-64">
+                <div role="menu" aria-label="Acerca de la revista">
+                    @foreach ($acercaDe as [$routeName, $label])
+                        <a class="block px-3 py-2 text-stone-600 hover:bg-paper hover:text-navy-900"
+                           href="{{ route($routeName) }}" wire:navigate.hover role="menuitem" @click="open = false"
+                           @if (request()->routeIs($routeName)) aria-current="page" @endif>{{ $label }}</a>
+                    @endforeach
+                </div>
             </div>
-        </details>
+        </div>
     </div>
 </nav>

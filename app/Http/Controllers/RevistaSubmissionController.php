@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RevistaSubmissionController extends Controller
@@ -72,7 +73,7 @@ class RevistaSubmissionController extends Controller
     public function correction(Request $request, RevistaSubmissionService $submissions): RedirectResponse
     {
         abort_unless($submissions->available(), 503, 'La recepción de envíos todavía no está habilitada.');
-        $data = $request->validate([
+        $data = $request->validateWithBag('correccion', [
             'website_correction' => ['nullable', 'max:0'],
             'codigo_seguimiento' => ['required', 'string', 'max:32'],
             'email_institucional_correccion' => ['required', 'email:rfc', 'max:255'],
@@ -81,11 +82,71 @@ class RevistaSubmissionController extends Controller
         ]);
         $envio = RevistaEnvio::query()->where('codigo_seguimiento', strtoupper($data['codigo_seguimiento']))->first();
         if (! $envio || mb_strtolower($envio->email_institucional) !== mb_strtolower($data['email_institucional_correccion'])) {
-            throw ValidationException::withMessages(['codigo_seguimiento' => 'No fue posible validar el código y el correo indicados.']);
+            throw ValidationException::withMessages(['codigo_seguimiento' => 'No fue posible validar el código y el correo indicados.'])
+                ->errorBag('correccion');
         }
+
+        // El autor ya acreditó código y correo, así que se le puede decir con
+        // precisión por qué no procede: el envío no está en fase de corrección.
+        if (! in_array($envio->estado, RevistaEnvio::ESTADOS_ADMITEN_CORRECCION, true)) {
+            throw ValidationException::withMessages([
+                'codigo_seguimiento' => 'Este envío no está a la espera de correcciones. Escribe al equipo editorial si necesitas actualizar tu manuscrito.',
+            ])->errorBag('correccion');
+        }
+
         $submissions->addCorrection($envio, $request->file('manuscrito_corregido'), $data['nota_autor'] ?? null);
 
         return to_route('revista.envios')->with('correction_success', true);
+    }
+
+    /**
+     * Consulta pública de estado. Deliberadamente NO exige que la recepción esté
+     * abierta: un autor con un manuscrito en curso debe poder seguirlo aunque se
+     * hayan cerrado los envíos nuevos. Es de solo lectura y no toca el disco.
+     */
+    public function status(RevistaService $revistas): View
+    {
+        $ficha = $revistas->revistaPublica();
+        abort_unless($ficha, 404);
+
+        return view('revista.consulta', [
+            'revista' => $ficha,
+            'resultado' => session('consulta_resultado'),
+        ]);
+    }
+
+    public function lookup(Request $request): RedirectResponse
+    {
+        $data = $request->validateWithBag('consulta', [
+            'codigo_seguimiento' => ['required', 'string', 'max:32'],
+            'email_consulta' => ['required', 'email:rfc', 'max:255'],
+        ]);
+
+        $envio = RevistaEnvio::query()
+            ->with('lineaInvestigacion')
+            ->withCount('versiones')
+            ->where('codigo_seguimiento', strtoupper(trim($data['codigo_seguimiento'])))
+            ->first();
+
+        // Mismo mensaje genérico que en correction(): no revela si el código existe.
+        if (! $envio || mb_strtolower($envio->email_institucional) !== mb_strtolower($data['email_consulta'])) {
+            throw ValidationException::withMessages([
+                'codigo_seguimiento' => 'No fue posible validar el código y el correo indicados.',
+            ])->errorBag('consulta');
+        }
+
+        // Se seleccionan los campos uno a uno a propósito: nunca se vuelca el
+        // modelo, que contiene observaciones internas, documento y rutas de archivo.
+        return to_route('revista.envios.consulta')->with('consulta_resultado', [
+            'codigo' => $envio->codigo_seguimiento,
+            'titulo' => $envio->titulo,
+            'tipo' => RevistaEnvio::TIPOS[$envio->tipo_contribucion] ?? $envio->tipo_contribucion,
+            'linea' => $envio->lineaInvestigacion?->nombre,
+            'estado' => RevistaEnvio::ESTADOS[$envio->estado] ?? $envio->estado,
+            'recibido_en' => $envio->created_at?->toDateTimeString(),
+            'versiones' => $envio->versiones_count,
+            'admite_correccion' => in_array($envio->estado, RevistaEnvio::ESTADOS_ADMITEN_CORRECCION, true),
+        ]);
     }
 
     public function download(Request $request, RevistaEnvio $envio, string $type): StreamedResponse

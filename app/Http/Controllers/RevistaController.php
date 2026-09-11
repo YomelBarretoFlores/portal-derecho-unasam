@@ -42,17 +42,6 @@ class RevistaController extends Controller
         ]);
     }
 
-    public function equipo(RevistaService $revista): View
-    {
-        $ficha = $revista->revistaPublica();
-        abort_unless($ficha, 404);
-
-        return view('revista.equipo', [
-            'revista' => $ficha,
-            'grupos' => $ficha->miembros->groupBy('grupo'),
-        ]);
-    }
-
     public function actual(RevistaService $revista): View
     {
         $ficha = $this->ficha($revista);

@@ -98,6 +98,10 @@ class RevistaMicrositeTest extends TestCase
         $this->assertStringNotContainsString('+51950061184', $notificationPayload);
         $this->assertStringContainsString('/admin/revista-envios/'.$envio->id.'/edit', $editorNotification->data['actions'][0]['url']);
 
+        // Las correcciones solo proceden cuando el equipo editorial ha observado
+        // el manuscrito; antes de eso el envío no está en fase de corrección.
+        $envio->update(['estado' => 'observado']);
+
         $this->post(route('revista.envios.correction'), [
             'codigo_seguimiento' => strtolower($envio->codigo_seguimiento),
             'email_institucional_correccion' => 'autor@universidad.edu.pe',
