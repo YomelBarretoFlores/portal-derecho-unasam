@@ -174,6 +174,28 @@ class InstalacionLimpiaTest extends TestCase
         $this->get('/')->assertOk()->assertSee('/img/mascota-derecho.webp');
     }
 
+    public function test_a_migration_that_writes_settings_clears_their_cache(): void
+    {
+        // Los ajustes se sirven desde una caché que se guarda para siempre y
+        // que solo invalidan los eventos del modelo. Una migración escribe con
+        // el constructor de consultas, así que esos eventos no se disparan.
+        //
+        // Sin vaciar la caché a mano, un servidor que lleve tiempo en marcha
+        // aplica la migración y sigue mostrando lo anterior. Pasó de verdad: en
+        // Render se veía la mascota y en la máquina de desarrollo no, con la
+        // misma base de datos.
+        Setting::query()->updateOrCreate(['clave' => 'home_hero_mascota_url'], ['valor' => '']);
+        Setting::olvidarCache();
+        $this->assertSame('', Setting::get('home_hero_mascota_url'), 'La caché debía quedar caliente y vacía.');
+
+        // Se invoca la migración directamente: RefreshDatabase ya la aplicó, y
+        // «migrate» la omitiría por estar registrada.
+        $migracion = require database_path('migrations/2026_09_11_000015_set_hero_mascot_defaults.php');
+        $migracion->up();
+
+        $this->assertSame('/img/mascota-derecho.webp', Setting::get('home_hero_mascota_url'));
+    }
+
     public function test_running_the_seeder_twice_does_not_duplicate_content(): void
     {
         // El arranque lo ejecuta en CADA despliegue, no solo en el primero.

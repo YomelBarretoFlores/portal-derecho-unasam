@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -31,6 +32,8 @@ return new class extends Migration
             return;
         }
 
+        $escrito = false;
+
         foreach (self::VALORES as $clave => $valor) {
             $fila = DB::table('settings')->where('clave', $clave)->first();
 
@@ -42,6 +45,8 @@ return new class extends Migration
                     'updated_at' => now(),
                 ]);
 
+                $escrito = true;
+
                 continue;
             }
 
@@ -50,7 +55,24 @@ return new class extends Migration
                     'valor' => $valor,
                     'updated_at' => now(),
                 ]);
+                $escrito = true;
             }
+        }
+
+        /*
+         * Los ajustes se sirven desde una caché que se guarda para siempre y
+         * que solo invalidan los eventos del modelo. Esta migración escribe con
+         * el constructor de consultas —lo correcto: una migración no debe
+         * depender de un modelo que quizá cambie—, así que esos eventos no se
+         * disparan y hay que vaciar la caché a mano.
+         *
+         * Sin esto, un servidor que lleve tiempo en marcha aplica la migración
+         * y sigue mostrando el valor anterior hasta que algo más toque los
+         * ajustes. Pasó en desarrollo: en el servidor se veía la mascota, y en
+         * la máquina de quien desarrolla no, con la misma base de datos.
+         */
+        if ($escrito) {
+            Setting::olvidarCache();
         }
     }
 
