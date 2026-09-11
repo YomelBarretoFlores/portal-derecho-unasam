@@ -1,5 +1,9 @@
 # Despliegue en Render
 
+> **Para entregar al área de TI hay una versión en página web de esta guía**, más corta y con
+> los pasos en orden: `docs/despliegue-para-ti.html`. Este documento es la referencia completa
+> y manda ante cualquier diferencia.
+
 El servicio usa el Dockerfile, Node 22 para compilar los assets y FrankenPHP/PHP 8.4 para ejecutar Laravel.
 
 En cada arranque, `docker/entrypoint.sh` cachea configuración, rutas y vistas, aplica las migraciones pendientes, **siembra el contenido institucional**, **crea la cuenta de administrador** si están definidas sus variables, y levanta el servidor.

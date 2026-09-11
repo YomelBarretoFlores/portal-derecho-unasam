@@ -1,0 +1,727 @@
+<title>Despliegue Derecho UNASAM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap">
+
+<style>
+:root {
+    --papel:        #faf8f4;
+    --superficie:   #ffffff;
+    --navy-950:     #0f2240;
+    --navy-900:     #17335c;
+    --navy-700:     #234a85;
+    --navy-100:     #e1ebf5;
+    --oro-400:      #c4aa4e;
+    --oro-600:      #826d3a;
+    --oro-100:      #f5eed4;
+    --texto:        #4b4540;
+    --texto-tenue:  #78716c;
+    --regla:        #e3ded6;
+    --regla-fuerte: #cdc6ba;
+    --alerta:       #9a3324;
+    --alerta-fondo: #fbf1ee;
+    --correcto:     #2f6b46;
+    --correcto-fondo:#eef5f0;
+    --codigo-fondo: #f3f0ea;
+
+    --serif: 'EB Garamond', ui-serif, Georgia, 'Times New Roman', serif;
+    --sans:  'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono:  ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+:root:not([data-theme="light"]) { }
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --papel:        #11161f;
+        --superficie:   #171d28;
+        --navy-950:     #dbe7f5;
+        --navy-900:     #cfe0f3;
+        --navy-700:     #a8c6e6;
+        --navy-100:     #1f2b3d;
+        --oro-400:      #c4aa4e;
+        --oro-600:      #d9c27e;
+        --oro-100:      #2a2418;
+        --texto:        #cdc7bf;
+        --texto-tenue:  #968f86;
+        --regla:        #2a323f;
+        --regla-fuerte: #3b4553;
+        --alerta:       #e8907f;
+        --alerta-fondo: #2a1c19;
+        --correcto:     #87c6a2;
+        --correcto-fondo:#17251d;
+        --codigo-fondo: #1d242f;
+    }
+}
+:root[data-theme="dark"] {
+    --papel:        #11161f;
+    --superficie:   #171d28;
+    --navy-950:     #dbe7f5;
+    --navy-900:     #cfe0f3;
+    --navy-700:     #a8c6e6;
+    --navy-100:     #1f2b3d;
+    --oro-400:      #c4aa4e;
+    --oro-600:      #d9c27e;
+    --oro-100:      #2a2418;
+    --texto:        #cdc7bf;
+    --texto-tenue:  #968f86;
+    --regla:        #2a323f;
+    --regla-fuerte: #3b4553;
+    --alerta:       #e8907f;
+    --alerta-fondo: #2a1c19;
+    --correcto:     #87c6a2;
+    --correcto-fondo:#17251d;
+    --codigo-fondo: #1d242f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background: var(--papel);
+    color: var(--texto);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 16.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+.envoltura {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 72px;
+}
+
+/* ---------- Cabecera ---------- */
+
+.cabecera {
+    border-bottom: 1px solid var(--regla-fuerte);
+    padding-block: 56px 34px;
+    margin-bottom: 4px;
+}
+.eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--navy-700);
+    margin: 0 0 18px;
+}
+h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    line-height: 1.08;
+    color: var(--navy-900);
+    margin: 0;
+    text-wrap: balance;
+}
+.entradilla {
+    max-width: 60ch;
+    margin: 20px 0 0;
+    font-size: 1.08rem;
+    line-height: 1.6;
+}
+.ficha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--regla);
+    font-size: 13px;
+    color: var(--texto-tenue);
+}
+.ficha b {
+    font-weight: 500;
+    color: var(--navy-900);
+}
+
+/* ---------- Secciones ---------- */
+
+section { padding-block: 46px 0; }
+
+h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3.4vw, 1.95rem);
+    line-height: 1.2;
+    color: var(--navy-900);
+    margin: 0 0 6px;
+    text-wrap: balance;
+}
+h2 + .sumario {
+    max-width: 62ch;
+    margin: 0 0 26px;
+    color: var(--texto-tenue);
+}
+h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--navy-900);
+    margin: 0 0 8px;
+}
+p { max-width: 66ch; margin: 0 0 14px; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--navy-700); text-underline-offset: 3px; }
+
+code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--codigo-fondo);
+    padding: 1px 5px;
+    color: var(--navy-900);
+    white-space: nowrap;
+}
+
+/* ---------- Requisitos previos ---------- */
+
+.requisitos {
+    display: grid;
+    gap: 1px;
+    background: var(--regla);
+    border: 1px solid var(--regla);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.requisito {
+    background: var(--superficie);
+    padding: 24px 22px;
+}
+.requisito .marca {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--oro-600);
+    display: block;
+    margin-bottom: 12px;
+}
+
+/* ---------- Pasos numerados ---------- */
+
+.pasos {
+    list-style: none;
+    counter-reset: paso;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--regla);
+}
+.pasos > li {
+    counter-increment: paso;
+    display: grid;
+    grid-template-columns: 3.1rem 1fr;
+    gap: 0 4px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--regla);
+}
+.pasos > li::before {
+    content: counter(paso);
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    line-height: 1.15;
+    color: var(--oro-600);
+    font-variant-numeric: tabular-nums;
+    border-left: 2px solid var(--oro-400);
+    padding-left: 14px;
+}
+.pasos .cuerpo > *:last-child { margin-bottom: 0; }
+
+/* ---------- Bloques de aviso ---------- */
+
+.aviso {
+    border-left: 3px solid var(--alerta);
+    background: var(--alerta-fondo);
+    padding: 16px 20px;
+    margin: 20px 0;
+}
+.aviso .titulo {
+    font-weight: 600;
+    color: var(--alerta);
+    display: block;
+    margin-bottom: 4px;
+}
+.aviso p { max-width: 62ch; }
+
+.correcto-bloque {
+    border-left: 3px solid var(--correcto);
+    background: var(--correcto-fondo);
+    padding: 16px 20px;
+    margin: 20px 0;
+}
+.correcto-bloque .titulo {
+    font-weight: 600;
+    color: var(--correcto);
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* ---------- Tablas ---------- */
+
+.tabla-contenedor {
+    overflow-x: auto;
+    border: 1px solid var(--regla);
+    margin-bottom: 22px;
+    background: var(--superficie);
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: 14.5px;
+}
+caption {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--navy-700);
+    padding: 14px 18px 0;
+}
+th, td {
+    text-align: left;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--regla);
+    vertical-align: top;
+}
+thead th {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-tenue);
+    border-bottom: 1px solid var(--regla-fuerte);
+    white-space: nowrap;
+}
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+td.var, th.var {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--navy-900);
+    font-weight: 400;
+    white-space: nowrap;
+}
+td.valor {
+    font-family: var(--mono);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ---------- Bloque de consola ---------- */
+
+pre {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    background: var(--codigo-fondo);
+    border-left: 2px solid var(--regla-fuerte);
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 18px 0;
+    color: var(--texto);
+}
+pre .ok { color: var(--correcto); }
+pre .mal { color: var(--alerta); }
+pre .com { color: var(--texto-tenue); }
+
+/* ---------- Dos modos de almacenamiento ---------- */
+
+.modos {
+    display: grid;
+    gap: 1px;
+    background: var(--regla);
+    border: 1px solid var(--regla);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.modo {
+    background: var(--superficie);
+    padding: 22px;
+}
+.modo h3 { margin-bottom: 10px; }
+.modo .etiqueta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--oro-600);
+    display: block;
+    margin-bottom: 10px;
+}
+.modo ul { margin: 12px 0 0; padding-left: 18px; font-size: 15px; }
+.modo li { margin-bottom: 6px; }
+
+/* ---------- Pie ---------- */
+
+footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--regla-fuerte);
+    font-size: 13px;
+    color: var(--texto-tenue);
+}
+footer p { max-width: 66ch; }
+
+:is(a, button, summary):focus-visible {
+    outline: 2px solid var(--navy-700);
+    outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+    .pasos > li { grid-template-columns: 2.4rem 1fr; }
+    .pasos > li::before { font-size: 1.25rem; padding-left: 10px; }
+}
+</style>
+
+<div class="envoltura">
+
+<header class="cabecera">
+    <p class="eyebrow">Universidad Nacional Santiago Antúnez de Mayolo</p>
+    <h1>Despliegue del portal de Derecho</h1>
+    <p class="entradilla">
+        Instrucciones para publicar el sitio del Programa de Estudios de Derecho y Ciencias Políticas.
+        Pensadas para quien lo instala por primera vez en un servidor.
+    </p>
+    <div class="ficha">
+        <span><b>Aplicación</b> Laravel 13 · PHP 8.4 · FrankenPHP</span>
+        <span><b>Base de datos</b> PostgreSQL 14 o superior</span>
+        <span><b>Entrega</b> Docker, desde el repositorio</span>
+    </div>
+</header>
+
+<section>
+    <h2>Dos cosas antes de desplegar</h2>
+    <p class="sumario">
+        El portal no crea su propia base de datos ni se inventa una contraseña de administrador.
+        Si faltan, el despliegue termina sin errores y el sitio sale en blanco.
+    </p>
+
+    <div class="requisitos">
+        <div class="requisito">
+            <span class="marca">I</span>
+            <h3>Una base de datos PostgreSQL vacía</h3>
+            <p>
+                Versión 14 o superior. Sirve cualquier proveedor: Neon, Supabase, Render PostgreSQL
+                o un servidor de la universidad.
+            </p>
+            <p>
+                <strong>No hay que crear tablas ni importar ningún volcado.</strong> Las tablas las
+                crean las migraciones en el primer arranque. Solo hacen falta cinco datos: servidor,
+                puerto, nombre, usuario y contraseña.
+            </p>
+        </div>
+        <div class="requisito">
+            <span class="marca">II</span>
+            <h3>La contraseña del primer administrador</h3>
+            <p>
+                La elige quien despliega y se pasa en <code>ADMIN_PASSWORD</code>. Debe tener
+                <strong>12 caracteres como mínimo, con mayúscula, minúscula, número y símbolo</strong>.
+            </p>
+            <p>
+                Si no los cumple, la cuenta no se crea y el sitio queda sin forma de entrar al panel.
+                Conviene cambiarla desde <code>/admin</code> tras el primer acceso.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Variables de entorno</h2>
+    <p class="sumario">
+        Se definen en el panel del proveedor de alojamiento antes del primer despliegue.
+        El repositorio incluye <code>render.yaml</code>, que las lista todas con su explicación.
+    </p>
+
+    <div class="tabla-contenedor">
+        <table>
+            <caption>Obligatorias</caption>
+            <thead>
+                <tr><th>Variable</th><th>Qué poner</th></tr>
+            </thead>
+            <tbody>
+                <tr><td class="var">APP_KEY</td><td>La salida de <code>php artisan key:generate --show</code></td></tr>
+                <tr><td class="var">APP_URL</td><td>La dirección pública del sitio, con <code>https://</code></td></tr>
+                <tr><td class="var">DB_CONNECTION</td><td><code>pgsql</code></td></tr>
+                <tr><td class="var">DB_HOST</td><td>Servidor de la base de datos</td></tr>
+                <tr><td class="var">DB_PORT</td><td><code>5432</code> salvo que el proveedor indique otro</td></tr>
+                <tr><td class="var">DB_DATABASE</td><td>Nombre de la base creada</td></tr>
+                <tr><td class="var">DB_USERNAME</td><td>Usuario de la base</td></tr>
+                <tr><td class="var">DB_PASSWORD</td><td>Contraseña de ese usuario</td></tr>
+                <tr><td class="var">DB_SSLMODE</td><td><code>require</code> si el proveedor exige TLS. Neon lo exige</td></tr>
+                <tr><td class="var">ADMIN_NAME</td><td>Nombre de la persona administradora</td></tr>
+                <tr><td class="var">ADMIN_EMAIL</td><td>Su correo institucional. Es el usuario de acceso</td></tr>
+                <tr><td class="var">ADMIN_PASSWORD</td><td>Contraseña inicial, con los requisitos de arriba</td></tr>
+                <tr><td class="var">TRUSTED_PROXIES</td><td>IP o rango real del proxy. <strong>Nunca <code>*</code></strong>: la aplicación lo rechaza</td></tr>
+                <tr><td class="var">SESSION_SECURE_COOKIE</td><td><code>true</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tabla-contenedor">
+        <table>
+            <caption>Archivos subidos desde el panel</caption>
+            <thead>
+                <tr><th>Variable</th><th>Valor inicial</th><th>Para qué sirve</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="var">MEDIA_DISK</td>
+                    <td class="valor">public</td>
+                    <td>Dónde se guardan portadas, logos, PDF y retratos. Véase «Almacenamiento», más abajo</td>
+                </tr>
+                <tr>
+                    <td class="var">MEDIA_UPLOADS_ENABLED</td>
+                    <td class="valor">false</td>
+                    <td>Mientras esté en <code>false</code>, los campos de subida salen deshabilitados y se usan direcciones web de respaldo</td>
+                </tr>
+                <tr>
+                    <td class="var">CSP_IMG_HOSTS</td>
+                    <td class="valor">(vacío)</td>
+                    <td>Dominios externos autorizados a servir imágenes, separados por comas</td>
+                </tr>
+                <tr>
+                    <td class="var">SUBMISSIONS_DISK</td>
+                    <td class="valor">local</td>
+                    <td>Disco de los manuscritos recibidos. Tiene que ser privado</td>
+                </tr>
+                <tr>
+                    <td class="var">SUBMISSIONS_ENABLED</td>
+                    <td class="valor">false</td>
+                    <td rowspan="3">Los tres se ponen en <code>true</code> a la vez, y solo tras comprobar que el disco privado persiste</td>
+                </tr>
+                <tr><td class="var">SUBMISSIONS_PRIVACY_APPROVED</td><td class="valor">false</td></tr>
+                <tr><td class="var">SUBMISSIONS_STORAGE_PERSISTENT</td><td class="valor">false</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>El despliegue, paso a paso</h2>
+    <p class="sumario">
+        El orden importa: cada paso deja lista una condición del siguiente.
+    </p>
+
+    <ol class="pasos">
+        <li>
+            <div class="cuerpo">
+                <h3>Crear la base de datos PostgreSQL</h3>
+                <p>Vacía. Anotar servidor, puerto, nombre, usuario y contraseña.</p>
+            </div>
+        </li>
+        <li>
+            <div class="cuerpo">
+                <h3>Definir las variables de entorno</h3>
+                <p>
+                    Todas las de la tabla «Obligatorias», incluidas las tres <code>ADMIN_</code>.
+                    Las de archivos pueden quedarse con su valor inicial.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="cuerpo">
+                <h3>Desplegar y comprobar que responde</h3>
+                <p>
+                    La dirección <code>/up</code> debe devolver una respuesta correcta. Es la
+                    comprobación de salud de la aplicación.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="cuerpo">
+                <h3>Leer el registro del despliegue</h3>
+                <p>
+                    Este paso es el que evita el problema más frecuente. En el registro tienen que
+                    aparecer estas líneas:
+                </p>
+<pre><span class="com">→ Preparando la aplicación…</span>
+<span class="com">→ Contenido institucional…</span>
+<span class="com">→ Usuario administrador…</span>
+<span class="ok">Usuario superadministrador creado: admin@unasam.edu.pe</span>
+<span class="com">→ Iniciando FrankenPHP en el puerto 10000…</span></pre>
+                <p>Si en su lugar aparece este aviso, faltan las variables o la contraseña no cumple los requisitos:</p>
+<pre><span class="mal">⚠  NO se creó el usuario administrador.</span>
+<span class="mal">⚠  Defina ADMIN_NAME, ADMIN_EMAIL y ADMIN_PASSWORD…</span></pre>
+                <p>
+                    El sitio público funciona igual; lo que no habrá es forma de entrar al panel.
+                    Se corrige definiendo las variables y desplegando otra vez.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="cuerpo">
+                <h3>Abrir la portada y comprobar que tiene contenido</h3>
+                <p>
+                    Deben verse las cifras del programa, los accesos y la historia. <strong>Si la
+                    portada sale vacía, la siembra inicial no se ejecutó</strong>, y el registro del
+                    paso anterior dice por qué.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="cuerpo">
+                <h3>Entrar a <code>/admin</code> y cambiar la contraseña</h3>
+                <p>
+                    Con el correo y la contraseña de <code>ADMIN_EMAIL</code> y
+                    <code>ADMIN_PASSWORD</code>. La contraseña inicial queda guardada como variable
+                    de entorno, así que conviene cambiarla desde el propio panel.
+                </p>
+            </div>
+        </li>
+    </ol>
+</section>
+
+<section>
+    <h2>Qué contenido aparece solo</h2>
+    <p class="sumario">
+        En el primer arranque, la aplicación siembra la base institucional del sitio. No hay que
+        cargarla a mano ni importar nada.
+    </p>
+
+    <div class="modos">
+        <div class="modo">
+            <span class="etiqueta">Se crea automáticamente</span>
+            <h3>Base institucional</h3>
+            <ul>
+                <li>Textos del sitio, lema y datos de contacto</li>
+                <li>Historia, misión y visión</li>
+                <li>Objetivos y competencias</li>
+                <li>Áreas laborales y perfil de ingreso</li>
+                <li>Documentos normativos</li>
+                <li>Organigrama y estadísticas</li>
+                <li>Ficha de la revista Derecho y Cultura</li>
+            </ul>
+        </div>
+        <div class="modo">
+            <span class="etiqueta">Se carga desde el panel</span>
+            <h3>Contenido editorial</h3>
+            <ul>
+                <li>Comunicados</li>
+                <li>Entradas del blog</li>
+                <li>Perfiles docentes</li>
+                <li>Números y artículos de la revista</li>
+            </ul>
+            <p style="margin-top:14px;font-size:14.5px;">
+                Se crea y se revisa en <code>/admin</code>, que es su única fuente de verdad.
+            </p>
+        </div>
+    </div>
+
+    <div class="correcto-bloque">
+        <span class="titulo">Volver a desplegar es seguro</span>
+        <p>
+            La siembra se repite en cada despliegue y no duplica nada: cada bloque solo actúa si su
+            tabla está vacía, y los textos del sitio solo se crean si faltan.
+            <strong>Nunca sobrescribe lo que se haya editado desde el panel.</strong>
+        </p>
+    </div>
+</section>
+
+<section>
+    <h2>Almacenamiento de los archivos</h2>
+    <p class="sumario">
+        El portal funciona con dos infraestructuras distintas sin cambiar nada de código. Elija
+        una según lo que tenga disponible.
+    </p>
+
+    <div class="modos">
+        <div class="modo">
+            <span class="etiqueta">Opción A</span>
+            <h3>Disco del propio servidor</h3>
+            <p>Lo más sencillo si el servidor tiene almacenamiento propio.</p>
+            <ul>
+                <li><code>MEDIA_DISK=public</code></li>
+                <li>Un volumen persistente montado en <code>storage/app/public</code></li>
+                <li>La raíz web debe apuntar a <code>public/</code>, nunca a la carpeta del proyecto</li>
+            </ul>
+        </div>
+        <div class="modo">
+            <span class="etiqueta">Opción B</span>
+            <h3>Proveedor compatible con S3</h3>
+            <p>Cloudflare R2, MinIO, AWS S3, el almacenamiento de objetos de Neon o un servidor propio.</p>
+            <ul>
+                <li><code>MEDIA_DISK=medios</code></li>
+                <li><code>AWS_BUCKET</code>, <code>AWS_ENDPOINT</code> y las credenciales</li>
+                <li><code>AWS_URL</code>: la dirección pública de lectura del bucket</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="aviso">
+        <span class="titulo">Dos buckets, no uno</span>
+        <p>
+            Si usa la opción B, los manuscritos recibidos de autores necesitan un bucket
+            <strong>distinto y sin lectura pública</strong>. Son originales inéditos con datos
+            personales. La aplicación rechaza que compartan bucket con los medios públicos.
+        </p>
+    </div>
+
+    <div class="aviso">
+        <span class="titulo">Un disco efímero pasa todas las pruebas y pierde los archivos</span>
+        <p>
+            Un contenedor sin volumen montado supera cualquier comprobación de escritura y aun así
+            pierde lo subido en el siguiente despliegue. Por eso
+            <code>MEDIA_UPLOADS_ENABLED</code> se pone en <code>true</code> a mano, y solo cuando
+            quien administra la infraestructura confirme que el almacenamiento persiste.
+        </p>
+    </div>
+
+    <p>Para comprobarlo desde el servidor:</p>
+<pre>php artisan almacenamiento:verificar</pre>
+    <p>
+        El comando dice en qué modo está cada almacenamiento, si se puede escribir y leer de
+        verdad, y nombra la variable concreta que falte.
+    </p>
+</section>
+
+<section>
+    <h2>Si algo no funciona</h2>
+    <p class="sumario">
+        Los cuatro casos que aparecen en un despliegue nuevo, y dónde mirar.
+    </p>
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr><th>Lo que se ve</th><th>Causa probable</th><th>Dónde mirar</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>El sitio no responde, error 500</td>
+                    <td>La base de datos no conecta</td>
+                    <td>El registro nombra el fallo. Revisar <code>DB_HOST</code>, <code>DB_DATABASE</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code> y <code>DB_SSLMODE</code></td>
+                </tr>
+                <tr>
+                    <td>Responde, pero las páginas salen vacías</td>
+                    <td>No se ejecutó la siembra inicial</td>
+                    <td>Buscar <code>→ Contenido institucional…</code> en el registro del despliegue</td>
+                </tr>
+                <tr>
+                    <td>No se puede entrar a <code>/admin</code></td>
+                    <td>No se creó la cuenta administradora</td>
+                    <td>Buscar <code>⚠ NO se creó el usuario administrador</code></td>
+                </tr>
+                <tr>
+                    <td>Las imágenes no se muestran</td>
+                    <td>Su dominio no está autorizado</td>
+                    <td>Revisar <code>CSP_IMG_HOSTS</code> y <code>AWS_URL</code>. En el navegador, la consola señala la cabecera de seguridad</td>
+                </tr>
+                <tr>
+                    <td>Los campos de archivo salen en gris</td>
+                    <td>Es el comportamiento esperado</td>
+                    <td><code>MEDIA_UPLOADS_ENABLED=false</code> mientras no haya almacenamiento persistente</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<footer>
+    <p>
+        La versión de referencia de este documento es <code>DEPLOY.md</code>, en la raíz del
+        repositorio; se actualiza junto con el código. Para la carga inicial de contenido editorial,
+        <code>docs/CARGA_INICIAL_CMS.md</code>.
+    </p>
+</footer>
+
+</div>
