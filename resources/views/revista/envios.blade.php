@@ -9,7 +9,7 @@
     </ol>
     <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a><a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar mi envío</a></div>
     @if(session('submission_success'))
-        <div class="mt-10 border-2 border-navy-900 bg-white" role="status" x-data="{ copiado: false }">
+        <div class="mt-10 border-2 border-navy-900 bg-white" role="status" x-data="{ copiado: false, sinPortapapeles: false }">
             <div class="border-b border-stone-200 bg-paper px-7 py-5">
                 <p class="eyebrow">Envío recibido correctamente</p>
                 <h2 class="mt-2 text-2xl">Guarda tu código de seguimiento</h2>
@@ -17,10 +17,14 @@
             <div class="px-7 py-7">
                 <p class="font-mono text-3xl font-bold tracking-wider text-navy-900 md:text-4xl" id="codigo-seguimiento">{{ session('submission_success') }}</p>
                 <div class="mt-5 flex flex-wrap gap-3 print:hidden">
+                    {{-- Sin el catch, un portapapeles bloqueado dejaba el botón mudo. --}}
                     <button type="button" class="btn btn-primary"
-                            x-on:click="navigator.clipboard.writeText('{{ session('submission_success') }}').then(() => { copiado = true; setTimeout(() => copiado = false, 2500) })">
-                        <span x-show="! copiado">Copiar código</span>
+                            x-on:click="navigator.clipboard?.writeText('{{ session('submission_success') }}')
+                                .then(() => { copiado = true; sinPortapapeles = false; setTimeout(() => copiado = false, 2500) })
+                                .catch(() => { sinPortapapeles = true }) ?? (sinPortapapeles = true)">
+                        <span x-show="! copiado && ! sinPortapapeles">Copiar código</span>
                         <span x-show="copiado" x-cloak>Copiado</span>
+                        <span x-show="sinPortapapeles" x-cloak>Cópialo a mano</span>
                     </button>
                     <button type="button" class="btn btn-ghost" x-on:click="window.print()">Imprimir</button>
                     <a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar estado</a>

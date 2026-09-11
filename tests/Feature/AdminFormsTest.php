@@ -33,6 +33,14 @@ use App\Filament\Resources\Objetivos\Pages\EditObjetivo;
 use App\Filament\Resources\Organigramas\Pages\EditOrganigrama;
 use App\Filament\Resources\PerfilIngresoAreas\Pages\CreatePerfilIngresoArea;
 use App\Filament\Resources\PerfilIngresoAreas\Pages\EditPerfilIngresoArea;
+use App\Filament\Resources\RevistaAvisos\Pages\CreateRevistaAviso;
+use App\Filament\Resources\RevistaAvisos\Pages\EditRevistaAviso;
+use App\Filament\Resources\RevistaContactos\Pages\CreateRevistaContacto;
+use App\Filament\Resources\RevistaContactos\Pages\EditRevistaContacto;
+use App\Filament\Resources\RevistaDocumentos\Pages\CreateRevistaDocumento;
+use App\Filament\Resources\RevistaDocumentos\Pages\EditRevistaDocumento;
+use App\Filament\Resources\RevistaLineasInvestigacion\Pages\CreateRevistaLineaInvestigacion;
+use App\Filament\Resources\RevistaLineasInvestigacion\Pages\EditRevistaLineaInvestigacion;
 use App\Filament\Resources\RevistaMiembros\Pages\CreateRevistaMiembro;
 use App\Filament\Resources\RevistaMiembros\Pages\EditRevistaMiembro;
 use App\Filament\Resources\RevistaNumeros\Pages\CreateRevistaNumero;
@@ -56,6 +64,10 @@ use App\Models\Objetivo;
 use App\Models\Organigrama;
 use App\Models\PerfilIngresoArea;
 use App\Models\Revista;
+use App\Models\RevistaAviso;
+use App\Models\RevistaContacto;
+use App\Models\RevistaDocumento;
+use App\Models\RevistaLineaInvestigacion;
 use App\Models\RevistaMiembro;
 use App\Models\RevistaNumero;
 use App\Models\Setting;
@@ -323,6 +335,67 @@ class AdminFormsTest extends TestCase
             ],
             ['titulo' => 'Artículo QA editado', 'slug' => 'articulo-qa-editado'],
             ['titulo' => 'Artículo QA editado', 'slug' => 'articulo-qa-editado'],
+        );
+    }
+
+    public function test_remaining_magazine_forms_create_and_edit_records(): void
+    {
+        // Los cuatro recursos de revista que no tenían cobertura de edición.
+        $revista = Revista::query()->create([
+            'nombre' => 'Revista QA', 'nombre_corto' => 'RQA', 'estado_editorial' => 'draft',
+        ]);
+
+        $this->assertCreateAndEdit(
+            CreateRevistaDocumento::class,
+            EditRevistaDocumento::class,
+            RevistaDocumento::class,
+            [
+                'revista_id' => $revista->id, 'categoria' => 'formato',
+                'titulo' => 'Plantilla QA', 'descripcion' => 'Plantilla de artículo',
+                'url' => 'https://unasam.edu.pe/plantilla.docx', 'orden' => 1,
+                'visible' => true, 'estado_editorial' => 'draft',
+            ],
+            ['titulo' => 'Plantilla QA editada'],
+            ['titulo' => 'Plantilla QA editada'],
+        );
+
+        $this->assertCreateAndEdit(
+            CreateRevistaContacto::class,
+            EditRevistaContacto::class,
+            RevistaContacto::class,
+            [
+                'revista_id' => $revista->id, 'tipo' => 'persona', 'nombre' => 'Contacto QA',
+                'cargo' => 'Editor', 'email' => 'contacto.qa@unasam.edu.pe',
+                'telefono' => '043640020', 'orden' => 1, 'visible' => true,
+            ],
+            ['nombre' => 'Contacto QA editado'],
+            ['nombre' => 'Contacto QA editado'],
+        );
+
+        $this->assertCreateAndEdit(
+            CreateRevistaLineaInvestigacion::class,
+            EditRevistaLineaInvestigacion::class,
+            RevistaLineaInvestigacion::class,
+            [
+                'revista_id' => $revista->id, 'nombre' => 'Línea QA',
+                'descripcion' => 'Descripción de la línea', 'orden' => 1, 'activa' => true,
+            ],
+            ['nombre' => 'Línea QA editada'],
+            ['nombre' => 'Línea QA editada'],
+        );
+
+        $this->assertCreateAndEdit(
+            CreateRevistaAviso::class,
+            EditRevistaAviso::class,
+            RevistaAviso::class,
+            [
+                'revista_id' => $revista->id, 'titulo' => 'Aviso QA', 'slug' => 'aviso-qa',
+                'resumen' => 'Resumen del aviso', 'contenido' => '<p>Cuerpo del aviso</p>',
+                'fecha_publicacion' => '2099-03-01 09:00:00',
+                'enlace' => 'https://unasam.edu.pe/convocatoria', 'estado_editorial' => 'draft',
+            ],
+            ['titulo' => 'Aviso QA editado'],
+            ['titulo' => 'Aviso QA editado'],
         );
     }
 

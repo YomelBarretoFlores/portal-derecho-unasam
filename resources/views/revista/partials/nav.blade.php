@@ -25,10 +25,14 @@
         @endforeach
 
         {{-- Desplegable accesible: mismo patrón que x-nav-dropdown (foco y Escape). --}}
+        {{-- El botón es el único que abre y cierra. Abrir también con @focusin
+             lo dejaba inservible con ratón: el foco lo abría y el clic siguiente
+             lo cerraba en el mismo gesto. Con Enter o Espacio se dispara igual
+             el evento de clic, así que el teclado no pierde nada. --}}
         <div x-data="{ open: false }"
-             @focusin="open = true" @focusout="open = false"
              @keydown.escape.stop="open = false; $refs.trigger.focus()"
              @click.outside="open = false"
+             @focusout="if (! $el.contains($event.relatedTarget)) open = false"
              class="relative shrink-0">
             <button x-ref="trigger" type="button" @click="open = ! open"
                     aria-haspopup="true" :aria-expanded="open"
