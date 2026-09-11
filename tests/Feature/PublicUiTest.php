@@ -75,7 +75,12 @@ class PublicUiTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Recursos destacados')
+            // La sección usaba dos encabezados encadenados: un antetítulo fijo
+            // «Recursos destacados» y, debajo, el ajuste home_accesos_eyebrow
+            // haciendo de título. Ahora cada ajuste ocupa el papel que su nombre
+            // anuncia: el eyebrow como antetítulo y el título como título.
+            ->assertSee('Accesos directos')
+            ->assertSee('Explora el programa')
             ->assertSee('Plan de Estudios')
             ->assertDontSee('lg:grid-cols-4', false);
     }

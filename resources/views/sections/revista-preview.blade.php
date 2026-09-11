@@ -63,14 +63,9 @@
                             {{ \Illuminate\Support\Str::limit($presentacionRevista, 390) }}
                         </p>
                     @endif
-                    <div class="mt-7 flex flex-wrap gap-2 text-xs font-semibold text-navy-800">
-                        @if ($revistaInstitucional->periodicidad)
-                            <span class="border border-stone-300 bg-paper px-3 py-1.5">Periodicidad {{ strtolower($revistaInstitucional->periodicidad) }}</span>
-                        @endif
-                        @if ($revistaInstitucional->modalidad)
-                            <span class="border border-stone-300 bg-paper px-3 py-1.5">Modalidad {{ strtolower($revistaInstitucional->modalidad) }}</span>
-                        @endif
-                    </div>
+                    {{-- Periodicidad y modalidad se publicaban aquí como píldoras y
+                         además en la banda de credenciales de abajo; se quedan solo
+                         en la banda, que es donde el lector las busca junto al resto. --}}
                     <a href="{{ route('revista') }}" wire:navigate.hover class="link-arrow group mt-8 inline-flex items-center gap-2 text-sm font-semibold text-navy-800">
                         Conocer la revista
                         <x-ui-icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
@@ -101,6 +96,10 @@
             </div>
         @else
             <x-empty-state class="mt-10 bg-white" title="Derecho y Cultura" description="Revista científica de Derecho y Antropología Jurídica de la UNASAM." />
+        @endif
+
+        @if ($revistaInstitucional)
+            <x-revista-credenciales :revista="$revistaInstitucional" />
         @endif
     </div>
 </section>

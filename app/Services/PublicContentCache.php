@@ -52,12 +52,27 @@ class PublicContentCache
                     'resolucion_fecha' => $revistaInstitucional->resolucion_fecha?->toDateString(),
                     'periodicidad' => $revistaInstitucional->periodicidad,
                     'modalidad' => $revistaInstitucional->modalidad,
+                    'issn' => $revistaInstitucional->issn,
+                    'sistema_arbitraje' => $revistaInstitucional->sistema_arbitraje,
+                    'norma_citacion' => $revistaInstitucional->norma_citacion,
+                    'idiomas' => $revistaInstitucional->idiomas,
                     '_resolucion_url' => $revistaInstitucional->resolution_url,
                 ] : null,
                 'matriculados' => Estadistica::query()->where('tipo', 'matriculados')->orderBy('anio')->get(['anio', 'total'])->toArray(),
                 'titulados' => Estadistica::query()->where('tipo', 'titulados')->latest('anio')->first(['anio', 'total'])?->toArray(),
                 'accesos' => Acceso::query()->activos()->get()->toArray(),
                 'destacados' => $this->destacados(),
+                'docentes_portada' => Docente::query()->activos()->with('media')
+                    ->orderBy('orden')->limit(4)->get()
+                    ->map(fn (Docente $d): array => [
+                        'slug' => $d->slug,
+                        'name' => $d->name,
+                        'area' => $d->area,
+                        'grado' => $d->grado,
+                        'iniciales' => $d->iniciales,
+                        '_foto_url' => $d->fotoPublicaUrl('thumb'),
+                    ])->all(),
+                'docentes_total' => Docente::query()->activos()->count(),
             ];
         });
 
@@ -72,6 +87,8 @@ class PublicContentCache
             'tituladosActual' => $data['titulados'] ? (object) $data['titulados'] : null,
             'accesos' => $this->objects($data['accesos']),
             'destacados' => $this->objects($data['destacados'] ?? [], ['fecha']),
+            'docentesPortada' => $this->objects($data['docentes_portada'] ?? []),
+            'docentesTotal' => (int) ($data['docentes_total'] ?? 0),
         ];
     }
 
