@@ -19,10 +19,59 @@ class RevistaSubmissionService
 {
     public function available(): bool
     {
-        return config('submissions.enabled')
-            && config('submissions.privacy_approved')
-            && config('submissions.storage_persistent')
-            && $this->usesPrivateDisk();
+        return $this->unavailableReasons() === [];
+    }
+
+    /**
+     * Motivos por los que la recepción pública está cerrada, en lenguaje llano.
+     * Devuelve un array vacío cuando está abierta. Permite que el panel y la
+     * consola expliquen *qué falta* en lugar de mostrar solo «cerrada».
+     *
+     * @return array<int, string>
+     */
+    public function unavailableReasons(): array
+    {
+        $reasons = [];
+
+        if (! config('submissions.enabled')) {
+            $reasons[] = 'SUBMISSIONS_ENABLED está en false.';
+        }
+
+        if (! config('submissions.privacy_approved')) {
+            $reasons[] = 'SUBMISSIONS_PRIVACY_APPROVED está en false: falta aprobar la declaración de privacidad.';
+        }
+
+        if (! config('submissions.storage_persistent')) {
+            $reasons[] = 'SUBMISSIONS_STORAGE_PERSISTENT está en false: no se ha declarado almacenamiento persistente.';
+        }
+
+        if (! $this->usesPrivateDisk()) {
+            $reasons[] = sprintf('El disco «%s» no es privado: los manuscritos quedarían accesibles desde la web.', (string) config('submissions.disk'));
+        }
+
+        return $reasons;
+    }
+
+    /**
+     * Comprueba que el disco de manuscritos no sea alcanzable desde la web.
+     */
+    public function usesPrivateDisk(): bool
+    {
+        $disk = (string) config('submissions.disk');
+        $diskConfig = config("filesystems.disks.{$disk}");
+
+        if (! is_array($diskConfig) || $disk === 'public' || ($diskConfig['visibility'] ?? null) === 'public') {
+            return false;
+        }
+
+        if (($diskConfig['driver'] ?? null) === 'local') {
+            $root = str_replace('\\', '/', (string) ($diskConfig['root'] ?? ''));
+            $publicRoot = rtrim(str_replace('\\', '/', public_path()), '/').'/';
+
+            return $root !== '' && ! str_starts_with(rtrim($root, '/').'/', $publicRoot);
+        }
+
+        return true;
     }
 
     /** @param array<string, mixed> $data @param array<string, UploadedFile> $files */
@@ -105,25 +154,6 @@ class RevistaSubmissionService
         return $code;
     }
 
-    private function usesPrivateDisk(): bool
-    {
-        $disk = (string) config('submissions.disk');
-        $diskConfig = config("filesystems.disks.{$disk}");
-
-        if (! is_array($diskConfig) || $disk === 'public' || ($diskConfig['visibility'] ?? null) === 'public') {
-            return false;
-        }
-
-        if (($diskConfig['driver'] ?? null) === 'local') {
-            $root = str_replace('\\', '/', (string) ($diskConfig['root'] ?? ''));
-            $publicRoot = rtrim(str_replace('\\', '/', public_path()), '/').'/';
-
-            return $root !== '' && ! str_starts_with(rtrim($root, '/').'/', $publicRoot);
-        }
-
-        return true;
-    }
-
     private function storeFile(UploadedFile $file, string $directory, string $name, string $disk): string
     {
         $path = $file->storeAs($directory, $name, $disk);
@@ -138,13 +168,10 @@ class RevistaSubmissionService
     private function notifyEditorialTeam(RevistaEnvio $envio, bool $isCorrection): void
     {
         try {
+            // Solo estos dos roles pasan ContentPolicy::view, así que notificar a
+            // cualquier otro produciría avisos que su destinatario no puede abrir.
             $recipients = User::query()
-                ->where(function ($query): void {
-                    $query->whereIn('role', [User::ROLE_SUPER_ADMIN, User::ROLE_EDITOR])
-                        ->orWhere(function ($legacy): void {
-                            $legacy->whereNull('role')->where('is_admin', true);
-                        });
-                })
+                ->whereIn('role', [User::ROLE_SUPER_ADMIN, User::ROLE_EDITOR])
                 ->get();
 
             if ($recipients->isEmpty()) {

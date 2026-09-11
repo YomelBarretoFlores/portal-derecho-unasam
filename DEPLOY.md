@@ -47,6 +47,70 @@ Antes de habilitar cargas en producción se debe conectar almacenamiento persist
 
 Los envíos de manuscritos se habilitan únicamente cuando las tres variables de seguridad (`SUBMISSIONS_ENABLED`, `SUBMISSIONS_PRIVACY_APPROVED` y `SUBMISSIONS_STORAGE_PERSISTENT`) están en `true`. Sus archivos no deben usar el disco público.
 
+## Almacenamiento: especificación para el área de infraestructura (ETI)
+
+El portal usa **dos almacenamientos distintos, con requisitos opuestos**. No basta con "un disco": hay que atender a los dos.
+
+| Uso | Disco | Ruta por defecto | Requisito |
+|---|---|---|---|
+| Medios públicos: portadas y PDF de números, PDF de artículos, fotos de docentes, adjuntos de avisos y documentos | `public` (variable `MEDIA_DISK`) | `storage/app/public` | Persistente **y servido por web** |
+| Manuscritos recibidos de autores | variable `SUBMISSIONS_DISK` | `storage/app/private` | Persistente y **nunca alcanzable por web** |
+
+Los manuscritos contienen datos personales (nombre, documento de identidad, WhatsApp, afiliación). Deben descargarse solo a través de `/admin/revista-envios/...`, que exige sesión autenticada y rol editor. La aplicación **rechaza** `SUBMISSIONS_DISK=public` y cualquier disco cuya raíz caiga dentro de `public/`.
+
+### Escenario A — Servidor propio o VPS con disco
+
+El escenario más simple: no hace falta object storage. Basta con que `storage/` viva en un volumen persistente y sobreviva a los despliegues.
+
+```
+MEDIA_UPLOADS_ENABLED=true
+SUBMISSIONS_DISK=local            # storage/app/private, fuera de la raíz web
+SUBMISSIONS_ENABLED=true
+SUBMISSIONS_PRIVACY_APPROVED=true # solo cuando la declaración esté aprobada
+SUBMISSIONS_STORAGE_PERSISTENT=true
+```
+
+Requisitos en el servidor:
+
+1. `storage/` en un volumen persistente, escribible por el usuario del proceso web.
+2. Ejecutar `php artisan storage:link` (crea `public/storage`). Sin ese enlace los medios se guardan pero devuelven 404.
+3. La raíz web debe apuntar a `public/`, **nunca** al directorio del proyecto: si `storage/` queda accesible por URL, los manuscritos quedan expuestos.
+4. Copia de seguridad periódica de `storage/app/public` y `storage/app/private`.
+
+### Escenario B — Object storage (S3 o compatible)
+
+El disco `s3` ya está definido en `config/filesystems.php`; solo hay que rellenar credenciales.
+
+```
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_DEFAULT_REGION=...
+AWS_BUCKET=...
+AWS_ENDPOINT=...                  # solo si es compatible-S3, no AWS
+MEDIA_DISK=s3
+MEDIA_UPLOADS_ENABLED=true
+SUBMISSIONS_DISK=s3_privado       # bucket o prefijo SIN acceso público
+SUBMISSIONS_ENABLED=true
+SUBMISSIONS_PRIVACY_APPROVED=true
+SUBMISSIONS_STORAGE_PERSISTENT=true
+```
+
+Si se usa S3 para ambos, deben ser **dos buckets o dos discos distintos**: el de medios con lectura pública, el de manuscritos con acceso denegado por completo. Compartir un bucket público para los dos expondría los manuscritos.
+
+### Verificación
+
+En el servidor ya desplegado:
+
+```bash
+php artisan almacenamiento:verificar
+```
+
+Comprueba, para cada disco: que existe, su driver y raíz, si es alcanzable por web, que el enlace `public/storage` está presente, y que se puede escribir, leer y borrar de verdad. Además explica, si la recepción está cerrada, **qué interruptor concreto falta**.
+
+**Lo que el comando no puede comprobar:** la persistencia entre despliegues. Un contenedor sin volumen montado supera todas las pruebas y aun así pierde los archivos en el siguiente despliegue. Esa confirmación es responsabilidad de quien administra la infraestructura, y es la razón de que `SUBMISSIONS_STORAGE_PERSISTENT` sea una declaración manual y no una detección automática.
+
+Recomendación: antes de poner los interruptores en `true`, subir un archivo de prueba, **forzar un redespliegue** y comprobar que el archivo sigue ahí.
+
 ## Recuperación administrativa
 
 No hay recuperación por correo mientras no exista SMTP. Si se pierde el acceso, otro superadministrador puede restablecer la contraseña; nunca se deben introducir contraseñas en logs o commits.
