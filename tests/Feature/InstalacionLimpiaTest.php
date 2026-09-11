@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\AjustesSitio;
 use App\Models\Acceso;
 use App\Models\Competencia;
 use App\Models\Hito;
@@ -11,9 +12,11 @@ use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\ContenidoInstitucionalSeeder;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
@@ -114,6 +117,43 @@ class InstalacionLimpiaTest extends TestCase
         }
 
         $this->get(route('estadisticas', ['tipo' => 'matriculados']))->assertOk();
+    }
+
+    /**
+     * Lo sembrado tiene que aparecer ya escrito en el panel.
+     *
+     * Si «Ajustes del sitio» abriera con los campos en blanco, quien administra
+     * concluiría que no hay nada cargado —y al guardar, borraría de verdad el
+     * contenido que el sitio estaba mostrando. Que el dato exista en la base no
+     * basta: el formulario tiene que traerlo.
+     */
+    public function test_the_seeded_texts_appear_already_written_in_the_admin_form(): void
+    {
+        $this->artisan('db:seed', ['--class' => ContenidoInstitucionalSeeder::class]);
+
+        $this->actingAs(User::query()->create([
+            'name' => 'Administradora',
+            'email' => 'admin@unasam.edu.pe',
+            'password' => 'Clave-Inicial-2026!',
+            'role' => User::ROLE_SUPER_ADMIN,
+            'is_admin' => true,
+        ]));
+
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+        Filament::bootCurrentPanel();
+
+        $formulario = Livewire::test(AjustesSitio::class);
+
+        foreach (['mision', 'vision', 'presentacion_titulo', 'resumen_titulo', 'perfil_egreso_2023'] as $clave) {
+            $valor = (string) Setting::get($clave);
+
+            // Sin esta comprobación el test sería vacuo: sin sembrar, la clave
+            // vale cadena vacía y el campo del formulario también, así que
+            // coincidirían y pasaría igual con la base a medio instalar.
+            $this->assertNotSame('', $valor, "La clave «{$clave}» no quedó sembrada.");
+
+            $formulario->assertFormSet([$clave => $valor]);
+        }
     }
 
     public function test_running_the_seeder_twice_does_not_duplicate_content(): void
