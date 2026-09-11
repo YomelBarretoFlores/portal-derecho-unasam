@@ -13,6 +13,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
+use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -175,5 +176,35 @@ class PanelAdministrableTest extends TestCase
     public function test_the_dashboard_loads_with_its_widgets(): void
     {
         Livewire::test(Dashboard::class)->assertOk();
+    }
+
+    public function test_the_avatar_is_generated_locally_and_not_fetched_from_a_third_party(): void
+    {
+        // Filament pide el avatar a ui-avatars.com de serie. Aquí eso fallaba
+        // dos veces: la cabecera Content-Security-Policy declara
+        // «img-src \'self\' data: blob:», así que el navegador lo bloqueaba y el
+        // panel enseñaba el icono de imagen rota; y además el nombre del usuario
+        // viajaba a un tercero en cada carga, sin que nadie lo consintiera.
+        $url = Filament::getUserAvatarUrl(auth()->user());
+
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $url,
+            'El avatar vuelve a salir a un servicio externo.');
+
+        $svg = base64_decode(substr($url, strlen('data:image/svg+xml;base64,')));
+        $this->assertStringContainsString('<svg', $svg);
+    }
+
+    public function test_the_panel_does_not_advertise_the_framework_version(): void
+    {
+        // FilamentInfoWidget muestra la versión exacta de Filament y enlaces a
+        // su documentación y su GitHub: sirve a quien desarrolla, no a quien
+        // administra el portal, y anuncia la versión del framework a cualquiera
+        // que entre al panel.
+        $widgets = array_map(
+            fn ($widget): string => is_string($widget) ? $widget : $widget::class,
+            Filament::getPanel('admin')->getWidgets(),
+        );
+
+        $this->assertNotContains(FilamentInfoWidget::class, $widgets);
     }
 }
