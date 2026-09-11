@@ -65,8 +65,49 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      # --- Archivos subidos desde el panel ---
+      #
+      # Hoy están DESHABILITADOS porque el plan «free» de Render corre en un
+      # contenedor sin volumen: lo que se suba desaparece en el siguiente
+      # despliegue. No es una limitación del portal, sino del alojamiento.
+      #
+      # Para habilitarlos hay dos caminos, y el código admite los dos sin
+      # cambios. Elija UNO, y ponga MEDIA_UPLOADS_ENABLED=true solo después de
+      # comprobarlo con «php artisan almacenamiento:verificar».
+      #
+      #   A) Disco persistente del propio servidor
+      #      - MEDIA_DISK=public
+      #      - montar un volumen en /app/storage/app/public
+      #      - en Render exige plan de pago y elimina el despliegue sin corte
+      #
+      #   B) Proveedor compatible con S3 (R2, Neon, MinIO, AWS S3, propio)
+      #      - MEDIA_DISK=medios
+      #      - rellenar AWS_BUCKET, AWS_ENDPOINT, AWS_URL y las credenciales
+      #      - AWS_URL debe ser la URL pública de lectura: alimenta también la
+      #        cabecera CSP, y sin ella el navegador bloquea las imágenes
+      #
+      # Detalle completo en la sección «Almacenamiento» de DEPLOY.md.
+      - key: MEDIA_DISK
+        value: public
       - key: MEDIA_UPLOADS_ENABLED
         value: "false"
+      - key: AWS_ACCESS_KEY_ID
+        sync: false           # solo en el modo B
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false           # solo en el modo B
+      - key: AWS_DEFAULT_REGION
+        sync: false
+      - key: AWS_BUCKET
+        sync: false
+      - key: AWS_ENDPOINT
+        sync: false           # vacío en AWS S3; obligatorio en el resto
+      - key: AWS_URL
+        sync: false           # URL pública de lectura del bucket de medios
+
+      # --- Recepción de manuscritos ---
+      # El disco de manuscritos NUNCA debe ser público: son originales inéditos
+      # con datos personales de los autores. Con proveedor externo use un bucket
+      # distinto del de medios y sin lectura pública (SUBMISSIONS_DISK=manuscritos).
       - key: SUBMISSIONS_ENABLED
         value: "false"
       - key: SUBMISSIONS_PRIVACY_APPROVED
@@ -75,5 +116,7 @@ services:
         value: "false"
       - key: SUBMISSIONS_DISK
         value: local
+      - key: AWS_SUBMISSIONS_BUCKET
+        sync: false
       - key: TRUSTED_PROXIES
         value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"

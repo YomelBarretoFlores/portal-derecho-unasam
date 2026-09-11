@@ -49,7 +49,44 @@ class RevistaSubmissionService
             $reasons[] = sprintf('El disco «%s» no es privado: los manuscritos quedarían accesibles desde la web.', (string) config('submissions.disk'));
         }
 
+        if (($faltante = $this->missingDiskSetting()) !== null) {
+            $reasons[] = $faltante;
+        }
+
         return $reasons;
+    }
+
+    /**
+     * Ajuste imprescindible que le falta al disco de manuscritos, si alguno.
+     *
+     * Sin esto, un disco de proveedor a medio configurar pasaba todas las
+     * comprobaciones: «privado» es cierto, pero el bucket estaba vacío. La
+     * recepción se declaraba abierta y el primer manuscrito que llegara moría
+     * al guardarse, después de que el autor hubiera rellenado el formulario y
+     * subido su original.
+     */
+    public function missingDiskSetting(): ?string
+    {
+        $disk = (string) config('submissions.disk');
+        $diskConfig = config("filesystems.disks.{$disk}");
+
+        if (! is_array($diskConfig)) {
+            return sprintf('El disco «%s» no está definido en config/filesystems.php.', $disk);
+        }
+
+        $requeridos = match ((string) ($diskConfig['driver'] ?? '')) {
+            's3' => ['bucket' => 'AWS_SUBMISSIONS_BUCKET', 'key' => 'AWS_ACCESS_KEY_ID', 'secret' => 'AWS_SECRET_ACCESS_KEY'],
+            'local' => ['root' => 'la raíz del disco'],
+            default => [],
+        };
+
+        foreach ($requeridos as $clave => $variable) {
+            if (blank($diskConfig[$clave] ?? null)) {
+                return sprintf('Al disco «%s» le falta %s.', $disk, $variable);
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -88,6 +88,41 @@ class VerificarAlmacenamiento extends Command
 
         $ok = true;
 
+        // Un disco de proveedor a medio configurar revienta más abajo con un
+        // error de tipos de PHP que no dice nada a quien administra el
+        // servidor. Se comprueba antes y se nombra la variable que falta.
+        if ($driver === 's3') {
+            $variables = [
+                'bucket' => $disco === 'manuscritos' ? 'AWS_SUBMISSIONS_BUCKET' : 'AWS_BUCKET',
+                'key' => 'AWS_ACCESS_KEY_ID',
+                'secret' => 'AWS_SECRET_ACCESS_KEY',
+            ];
+
+            if ($debeSerPublico) {
+                $variables['url'] = 'AWS_URL (además de los enlaces, alimenta la cabecera CSP)';
+            }
+
+            $faltantes = [];
+            foreach ($variables as $clave => $variable) {
+                if (blank($config[$clave] ?? null)) {
+                    $faltantes[] = $variable;
+                }
+            }
+
+            if ($faltantes !== []) {
+                foreach ($faltantes as $variable) {
+                    $this->line("  <fg=red>✘</> Falta {$variable}.");
+                }
+
+                $this->line('  <fg=yellow>●</> No se prueba la escritura: el disco está incompleto.');
+                $this->line($habilitado
+                    ? "  <fg=red>✘</> {$variableInterruptor}=true con el disco sin configurar."
+                    : "  <fg=yellow>●</> {$variableInterruptor}=false (deshabilitado en este entorno)");
+
+                return false;
+            }
+        }
+
         if ($driver === 'local') {
             $root = (string) ($config['root'] ?? '');
             $this->line("  Raíz:   {$root}");

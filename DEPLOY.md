@@ -53,8 +53,10 @@ El portal usa **dos almacenamientos distintos, con requisitos opuestos**. No bas
 
 | Uso | Disco | Ruta por defecto | Requisito |
 |---|---|---|---|
-| Medios públicos: portadas y PDF de números, PDF de artículos, fotos de docentes, adjuntos de avisos y documentos | `public` (variable `MEDIA_DISK`) | `storage/app/public` | Persistente **y servido por web** |
-| Manuscritos recibidos de autores | variable `SUBMISSIONS_DISK` | `storage/app/private` | Persistente y **nunca alcanzable por web** |
+| Medios públicos: portadas y PDF de números, logo de la revista, PDF de artículos, fotos de docentes, adjuntos de avisos y documentos | `MEDIA_DISK`: `public` o `medios` | `storage/app/public` | Persistente **y servido por web** |
+| Manuscritos recibidos de autores | `SUBMISSIONS_DISK`: `local` o `manuscritos` | `storage/app/private` | Persistente y **nunca alcanzable por web** |
+
+Cada variable admite dos valores según la infraestructura: el primero usa el disco del propio servidor (escenario A), el segundo un proveedor de objetos (escenario B). **Los dos funcionan sin cambiar código.**
 
 Los manuscritos contienen datos personales (nombre, documento de identidad, WhatsApp, afiliación). Deben descargarse solo a través de `/admin/revista-envios/...`, que exige sesión autenticada y rol editor. La aplicación **rechaza** `SUBMISSIONS_DISK=public` y cualquier disco cuya raíz caiga dentro de `public/`.
 
@@ -79,23 +81,34 @@ Requisitos en el servidor:
 
 ### Escenario B — Object storage (S3 o compatible)
 
-El disco `s3` ya está definido en `config/filesystems.php`; solo hay que rellenar credenciales.
+Vale cualquier proveedor compatible con S3: Cloudflare R2, el almacenamiento de objetos de Neon, MinIO, AWS S3 o un servidor propio. Lo único que cambia entre ellos es `AWS_ENDPOINT`. La librería necesaria (`league/flysystem-aws-s3-v3`) ya está instalada.
+
+Los dos discos ya están definidos en `config/filesystems.php` — `medios` y `manuscritos` — y **no hay que tocar código**: solo rellenar variables.
 
 ```
+# Bucket de medios: con lectura pública
+MEDIA_DISK=medios
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 AWS_DEFAULT_REGION=...
 AWS_BUCKET=...
-AWS_ENDPOINT=...                  # solo si es compatible-S3, no AWS
-MEDIA_DISK=s3
+AWS_ENDPOINT=...                  # vacío en AWS S3; obligatorio en el resto
+AWS_URL=...                       # URL pública de lectura del bucket
 MEDIA_UPLOADS_ENABLED=true
-SUBMISSIONS_DISK=s3_privado       # bucket o prefijo SIN acceso público
+
+# Bucket de manuscritos: SIN acceso público, y distinto del anterior
+SUBMISSIONS_DISK=manuscritos
+AWS_SUBMISSIONS_BUCKET=...
 SUBMISSIONS_ENABLED=true
 SUBMISSIONS_PRIVACY_APPROVED=true
 SUBMISSIONS_STORAGE_PERSISTENT=true
 ```
 
-Si se usa S3 para ambos, deben ser **dos buckets o dos discos distintos**: el de medios con lectura pública, el de manuscritos con acceso denegado por completo. Compartir un bucket público para los dos expondría los manuscritos.
+Las credenciales del bucket de manuscritos caen a las `AWS_*` de arriba si se dejan vacías. Si su proveedor permite emitir credenciales separadas por bucket, use `AWS_SUBMISSIONS_ACCESS_KEY_ID` y `AWS_SUBMISSIONS_SECRET_ACCESS_KEY`: así una filtración de la clave pública de medios no alcanza a los manuscritos.
+
+**`AWS_URL` no es opcional.** Además de formar los enlaces, alimenta la cabecera `Content-Security-Policy`. Sin ella las imágenes se guardan correctamente en el bucket y aun así el navegador se niega a mostrarlas, sin error visible en la página.
+
+Deben ser **dos buckets distintos**: el de medios con lectura pública, el de manuscritos con acceso denegado por completo. Compartir un bucket público para los dos expondría los manuscritos. El portal rechaza `SUBMISSIONS_DISK=medios` por ese motivo.
 
 ### Verificación
 
