@@ -8,6 +8,9 @@ use App\Filament\Resources\RevistaLineasInvestigacion\Pages\ListRevistaLineasInv
 use App\Models\Revista;
 use App\Models\RevistaLineaInvestigacion;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -42,7 +45,8 @@ class RevistaLineaInvestigacionResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('nombre')->searchable(), TextColumn::make('descripcion')->limit(60), TextColumn::make('orden')->sortable(), IconColumn::make('activa')->boolean()])->defaultSort('orden')->recordActions([EditAction::make()]);
+        return $table->columns([TextColumn::make('nombre')->searchable(), TextColumn::make('descripcion')->limit(60), TextColumn::make('orden')->sortable(), IconColumn::make('activa')->boolean()])->defaultSort('orden')->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

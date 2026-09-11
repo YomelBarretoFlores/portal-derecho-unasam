@@ -11,6 +11,9 @@ use App\Models\Revista;
 use App\Models\RevistaAviso;
 use App\Rules\SafeUrl;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
@@ -55,7 +58,8 @@ class RevistaAvisoResource extends Resource
     {
         return $table->columns([
             TextColumn::make('titulo')->searchable(), TextColumn::make('fecha_publicacion')->dateTime('d/m/Y H:i')->sortable(), TextColumn::make('fecha_caducidad')->date('d/m/Y'), EditorialStatusColumn::make(),
-        ])->defaultSort('fecha_publicacion', 'desc')->recordActions([EditAction::make()]);
+        ])->defaultSort('fecha_publicacion', 'desc')->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

@@ -8,6 +8,9 @@ use App\Filament\Resources\RevistaMiembros\Pages\ListRevistaMiembros;
 use App\Models\Revista;
 use App\Models\RevistaMiembro;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -74,7 +77,8 @@ class RevistaMiembroResource extends Resource
                 SelectFilter::make('grupo')->label('Función')->options(RevistaMiembro::GRUPOS),
             ])
             ->defaultSort('orden')
-            ->recordActions([EditAction::make()]);
+            ->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

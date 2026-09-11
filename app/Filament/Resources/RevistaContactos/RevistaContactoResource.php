@@ -8,6 +8,9 @@ use App\Filament\Resources\RevistaContactos\Pages\ListRevistaContactos;
 use App\Models\Revista;
 use App\Models\RevistaContacto;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -39,7 +42,8 @@ class RevistaContactoResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->columns([TextColumn::make('nombre')->searchable(), TextColumn::make('cargo'), TextColumn::make('email'), TextColumn::make('telefono'), TextColumn::make('orden')->sortable(), IconColumn::make('visible')->boolean()])->defaultSort('orden')->recordActions([EditAction::make()]);
+        return $table->columns([TextColumn::make('nombre')->searchable(), TextColumn::make('cargo'), TextColumn::make('email'), TextColumn::make('telefono'), TextColumn::make('orden')->sortable(), IconColumn::make('visible')->boolean()])->defaultSort('orden')->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array

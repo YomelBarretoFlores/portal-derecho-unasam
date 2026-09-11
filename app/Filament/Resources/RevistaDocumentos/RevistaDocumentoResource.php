@@ -11,6 +11,9 @@ use App\Models\Revista;
 use App\Models\RevistaDocumento;
 use App\Rules\SafeUrl;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -62,7 +65,8 @@ class RevistaDocumentoResource extends Resource
             TextColumn::make('orden')->sortable(),
             IconColumn::make('visible')->boolean(),
             EditorialStatusColumn::make(),
-        ])->defaultSort('orden')->recordActions([EditAction::make()]);
+        ])->defaultSort('orden')->recordActions([EditAction::make(), DeleteAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 
     public static function getPages(): array
