@@ -10,7 +10,17 @@
     <section class="mx-auto max-w-4xl px-6 py-14 md:py-16">
         <form method="get" action="{{ route('buscar') }}" role="search" class="flex flex-col gap-3 sm:flex-row">
             <label class="sr-only" for="q">Términos de búsqueda</label>
-            <input id="q" name="q" type="search" value="{{ $q }}" maxlength="120" autofocus
+            {{-- autofocus solo cuando no hay consulta.
+
+                 Con autofocus incondicional, al pulsar Enter la página recargaba
+                 y el navegador devolvía el foco al campo dejando el cursor ANTES
+                 del texto ya escrito: para corregir la búsqueda había que pulsar
+                 Fin. Además, robar el foco tras enviar aparta la atención de los
+                 resultados, que es lo que se acaba de pedir; con lector de
+                 pantalla el efecto es peor, porque el foco vuelve al formulario
+                 en vez de quedar donde está la respuesta. --}}
+            <input id="q" name="q" type="search" value="{{ $q }}" maxlength="120"
+                   @if ($q === '') autofocus @endif
                    placeholder="Plan de estudios, normas para autores, un docente…"
                    class="min-w-0 flex-1 border border-stone-300 px-4 py-3 text-base focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/10">
             <button type="submit" class="btn btn-primary shrink-0">Buscar</button>

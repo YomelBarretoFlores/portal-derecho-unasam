@@ -101,4 +101,16 @@ class BuscadorTest extends TestCase
     {
         $this->get(route('home'))->assertOk()->assertSee(route('buscar', absolute: false), false);
     }
+
+    public function test_it_only_steals_focus_when_there_is_nothing_to_read(): void
+    {
+        // Con autofocus incondicional, al enviar la búsqueda el navegador
+        // devolvía el foco al campo y dejaba el cursor ANTES del texto ya
+        // escrito: corregir la consulta obligaba a pulsar Fin. Y con lector de
+        // pantalla el foco volvía al formulario en vez de quedar en la
+        // respuesta que se acababa de pedir.
+        $this->get(route('buscar'))->assertOk()->assertSee('autofocus', false);
+
+        $this->get(route('buscar', ['q' => 'mision']))->assertOk()->assertDontSee('autofocus', false);
+    }
 }
