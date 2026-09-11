@@ -13,7 +13,7 @@ Servicios conservados:
 
 - PublicContentCache: portada cacheada como arrays, nunca modelos serializados.
 - RevistaService: disponibilidad de la ficha y consulta editorial de integrantes, números y artículos.
-- CursoService, ObjetivoService y CompetenciaService: agrupaciones necesarias para las vistas académicas.
+- ObjetivoService y CompetenciaService: agrupaciones necesarias para las vistas académicas.
 
 content.version invalida la portada cuando cambia una entidad pública o un archivo. Los ajustes globales utilizan su propio mapa cacheado.
 

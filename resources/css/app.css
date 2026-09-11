@@ -177,9 +177,6 @@
     .editorial-empty-icon {
         @apply flex h-11 w-11 shrink-0 items-center justify-center border border-navy-200 bg-white text-navy-800;
     }
-    .editorial-panel {
-        @apply border border-stone-200 bg-white;
-    }
     .filter-chip {
         @apply border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors;
     }
@@ -386,15 +383,6 @@
     to { transform: scaleY(1); }
 }
 
-/* ---- Dropdown de navegación ---- */
-@keyframes dropIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.animate-drop-in {
-    animation: dropIn 0.2s var(--ease-smooth);
-}
-
 /* ---- View Transitions (Livewire wire:navigate) ---- */
 ::view-transition-old(root) {
     animation: 0.2s var(--ease-smooth) both vt-fade-out;
@@ -426,9 +414,6 @@
         transform: none !important;
     }
     .marquee-track {
-        animation: none !important;
-    }
-    .animate-drop-in {
         animation: none !important;
     }
     html {

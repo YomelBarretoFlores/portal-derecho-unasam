@@ -39,10 +39,11 @@
 
             {{-- Marca + contacto + CTA --}}
             <div class="sm:col-span-2 lg:col-span-2">
-                <picture>
-                    <source srcset="{{ asset('img/logo-derecho.webp') }}" type="image/webp">
-                    <img src="{{ asset('img/logo-derecho.webp') }}" alt="FDCCPP" loading="lazy" decoding="async" class="h-12 w-auto">
-                </picture>
+                {{-- Sin <picture>: el <source> anunciaba webp y el <img> servía el
+                     mismo webp, así que no había respaldo alguno, solo una etiqueta
+                     de más. El PNG que hacía de respaldo dejó de referenciarse hace
+                     tiempo y se retira del repositorio (pesaba 1 MB). --}}
+                <img src="{{ asset('img/logo-derecho.webp') }}" alt="FDCCPP" loading="lazy" decoding="async" class="h-12 w-auto">
                 <h3 class="mt-5 text-lg font-semibold text-white">{{ $ajustes['footer_marca'] }}</h3>
                 <p class="mt-2 max-w-xs text-sm leading-relaxed text-white/55">
                     {{ $ajustes['footer_descripcion'] }}
