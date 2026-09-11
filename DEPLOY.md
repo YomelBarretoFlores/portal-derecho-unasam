@@ -8,6 +8,31 @@ El servicio usa el Dockerfile, Node 22 para compilar los assets y FrankenPHP/PHP
 
 En cada arranque, `docker/entrypoint.sh` cachea configuración, rutas y vistas, aplica las migraciones pendientes, descarta los planes de consulta que el pooler guardaba de antes, **siembra el contenido institucional**, **crea la cuenta de administrador** si están definidas sus variables, y levanta el servidor.
 
+## Servidor propio con Docker
+
+El repositorio trae lo necesario para instalarlo sin depender de Render:
+
+| Archivo | Para qué |
+|---|---|
+| `compose.yaml` | Levanta el servicio con el volumen de archivos y la comprobación de salud |
+| `docker/actualizar.sh` | Recoge los cambios de `main` y reconstruye. Pensado para `cron` cada cinco minutos |
+
+```bash
+git clone https://github.com/YomelBarretoFlores/portal-derecho-unasam.git /opt/portal-derecho
+cd /opt/portal-derecho
+# crear portal.env con las variables de esta guía; chmod 600
+docker compose up -d --build
+docker compose logs -f
+```
+
+Y para que se mantenga al día sin que nadie intervenga:
+
+```
+*/5 * * * * /opt/portal-derecho/docker/actualizar.sh >> /var/log/portal-derecho.log 2>&1
+```
+
+El script no abre ningún puerto ni recibe conexiones: es el servidor quien consulta GitHub. Por eso se prefiere a un *webhook*, que exigiría exponer un punto de entrada más. Solo escribe en el registro cuando hay una actualización de verdad, y comprueba que el sitio responda en `/up` antes de darla por buena.
+
 ## Lo que hay que preparar ANTES de desplegar
 
 El portal no crea su propia base de datos ni se inventa una contraseña de administrador. Sin estos dos pasos previos el despliegue termina sin errores y el sitio sale en blanco.

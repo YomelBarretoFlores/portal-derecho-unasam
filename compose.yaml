@@ -1,0 +1,43 @@
+# Portal Derecho y Ciencias Políticas — UNASAM
+#
+# Despliegue en un servidor propio. Para Render se usa render.yaml.
+#
+#   1. Crear «portal.env» junto a este archivo, con las variables de entorno.
+#      Contiene contraseñas: chmod 600. Está ignorado por git a propósito.
+#   2. docker compose up -d --build
+#   3. docker compose logs -f   ← el arranque explica qué hizo y qué faltó
+#
+# Las actualizaciones posteriores las aplica docker/actualizar.sh.
+# Detalle de cada variable: DEPLOY.md.
+
+services:
+  portal:
+    build: .
+    env_file: portal.env
+    restart: unless-stopped
+
+    # El contenedor sirve HTTP plano; el certificado lo pone el proxy de la
+    # institución. Se publica solo en la interfaz local para que nadie pueda
+    # saltarse ese proxy: quítese el «127.0.0.1:» si no hay proxy delante.
+    ports:
+      - "127.0.0.1:8080:8080"
+
+    # Sin este volumen, todo lo que se suba desde el panel —portadas, PDF,
+    # retratos— desaparece en la siguiente actualización. Es también el motivo
+    # por el que MEDIA_UPLOADS_ENABLED viene en false: más vale no admitir
+    # cargas que perderlas en silencio.
+    volumes:
+      - portal-storage:/app/storage
+
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:8080/up"]
+      interval: 30s
+      timeout: 5s
+      # El primer arranque migra la base de datos y siembra el contenido, así
+      # que tarda más que los siguientes. Sin este margen, Docker daría el
+      # contenedor por enfermo mientras todavía está haciendo su trabajo.
+      start_period: 90s
+      retries: 3
+
+volumes:
+  portal-storage:
