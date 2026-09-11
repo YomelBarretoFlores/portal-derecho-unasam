@@ -256,7 +256,25 @@ class PublicContentCache
                     '_portada_url' => $numero->portada_url,
                 ])->all();
 
+            // El número en curso encabeza la portada de la revista, como en
+            // cualquier publicación seria: el número ES la noticia. Se prefiere
+            // el marcado como actual y, si no lo hay, el más reciente.
+            $actual = RevistaNumero::query()->publicados()->with('media')
+                ->orderByDesc('es_actual')->orderByDesc('fecha_publicacion')->orderByDesc('orden')
+                ->first();
+            $articulosActual = $actual
+                ? Articulo::query()->publicados()->where('revista_numero_id', $actual->id)
+                    ->with('media')->orderBy('orden')->get()
+                : collect();
+
             return [
+                'actual' => $actual ? [
+                    ...$this->numeroArray($actual),
+                    'descripcion' => $actual->descripcion,
+                    '_portada_url' => $actual->portada_url,
+                    'articulos' => $articulosActual
+                        ->map(fn (Articulo $a): array => $this->articuloArray($a, $actual->slug))->all(),
+                ] : null,
                 'revista' => $revista ? [
                     'nombre' => $revista->nombre,
                     'nombre_corto' => $revista->nombre_corto,
@@ -269,6 +287,7 @@ class PublicContentCache
                     'modalidad' => $revista->modalidad,
                     'idiomas' => $revista->idiomas,
                     'sistema_arbitraje' => $revista->sistema_arbitraje,
+                    'norma_citacion' => $revista->norma_citacion,
                     'issn' => $revista->issn,
                     'contacto_email' => $revista->contacto_email,
                     'normas_publicacion' => $revista->normas_publicacion,
@@ -281,8 +300,14 @@ class PublicContentCache
             ->when($q, fn (Collection $rows) => $rows->filter(fn (array $row): bool => str_contains(mb_strtolower($row['titulo'].' '.($row['descripcion'] ?? '')), mb_strtolower((string) $q))))
             ->values()->all();
 
+        $actual = $data['actual'] ?? null;
+
         return [
             'revista' => $data['revista'] ? $this->object($data['revista'], ['resolucion_fecha']) : null,
+            'actual' => $actual ? (object) [
+                ...(array) $this->object($actual, ['fecha_publicacion']),
+                'articulos' => $this->objects($actual['articulos'] ?? []),
+            ] : null,
             'numeros' => $this->paginate($filtered, 12, $page, ['fecha_publicacion']),
         ];
     }

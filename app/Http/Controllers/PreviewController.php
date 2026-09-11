@@ -47,7 +47,13 @@ class PreviewController extends Controller
             ->when($q, fn ($query) => $query->where('titulo', 'like', "%{$q}%"))
             ->orderByDesc('fecha_publicacion')->paginate(12)->withQueryString();
 
-        return $this->render('revista.index', compact('revista', 'numeros', 'q'));
+        // La portada pública encabeza con el número en curso; la vista previa
+        // tiene que enseñar lo mismo, incluidos los números aún sin publicar.
+        $actual = $revista->numeros()->with(['media', 'articulos' => fn ($query) => $query->orderBy('orden')])
+            ->orderByDesc('es_actual')->orderByDesc('fecha_publicacion')->orderByDesc('orden')
+            ->first();
+
+        return $this->render('revista.index', compact('revista', 'numeros', 'q', 'actual'));
     }
 
     public function numero(Request $request, RevistaNumero $numero): Response

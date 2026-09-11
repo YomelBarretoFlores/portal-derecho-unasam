@@ -9,11 +9,6 @@
     if (! $resolucionUrl && $revista && isset($revista->resolution_url)) {
         $resolucionUrl = $revista->resolution_url;
     }
-    $idiomas = collect($revista?->idiomas ?? [])->map(fn (string $idioma) => match ($idioma) {
-        'es' => 'Español',
-        'en' => 'Inglés',
-        default => strtoupper($idioma),
-    })->join(' e ');
 @endphp
 
 @section('title', $nombre.' — UNASAM')
@@ -47,6 +42,8 @@
         :title="$nombre"
         :subtitle="$revista?->nombre ?: 'Revista Científica de Derecho y Antropología Jurídica'"
     />
+
+    @include('revista.partials.numero-actual', ['actual' => $actual])
 
     <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
         @if ($revista)
@@ -100,24 +97,13 @@
                 </aside>
             </div>
 
-            <dl class="grid border-b border-stone-200 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="border-stone-200 py-7 sm:border-r sm:pr-6">
-                    <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Periodicidad</dt>
-                    <dd class="mt-2 font-semibold text-navy-900">{{ $revista->periodicidad }}</dd>
-                </div>
-                <div class="border-t border-stone-200 py-7 sm:border-t-0 sm:px-6 lg:border-r">
-                    <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Modalidad</dt>
-                    <dd class="mt-2 font-semibold text-navy-900">{{ $revista->modalidad }}</dd>
-                </div>
-                <div class="border-t border-stone-200 py-7 sm:border-r sm:px-6 lg:border-t-0">
-                    <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Evaluación</dt>
-                    <dd class="mt-2 font-semibold text-navy-900">Doble ciego</dd>
-                </div>
-                <div class="border-t border-stone-200 py-7 sm:px-6 lg:border-t-0 lg:pr-0">
-                    <dt class="text-xs font-semibold uppercase tracking-wider text-stone-500">Idiomas</dt>
-                    <dd class="mt-2 font-semibold text-navy-900">{{ $idiomas }}</dd>
-                </div>
-            </dl>
+            {{-- Esta ficha era una rejilla de cuatro columnas escrita a mano, con
+                 «Doble ciego» fijo en la plantilla pese a que el sistema de
+                 arbitraje es un campo administrable: si el equipo editorial lo
+                 cambiaba, la página seguía afirmando lo anterior. Además omitía
+                 la norma de citación. Pasa a compartir componente con la portada
+                 del sitio, de modo que ambas digan siempre lo mismo. --}}
+            <x-revista-credenciales :revista="$revista" class="!mt-0 border-b border-t-0 border-stone-200 pb-14 pt-0" />
 
             @if ($revista->enfoque_alcance)
                 <div class="grid gap-10 py-16 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-20">

@@ -27,7 +27,7 @@
 @endphp
 
 @if ($credenciales->count() >= 3)
-    <div class="reveal mt-12 border-t border-stone-300 pt-8">
+    <div {{ $attributes->class(['reveal mt-12 border-t border-stone-300 pt-8']) }}>
         <p class="eyebrow">Credenciales académicas</p>
         <dl class="mt-6 grid gap-px border border-stone-200 bg-stone-200 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($credenciales as [$etiqueta, $valor])
