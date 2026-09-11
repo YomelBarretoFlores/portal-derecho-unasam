@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('sections.hero-split')
+    @include('sections.hero')
     @include('sections.about')
     @include('sections.audiencias')
     @include('sections.revista-preview')

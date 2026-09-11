@@ -273,6 +273,22 @@
         @apply mx-auto h-px w-16 bg-stone-200;
     }
 
+    /* ---- Cifra editorial 01/02 ----
+       DESIGN.md la describe como firma del sistema desde el principio, pero
+       nunca llegó a existir en el CSS: la clase estaba documentada y ningún
+       estilo la respaldaba. Solo se usa donde hay una secuencia real. */
+    .num-editorial {
+        font-family: var(--font-serif);
+        color: var(--color-gold-600);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
+    }
+    /* Sobre navy el dorado tinta se apaga hasta ser ilegible; gold-300 llega
+       a 6.98:1 sobre navy-900, que es el contraste que pide PRODUCT.md. */
+    .num-editorial-claro {
+        color: var(--color-gold-300);
+    }
+
     /* ---- Hero title: serif académico, dramático pero con aire ---- */
     .hero-title {
         font-family: var(--font-serif);

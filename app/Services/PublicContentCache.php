@@ -15,6 +15,7 @@ use App\Models\Hito;
 use App\Models\Organigrama;
 use App\Models\PerfilIngresoArea;
 use App\Models\Revista;
+use App\Models\RevistaAviso;
 use App\Models\RevistaNumero;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
@@ -56,6 +57,7 @@ class PublicContentCache
                 'matriculados' => Estadistica::query()->where('tipo', 'matriculados')->orderBy('anio')->get(['anio', 'total'])->toArray(),
                 'titulados' => Estadistica::query()->where('tipo', 'titulados')->latest('anio')->first(['anio', 'total'])?->toArray(),
                 'accesos' => Acceso::query()->activos()->get()->toArray(),
+                'destacados' => $this->destacados(),
             ];
         });
 
@@ -69,7 +71,52 @@ class PublicContentCache
             'matriculados' => $this->objects($data['matriculados']),
             'tituladosActual' => $data['titulados'] ? (object) $data['titulados'] : null,
             'accesos' => $this->objects($data['accesos']),
+            'destacados' => $this->objects($data['destacados'] ?? [], ['fecha']),
         ];
+    }
+
+    /**
+     * Lo último publicado por el programa, para la tira del hero: comunicados,
+     * entradas del blog y avisos vigentes de la revista, mezclados por fecha.
+     *
+     * Las direcciones se guardan ya resueltas y en forma relativa: absolutas
+     * quedarían congeladas en la caché con el dominio del momento en que se
+     * calcularon, y relativas sobreviven a un cambio de dominio o de esquema.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function destacados(int $limite = 3): array
+    {
+        $comunicados = Comunicado::query()->publicados()->latest('fecha_publicacion')->limit($limite)
+            ->get(['titulo', 'slug', 'fecha_publicacion'])
+            ->map(fn (Comunicado $c): array => [
+                'etiqueta' => 'Comunicado',
+                'titulo' => $c->titulo,
+                'fecha' => $c->fecha_publicacion?->toDateString(),
+                'url' => route('comunicados.show', $c->slug, absolute: false),
+            ]);
+
+        $entradas = BlogPost::query()->publicados()->latest('fecha')->limit($limite)
+            ->get(['tipo', 'titulo', 'slug', 'fecha'])
+            ->map(fn (BlogPost $p): array => [
+                'etiqueta' => filled($p->tipo) ? ucfirst((string) $p->tipo) : 'Blog',
+                'titulo' => $p->titulo,
+                'fecha' => $p->fecha?->toDateString(),
+                'url' => route('blog.show', $p->slug, absolute: false),
+            ]);
+
+        $avisos = RevistaAviso::query()->publicados()->latest('fecha_publicacion')->limit($limite)
+            ->get(['titulo', 'slug', 'fecha_publicacion'])
+            ->map(fn (RevistaAviso $a): array => [
+                'etiqueta' => 'Revista',
+                'titulo' => $a->titulo,
+                'fecha' => $a->fecha_publicacion?->toDateString(),
+                'url' => route('revista.avisos', absolute: false),
+            ]);
+
+        return $comunicados->concat($entradas)->concat($avisos)
+            ->filter(fn (array $item): bool => filled($item['fecha']))
+            ->sortByDesc('fecha')->values()->take($limite)->all();
     }
 
     public function hitos(): Collection
