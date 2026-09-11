@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BuscadorController;
 use App\Http\Controllers\ComunicadoController;
 use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\EstadisticaController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/buscar', BuscadorController::class)->name('buscar');
 
 Route::middleware(['auth', 'signed:relative'])->prefix('preview')->name('preview.')->group(function (): void {
     Route::get('/blog/{post}', [PreviewController::class, 'blog'])->name('blog');

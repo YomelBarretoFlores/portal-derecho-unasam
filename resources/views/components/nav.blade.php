@@ -37,8 +37,15 @@
             <x-nav-link :href="route('comunicados')">Comunicados</x-nav-link>
         </div>
 
-        {{-- CTA + toggle móvil --}}
+        {{-- Buscador + CTA + toggle móvil --}}
         <div class="flex items-center gap-3">
+            {{-- Enlace, no panel plegable: funciona igual sin JavaScript y no
+                 añade estado a una barra que ya gestiona tres desplegables. --}}
+            <a href="{{ route('buscar') }}" wire:navigate.hover aria-label="Buscar en el portal"
+               @if (request()->routeIs('buscar')) aria-current="page" @endif
+               class="hidden p-2 text-navy-800 transition-colors hover:text-navy-950 lg:inline-flex">
+                <x-ui-icon name="buscar" class="h-5 w-5" />
+            </a>
             <a href="https://unasam.edu.pe" target="_blank" rel="noopener"
                class="btn btn-sm btn-primary hidden sm:inline-flex">
                 Portal UNASAM
@@ -77,6 +84,9 @@
             @endforeach
 
             <a href="{{ route('comunicados') }}" wire:navigate.hover @click="mobile = false" class="block border-t border-stone-100 py-2 font-medium text-navy-900">Comunicados</a>
+            <a href="{{ route('buscar') }}" wire:navigate.hover @click="mobile = false" class="flex items-center gap-2 border-t border-stone-100 py-2 font-medium text-navy-900">
+                <x-ui-icon name="buscar" class="h-4 w-4" /> Buscar
+            </a>
 
             <a href="https://unasam.edu.pe" target="_blank" rel="noopener" @click="mobile = false" class="btn btn-sm btn-primary mt-3 w-full">Portal UNASAM <x-ui-icon name="external-link" class="h-3.5 w-3.5" /></a>
         </div>
@@ -101,5 +111,6 @@
         <a href="{{ route('blog') }}">Blog</a>
         <a href="{{ route('docentes') }}">Docentes</a>
         <a href="{{ route('comunicados') }}">Comunicados</a>
+        <a href="{{ route('buscar') }}">Buscar</a>
     </nav>
 </header>

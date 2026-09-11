@@ -11,6 +11,9 @@
         @case('chevron-down')
             <path d="m6 9 6 6 6-6" />
             @break
+        @case('buscar')
+            <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+            @break
         @case('document')
             <path d="M6 3h8l4 4v14H6z" /><path d="M14 3v5h5M9 13h6M9 17h6" />
             @break

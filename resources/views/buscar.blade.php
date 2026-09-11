@@ -1,0 +1,51 @@
+@extends('layouts.app')
+
+@section('title', ($q !== '' ? 'Buscar: '.$q : 'Buscar').' — Derecho UNASAM')
+@section('robots', 'noindex, follow')
+
+@section('content')
+    <x-page-hero seccion="Portal" title="Buscar en el portal"
+        subtitle="Páginas institucionales, comunicados, plana docente, documentos normativos y la revista Derecho y Cultura." />
+
+    <section class="mx-auto max-w-4xl px-6 py-14 md:py-16">
+        <form method="get" action="{{ route('buscar') }}" role="search" class="flex flex-col gap-3 sm:flex-row">
+            <label class="sr-only" for="q">Términos de búsqueda</label>
+            <input id="q" name="q" type="search" value="{{ $q }}" maxlength="120" autofocus
+                   placeholder="Plan de estudios, normas para autores, un docente…"
+                   class="min-w-0 flex-1 border border-stone-300 px-4 py-3 text-base focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/10">
+            <button type="submit" class="btn btn-primary shrink-0">Buscar</button>
+        </form>
+
+        @if ($q === '')
+            <p class="mt-10 leading-relaxed text-stone-600">
+                Escribe lo que busques. La búsqueda no distingue mayúsculas ni tildes.
+            </p>
+        @elseif ($resultados->isEmpty())
+            <div class="mt-10 border border-stone-200 bg-paper p-8">
+                <p class="font-serif text-2xl text-navy-900">Sin resultados para «{{ $q }}»</p>
+                <p class="mt-3 leading-relaxed text-stone-600">
+                    Pruebe con menos palabras o con otras. También puede recorrer el portal desde el menú.
+                </p>
+            </div>
+        @else
+            <p class="mt-10 text-sm text-stone-500">
+                {{ trans_choice('{1}:count resultado|[2,*]:count resultados', $resultados->count(), ['count' => $resultados->count()]) }}
+                para «{{ $q }}»
+            </p>
+
+            <ol class="mt-6 border-t border-stone-200">
+                @foreach ($resultados as $resultado)
+                    <li class="border-b border-stone-200">
+                        <a href="{{ $resultado->url }}" wire:navigate.hover class="group block py-6 transition-colors hover:bg-paper">
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-navy-700">{{ $resultado->tipo }}</p>
+                            <h2 class="mt-1.5 text-xl font-semibold leading-snug text-navy-900">{{ $resultado->titulo }}</h2>
+                            @if (filled($resultado->extracto))
+                                <p class="mt-1.5 text-sm leading-relaxed text-stone-600">{{ $resultado->extracto }}</p>
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
+            </ol>
+        @endif
+    </section>
+@endsection
