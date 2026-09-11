@@ -76,9 +76,18 @@ services:
       - key: DB_PASSWORD
         sync: false
 
-      # --- Sesión, caché y colas (local, sin tocar la BD en cada request) ---
+      # --- Sesión, caché y colas ---
+      #
+      # La sesión va en la BASE DE DATOS, no en ficheros. El contenedor tiene
+      # disco efímero: con SESSION_DRIVER=file, cada despliegue borraba las
+      # sesiones y expulsaba a quien estuviera editando. El síntoma en el panel
+      # era «Error al cargar la página» a mitad de un formulario, con el trabajo
+      # perdido. La tabla «sessions» la crea la primera migración.
+      #
+      # Cuesta una consulta por petición, y las vale: el portal se despliega
+      # más veces de las que nadie quiere volver a iniciar sesión.
       - key: SESSION_DRIVER
-        value: file
+        value: database
       - key: SESSION_SECURE_COOKIE
         value: "true"
       - key: CACHE_STORE

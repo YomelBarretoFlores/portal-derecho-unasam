@@ -106,10 +106,34 @@ class CspImagenesTest extends TestCase
         );
 
         $this->assertTrue($validador->fails());
-        $this->assertStringContainsString(
-            'CSP_IMG_HOSTS',
-            (string) $validador->errors()->first('portada_url_respaldo'),
+
+        // El mensaje lo lee quien redacta contenido, no quien administra el
+        // servidor: no puede nombrarle variables de entorno ni pedirle que las
+        // cambie. La primera versión decía «añada ese dominio a CSP_IMG_HOSTS»,
+        // y una redactora concluyó que el portal solo admitía texto.
+        $mensaje = (string) $validador->errors()->first('portada_url_respaldo');
+
+        $this->assertStringNotContainsString('CSP_IMG_HOSTS', $mensaje);
+        $this->assertStringNotContainsString('CSP', $mensaje);
+        $this->assertStringContainsString('quien administra el servidor', $mensaje);
+    }
+
+    public function test_a_link_to_a_social_media_post_is_explained_as_such(): void
+    {
+        // El error más frecuente de quien redacta: copiar la dirección de la
+        // barra del navegador estando en una publicación. Eso lleva a una
+        // página entera, no a la fotografía, y el mensaje genérico sobre
+        // dominios no ayudaba nada a entenderlo.
+        $validador = Validator::make(
+            ['imagen_url_respaldo' => 'https://www.instagram.com/p/DXfrEDGFbOc/'],
+            ['imagen_url_respaldo' => [new ImagenVisible]],
         );
+
+        $this->assertTrue($validador->fails());
+
+        $mensaje = (string) $validador->errors()->first('imagen_url_respaldo');
+        $this->assertStringContainsString('publicación de Instagram', $mensaje);
+        $this->assertStringContainsString('Copiar dirección de la imagen', $mensaje);
     }
 
     public function test_the_admin_accepts_an_image_from_a_declared_host(): void

@@ -31,7 +31,10 @@ class UrlDeRespaldo
             ->rule(new SafeUrl)
             ->rule(new ImagenVisible)
             ->columnSpanFull()
-            ->helperText(self::ayuda('Debe estar en un dominio autorizado; si no, el navegador la bloquea y no se ve.'));
+            ->helperText(self::ayuda(
+                'Pegue la dirección del archivo de imagen —termina en .jpg, .png o .webp—, '
+                .'no el enlace a una publicación de Instagram o Facebook.',
+            ));
     }
 
     /** Campo de respaldo para un ARCHIVO descargable (PDF, documento). */
@@ -53,14 +56,16 @@ class UrlDeRespaldo
     {
         return config('media.uploads_enabled')
             ? $cuandoSePuede
-            : 'Las cargas están deshabilitadas en este servidor porque los archivos no sobrevivirían al siguiente despliegue. Mientras tanto, use el campo de URL de respaldo.';
+            : 'Este servidor todavía no guarda archivos subidos: se perderían en la próxima '
+              .'actualización del portal. Mientras el área de sistemas no habilite el '
+              .'almacenamiento, use el campo de dirección web que aparece justo debajo.';
     }
 
     private static function ayuda(string $extra = ''): string
     {
         $base = config('media.uploads_enabled')
             ? 'Solo se usa si no se sube ningún archivo.'
-            : 'Es la única vía disponible en este servidor, porque las cargas están deshabilitadas.';
+            : 'Por ahora es la única forma de poner una imagen aquí.';
 
         return trim($base.' '.$extra);
     }
