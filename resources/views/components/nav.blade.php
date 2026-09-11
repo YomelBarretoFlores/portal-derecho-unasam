@@ -119,17 +119,23 @@
         </div>
     </div>
 
-    {{-- Respaldo navegable en móvil cuando JavaScript está deshabilitado. --}}
-    <noscript>
-        <style>[data-mobile-menu-toggle] { display: none !important; }</style>
-        <nav aria-label="Navegación principal sin JavaScript"
-             class="flex gap-5 overflow-x-auto border-t border-stone-200 bg-paper px-6 py-3 text-sm font-medium text-navy-900 lg:hidden">
-            <a href="{{ route('home') }}">Inicio</a>
-            <a href="{{ route('presentacion') }}">Programa</a>
-            <a href="{{ route('plan-2023') }}">Plan de estudios</a>
-            <a href="{{ route('revista') }}">Revista</a>
-            <a href="{{ route('blog') }}">Blog</a>
-            <a href="{{ route('docentes') }}">Docentes</a>
-        </nav>
-    </noscript>
+    {{-- Respaldo navegable en móvil cuando JavaScript está deshabilitado.
+
+         No puede ir dentro de <noscript>: al navegar con wire:navigate, Livewire
+         reconstruye el documento a partir del HTML recibido, y en ese análisis la
+         bandera de scripting está apagada, así que el contenido de <noscript> pasa
+         a ser DOM real. El <style> que ocultaba el botón se convertía en una hoja
+         viva y el ícono de hamburguesa desaparecía en todas las páginas siguientes.
+
+         En su lugar se marca el estado con la clase «js» en <html> (ver el layout)
+         y se decide en CSS, que es inmune a cómo se analice el documento. --}}
+    <nav data-sin-js aria-label="Navegación principal sin JavaScript"
+         class="flex gap-5 overflow-x-auto border-t border-stone-200 bg-paper px-6 py-3 text-sm font-medium text-navy-900 lg:hidden">
+        <a href="{{ route('home') }}">Inicio</a>
+        <a href="{{ route('presentacion') }}">Programa</a>
+        <a href="{{ route('plan-2023') }}">Plan de estudios</a>
+        <a href="{{ route('revista') }}">Revista</a>
+        <a href="{{ route('blog') }}">Blog</a>
+        <a href="{{ route('docentes') }}">Docentes</a>
+    </nav>
 </header>

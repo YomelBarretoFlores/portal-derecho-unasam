@@ -79,6 +79,15 @@
     [x-cloak] {
         display: none !important;
     }
+    /* Respaldo de navegación: con JavaScript manda el botón de hamburguesa; sin
+       JavaScript, la lista de enlaces. Se resuelve aquí y no con <noscript>
+       porque wire:navigate convierte el contenido de <noscript> en DOM real. */
+    html:not(.sin-js) [data-sin-js] {
+        display: none !important;
+    }
+    html.sin-js [data-mobile-menu-toggle] {
+        display: none !important;
+    }
     html {
         -webkit-font-smoothing: antialiased;
     }

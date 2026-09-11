@@ -1,7 +1,18 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es" class="scroll-smooth sin-js">
 <head>
     <meta charset="utf-8">
+    {{-- El respaldo de navegación sin JavaScript se decide con la clase «sin-js»,
+         no con <noscript>: al navegar con wire:navigate el documento se reconstruye
+         con la bandera de scripting apagada, y el contenido de <noscript> pasaría a
+         ser DOM real (el <style> de dentro se volvía una hoja viva que ocultaba el
+         botón de menú en todas las páginas siguientes).
+
+         Este script corre antes de que se resuelva ningún estilo, así que no hay
+         parpadeo. wire:navigate reemplaza los atributos de <html> con los del
+         servidor, que vuelven a traer «sin-js»; app.js la retira de nuevo al
+         recibir livewire:navigated. --}}
+    <script>document.documentElement.classList.remove('sin-js')</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="view-transition" content="same-origin">
     <title>@yield('title', $ajustes['seo_title'] ?? 'Derecho y Ciencias Políticas — UNASAM')</title>

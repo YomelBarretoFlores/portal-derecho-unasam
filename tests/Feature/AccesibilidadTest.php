@@ -257,4 +257,22 @@ class AccesibilidadTest extends TestCase
 
         return new DOMXPath($documento);
     }
+
+    public function test_the_mobile_menu_fallback_never_relies_on_noscript(): void
+    {
+        // Al navegar con wire:navigate, Livewire reconstruye el documento a partir
+        // del HTML recibido y en ese análisis la bandera de scripting está apagada:
+        // el contenido de <noscript> se convierte en DOM real. Un <style> ahí dentro
+        // pasaba a ser una hoja viva que ocultaba el botón de menú, así que el ícono
+        // de hamburguesa desaparecía en todas las páginas posteriores a la primera.
+        $html = $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('<noscript', $html,
+            'El layout volvió a usar <noscript>: wire:navigate activará su contenido al navegar.');
+        $this->assertStringContainsString('class="scroll-smooth sin-js"', $html,
+            'Falta la clase «sin-js» en <html>: el respaldo sin JavaScript no se puede decidir en CSS.');
+        $this->assertStringContainsString('data-sin-js', $html,
+            'Falta la navegación de respaldo para quien no tiene JavaScript.');
+        $this->assertStringContainsString('data-mobile-menu-toggle', $html);
+    }
 }

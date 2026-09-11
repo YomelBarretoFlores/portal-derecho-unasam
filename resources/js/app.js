@@ -131,7 +131,18 @@ function initAnimations() {
     initParallax();
 }
 
-document.addEventListener('livewire:navigated', initAnimations);
+// wire:navigate reemplaza los atributos de <html> con los que manda el servidor,
+// que siempre incluyen «sin-js». Sin esto, a partir de la primera navegación el
+// portal se comportaría como si no hubiera JavaScript: el botón de menú móvil
+// desaparecía y salía en su lugar la tira de enlaces de respaldo.
+function marcarConJs() {
+    document.documentElement.classList.remove('sin-js');
+}
+
+document.addEventListener('livewire:navigated', () => {
+    marcarConJs();
+    initAnimations();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!window.Livewire) initAnimations();
