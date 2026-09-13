@@ -41,6 +41,15 @@ class SecurityHeaders
             trim("style-src 'self' 'unsafe-inline' https://fonts.bunny.net {$viteOrigin}"),
             trim("script-src 'self' 'unsafe-inline' 'unsafe-eval' {$viteOrigin}"),
             trim("connect-src 'self' {$viteOrigin} {$viteWebSocketOrigin}"),
+            // El componente de carga de archivos del panel procesa cada archivo
+            // en un Web Worker que crea al vuelo, con una URL «blob:». Sin esta
+            // línea el navegador lo bloquea y el recuadro de «arrastra tu
+            // archivo» se queda como un campo básico que no sube nada: no hay
+            // mensaje de error, solo deja de funcionar.
+            //
+            // Lo encontró el área de sistemas de la UNASAM depurando el panel
+            // en el servidor de la universidad.
+            "worker-src 'self' blob:",
         ]));
 
         if (app()->environment('production') && $request->isSecure()) {

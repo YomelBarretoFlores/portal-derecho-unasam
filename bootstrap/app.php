@@ -15,18 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(fn (): string => route('filament.admin.auth.login'));
 
-        $trustedProxies = array_values(array_filter(array_map(
-            'trim',
-            explode(',', (string) env('TRUSTED_PROXIES', '')),
-        )));
-
-        if (env('APP_ENV') === 'production' && ($trustedProxies === [] || in_array('*', $trustedProxies, true))) {
-            throw new LogicException('TRUSTED_PROXIES debe contener IPs o CIDR explícitos en producción.');
-        }
-
-        if ($trustedProxies !== []) {
-            $middleware->trustProxies(at: $trustedProxies);
-        }
+        // Los proxies de confianza se configuran en AppServiceProvider::boot().
+        // Aquí no se puede: esta función corre antes de que exista config(), y
+        // leerlo con env() no sirve —con la configuración cacheada, que es como
+        // va producción, env() devuelve null fuera de los ficheros de config.
 
         $middleware->append(SecurityHeaders::class);
     })

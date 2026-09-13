@@ -32,8 +32,10 @@ use App\Policies\ContentAuditPolicy;
 use App\Policies\ContentPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -81,6 +83,8 @@ class AppServiceProvider extends ServiceProvider
         if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
+
+        $this->confiarEnLosProxiesDeclarados();
 
         $contentPolicyModels = array_merge(self::CONTENT_MODELS, [Setting::class, RevistaEnvio::class, RevistaEnvioVersion::class]);
         foreach ($contentPolicyModels as $model) {
@@ -203,5 +207,47 @@ class AppServiceProvider extends ServiceProvider
         }
 
         return $resultado;
+    }
+
+    /**
+     * Declara los proxies que hay delante del portal, si los hay.
+     *
+     * Antes vivía en bootstrap/app.php y exigía que TRUSTED_PROXIES estuviera
+     * relleno en producción, lanzando una excepción si no. Dos cosas fallaban.
+     *
+     * La comprobación no llegaba a ejecutarse: usaba env(), y con la
+     * configuración cacheada —como va producción— env() devuelve null fuera de
+     * los ficheros de config. Protegía sobre el papel y nada en la práctica.
+     *
+     * Y cuando sí saltaba, tumbaba el portal entero. Vacío no es un error:
+     * significa que no hay proxy delante, el caso de una instalación directa
+     * sobre un servidor propio. El área de sistemas de la UNASAM se topó con
+     * esto y tuvo que borrar el bloque a mano para poder arrancar.
+     *
+     * Aquí sí existe config(), así que el ajuste se lee de verdad; y un valor
+     * inservible se descarta con un aviso en el registro en vez de dejar el
+     * sitio caído.
+     */
+    private function confiarEnLosProxiesDeclarados(): void
+    {
+        $proxies = (array) config('seguridad.proxies_de_confianza', []);
+
+        if (in_array('*', $proxies, true)) {
+            Log::warning('TRUSTED_PROXIES contiene «*» y se ignora: confiar en cualquier proxy permite falsear la IP del visitante. Ponga las IPs o rangos CIDR del proxy.');
+
+            return;
+        }
+
+        if ($proxies === []) {
+            return;
+        }
+
+        Request::setTrustedProxies(
+            $proxies,
+            Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO,
+        );
     }
 }
