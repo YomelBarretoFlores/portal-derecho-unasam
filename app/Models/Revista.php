@@ -95,7 +95,7 @@ class Revista extends Model implements HasMedia
         return $this->resolverMedia(
             'resolucion',
             (string) $this->resolucion_url_respaldo,
-            asset(self::RESOLUTION_PUBLIC_PATH),
+            self::rutaDelRepositorio(self::RESOLUTION_PUBLIC_PATH),
         );
     }
 
@@ -111,8 +111,28 @@ class Revista extends Model implements HasMedia
         return $this->resolverMedia(
             'logo',
             (string) $this->logo_url_respaldo,
-            asset(self::LOGO_PUBLIC_PATH),
+            self::rutaDelRepositorio(self::LOGO_PUBLIC_PATH),
         );
+    }
+
+    /**
+     * Dirección RELATIVA de un archivo que viaja con la aplicación.
+     *
+     * No se usa asset() a propósito. Estas dos direcciones acaban guardadas en
+     * la caché de contenido público, y asset() las construye con el dominio de
+     * quien provocó el guardado. Basta con que la caché se caliente desde una
+     * consola —o desde otro puerto— para que todos los visitantes reciban una
+     * dirección que no existe: aquí el logo salía apuntando a
+     * «http://localhost:8000» y en el navegador se veía el icono de imagen
+     * rota.
+     *
+     * Relativa siempre es correcta: el archivo se sirve desde el mismo dominio
+     * que la página, sea cual sea. Es el mismo arreglo que se hizo con el disco
+     * público de los archivos subidos.
+     */
+    private static function rutaDelRepositorio(string $ruta): string
+    {
+        return '/'.ltrim($ruta, '/');
     }
 
     protected static function booted(): void
