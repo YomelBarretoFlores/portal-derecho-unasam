@@ -153,4 +153,21 @@ class HeroTest extends TestCase
         $this->assertStringContainsString('campus-derecho', $html);
         $this->assertMatchesRegularExpression('/alt="Patio de la Facultad[^"]+Cordillera Blanca[^"]*"/u', $html);
     }
+
+    public function test_the_mascot_is_also_visible_on_a_phone(): void
+    {
+        // Estuvo oculta por debajo de lg, que es justo la pantalla desde la que
+        // entra la mayoría: la facultad no veía su propia mascota en el móvil.
+        // Ahora sale pequeña y pegada al borde inferior; el pb-40 del contenido
+        // es lo que impide que las cifras se le metan debajo.
+        config()->set('seguridad.csp.img_hosts', ['cdn.unasam.edu.pe']);
+        Setting::set('home_hero_mascota_url', 'https://cdn.unasam.edu.pe/mascota.webp');
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $bloque = Str::before(Str::after($html, 'mascota-cae'), '</div>');
+
+        $this->assertStringNotContainsString('hidden', $bloque, 'La mascota vuelve a estar oculta en móvil.');
+        $this->assertStringContainsString('pb-40', $html, 'Sin ese espacio, las cifras del hero se solapan con la mascota.');
+    }
 }

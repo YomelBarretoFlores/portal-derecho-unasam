@@ -10,6 +10,7 @@ use App\Filament\Resources\Revistas\Pages\EditRevista;
 use App\Filament\Resources\Revistas\Pages\ListRevistas;
 use App\Filament\Tables\EditorialStatusColumn;
 use App\Models\Revista;
+use App\Services\RevistaSubmissionService;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -18,6 +19,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -117,6 +119,14 @@ class RevistaResource extends Resource
                         )),
                     EditorialStatusSelect::make()->columnSpan(2),
                     UrlDeRespaldo::imagen('logo_url_respaldo', 'URL pública de respaldo del logo'),
+                    Toggle::make('recepcion_abierta')
+                        ->label('Recibir manuscritos ahora')
+                        ->helperText(fn (RevistaSubmissionService $envios): string => $envios->motivosTecnicosPendientes() === []
+                            ? 'Actívelo cuando la convocatoria esté abierta; desactívelo para dejar de recibir trabajos. El formulario público aparece o desaparece al instante.'
+                            : 'No se puede abrir todavía: el servidor aún no puede guardar manuscritos de forma segura. '
+                              .'Pendiente — '.implode(' ', $envios->motivosTecnicosPendientes()))
+                        ->disabled(fn (RevistaSubmissionService $envios): bool => $envios->motivosTecnicosPendientes() !== [])
+                        ->columnSpanFull(),
                 ]),
         ]);
     }

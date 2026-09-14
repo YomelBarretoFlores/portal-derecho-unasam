@@ -6,6 +6,7 @@ use App\Filament\Resources\RevistaEnvios\RevistaEnvioResource;
 use App\Models\Revista;
 use App\Models\RevistaEnvio;
 use App\Models\RevistaEnvioVersion;
+use App\Models\Setting;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -31,18 +32,58 @@ class RevistaSubmissionService
      */
     public function unavailableReasons(): array
     {
+        $reasons = $this->motivosTecnicosPendientes();
+
+        /*
+         * Interruptor EDITORIAL, separado de los técnicos de arriba.
+         *
+         * Los demás motivos son hechos del servidor —si hay almacenamiento
+         * privado, si sobrevive a un despliegue— y por eso viven en el fichero
+         * de entorno: nadie puede afirmarlos desde un panel sin mentir, y si se
+         * mintiera se perderían manuscritos de autores.
+         *
+         * «¿Estamos recibiendo trabajos ahora mismo?» no es un hecho del
+         * servidor: es una decisión del equipo editorial que cambia cada vez
+         * que se abre o se cierra una convocatoria. Eso sí pertenece al panel.
+         *
+         * Cerrar desde el panel funciona siempre. Abrir solo tiene efecto si el
+         * servidor lo permite: se suma a los técnicos, nunca los sustituye.
+         */
+        /*
+         * Por defecto abierto, no cerrado. Los cinco motivos técnicos ya
+         * empiezan todos en «no», así que nada se abre solo. Si este empezara
+         * en «no» también, instalar esta versión cerraría la recepción en un
+         * portal que ya la tenía abierta, sin que nadie lo pidiera.
+         */
+        if (! Setting::get('revista_recepcion_abierta', true)) {
+            $reasons[] = 'La recepción está cerrada desde el panel (Revista → Publicación).';
+        }
+
+        return $reasons;
+    }
+
+    /**
+     * Motivos que dependen del servidor y que el panel no puede resolver.
+     *
+     * Se consulta aparte para que el interruptor del panel pueda explicar por
+     * qué está bloqueado en vez de limitarse a no dejarse pulsar.
+     *
+     * @return array<int, string>
+     */
+    public function motivosTecnicosPendientes(): array
+    {
         $reasons = [];
 
         if (! config('submissions.enabled')) {
-            $reasons[] = 'SUBMISSIONS_ENABLED está en false.';
+            $reasons[] = 'El servidor todavía no admite envíos (SUBMISSIONS_ENABLED está en false).';
         }
 
         if (! config('submissions.privacy_approved')) {
-            $reasons[] = 'SUBMISSIONS_PRIVACY_APPROVED está en false: falta aprobar la declaración de privacidad.';
+            $reasons[] = 'Falta aprobar la declaración de privacidad (SUBMISSIONS_PRIVACY_APPROVED).';
         }
 
         if (! config('submissions.storage_persistent')) {
-            $reasons[] = 'SUBMISSIONS_STORAGE_PERSISTENT está en false: no se ha declarado almacenamiento persistente.';
+            $reasons[] = 'No se ha declarado almacenamiento persistente (SUBMISSIONS_STORAGE_PERSISTENT).';
         }
 
         if (! $this->usesPrivateDisk()) {

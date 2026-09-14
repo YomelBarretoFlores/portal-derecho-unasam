@@ -62,14 +62,17 @@
                  rgba(15,34,64,0.05) 100%)"></div>
     </div>
 
-    <div class="relative mx-auto max-w-7xl px-6 pb-14 pt-16 sm:pt-20 lg:pb-20 lg:pt-28">
+    <div class="relative mx-auto max-w-7xl px-6 pb-40 pt-16 sm:pb-44 sm:pt-20 lg:pb-20 lg:pt-28">
 
         @if (filled($home['home_hero_mascota_url'] ?? ''))
             {{-- Mascota de la facultad, de pie sobre el patio.
 
-                 Solo desde lg. Por debajo, el titular ya ocupa el ancho entero y
-                 la mascota tendría que encogerse tanto que no se reconocería, o
-                 taparía el texto. Antes que una versión diminuta, ninguna.
+                 En el móvil también, pero pequeña y pegada al borde inferior
+                 derecho, donde no pisa nada: el titular y el subtítulo quedan
+                 por encima y las cifras se apartan con el pb-40 de abajo. Antes
+                 estaba oculta por debajo de lg, y era la única pantalla donde la
+                 facultad no veía su propia mascota —justo la pantalla desde la
+                 que entra la mayoría.
 
                  Va detrás del texto en el orden de apilado y con pointer-events
                  desactivados: es un elemento de ambiente, y no debe interceptar
@@ -78,8 +81,8 @@
                  Sin «alt» administrado se trata como decorativa: un lector de
                  pantalla no gana nada anunciando una ilustración, y obligarle a
                  escucharla antes del titular sería peor que omitirla. --}}
-            <div class="mascota-cae pointer-events-none absolute bottom-0 right-4 z-0 hidden select-none lg:block xl:right-10"
-                 style="height: clamp(19rem, 34vw, 30rem)">
+            <div class="mascota-cae pointer-events-none absolute bottom-0 right-2 z-0 select-none sm:right-4 xl:right-10"
+                 style="height: clamp(8.5rem, 34vw, 30rem)">
                 <img src="{{ $home['home_hero_mascota_url'] }}"
                      @if (filled($home['home_hero_mascota_alt'] ?? ''))
                          alt="{{ $home['home_hero_mascota_alt'] }}"

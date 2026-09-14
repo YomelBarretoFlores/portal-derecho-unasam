@@ -103,6 +103,11 @@ class SettingSeeder extends Seeder
             // de pie. Vaciarla desde el panel la retira.
             'error404_mascota_url' => '/img/mascota-volando.webp',
 
+            // Interruptor editorial de la recepción de manuscritos. Los cinco
+            // requisitos técnicos viven en el fichero de entorno; este es el
+            // único que decide el equipo editorial, y se suma a aquellos.
+            'revista_recepcion_abierta' => '1',
+
             // --- Fase 3: Plan de Estudios ---
             'plan_grado' => 'Bachiller en Derecho',
             'plan_titulo_prof' => 'Abogado(a)',
