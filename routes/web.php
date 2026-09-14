@@ -51,6 +51,7 @@ Route::get('/revista/avisos', [RevistaController::class, 'avisos'])->name('revis
 Route::get('/revista/envios', [RevistaController::class, 'envios'])->name('revista.envios');
 Route::post('/revista/envios', [RevistaSubmissionController::class, 'store'])->middleware('throttle:5,60')->name('revista.envios.store');
 Route::post('/revista/envios/correccion', [RevistaSubmissionController::class, 'correction'])->middleware('throttle:5,60')->name('revista.envios.correction');
+Route::post('/revista/envios/codigo-guardado', [RevistaSubmissionController::class, 'forgetCode'])->name('revista.envios.codigo-guardado');
 Route::get('/revista/envios/consulta', [RevistaSubmissionController::class, 'status'])->name('revista.envios.consulta');
 Route::post('/revista/envios/consulta', [RevistaSubmissionController::class, 'lookup'])->middleware('throttle:10,60')->name('revista.envios.consulta.buscar');
 Route::get('/revista/sobre-la-revista', [RevistaController::class, 'sobre'])->name('revista.sobre');

@@ -8,18 +8,18 @@
         @foreach(['Envío','Verificación editorial','Respuesta por correo','Corrección','Revisión por pares','Decisión'] as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<x-ui-icon name="arrow-right" class="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 bg-white text-navy-500 lg:block" />@endunless</li>@endforeach
     </ol>
     <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a><a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar mi envío</a></div>
-    @if(session('submission_success'))
+    @if(session('envio_codigo_reciente'))
         <div class="mt-10 border-2 border-navy-900 bg-white" role="status" x-data="{ copiado: false, sinPortapapeles: false }">
             <div class="border-b border-stone-200 bg-paper px-7 py-5">
                 <p class="eyebrow">Envío recibido correctamente</p>
                 <h2 class="mt-2 text-2xl">Guarda tu código de seguimiento</h2>
             </div>
             <div class="px-7 py-7">
-                <p class="font-mono text-3xl font-bold tracking-wider text-navy-900 md:text-4xl" id="codigo-seguimiento">{{ session('submission_success') }}</p>
+                <p class="font-mono text-3xl font-bold tracking-wider text-navy-900 md:text-4xl" id="codigo-seguimiento">{{ session('envio_codigo_reciente') }}</p>
                 <div class="mt-5 flex flex-wrap gap-3 print:hidden">
                     {{-- Sin el catch, un portapapeles bloqueado dejaba el botón mudo. --}}
                     <button type="button" class="btn btn-primary"
-                            x-on:click="navigator.clipboard?.writeText('{{ session('submission_success') }}')
+                            x-on:click="navigator.clipboard?.writeText('{{ session('envio_codigo_reciente') }}')
                                 .then(() => { copiado = true; sinPortapapeles = false; setTimeout(() => copiado = false, 2500) })
                                 .catch(() => { sinPortapapeles = true }) ?? (sinPortapapeles = true)">
                         <span x-show="! copiado && ! sinPortapapeles">Copiar código</span>
@@ -33,6 +33,12 @@
                     <strong>Sin este código no podrás enviar tu versión corregida</strong> ni consultar el estado de tu manuscrito. Anótalo o imprímelo antes de cerrar esta página.
                 </p>
                 <p class="mt-3 text-sm leading-relaxed text-stone-600">El equipo editorial revisará tu envío y se comunicará contigo por tu correo institucional.</p>
+                {{-- El aviso no se va solo: se queda hasta que el autor dice que
+                     ya lo tiene. Antes bastaba con recargar para perderlo, y
+                     perderlo deja al autor sin forma de consultar su envío. --}}
+                <form method="post" action="{{ route('revista.envios.codigo-guardado') }}" class="mt-5 print:hidden">@csrf
+                    <button type="submit" class="text-sm font-semibold text-navy-700 underline underline-offset-4 hover:text-navy-900">Ya lo guardé, ocultar este aviso</button>
+                </form>
             </div>
         </div>
     @endif

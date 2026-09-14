@@ -67,7 +67,29 @@ class RevistaSubmissionController extends Controller
             'declaracion' => $request->file('declaracion'), 'constancia_estilo' => $request->file('constancia_estilo'),
         ], $request->ip());
 
-        return to_route('revista.envios')->with('submission_success', $envio->codigo_seguimiento);
+        /*
+         * El código va a la sesión, no a un mensaje de un solo uso.
+         *
+         * Antes viajaba en flash, que solo sobrevive a una petición: bastaba
+         * con recargar la página —o volver atrás, o un resbalón en el móvil—
+         * para perderlo. Y perderlo es definitivo: sin él no se puede
+         * consultar el estado ni mandar la versión corregida, y no hay forma
+         * de recuperarlo salvo escribiendo al equipo editorial.
+         *
+         * En la sesión aguanta recargas y sigue ahí hasta que el autor pulsa
+         * «Ya lo guardé». Lo borra también el cierre de sesión del navegador.
+         */
+        session()->put('envio_codigo_reciente', $envio->codigo_seguimiento);
+
+        return to_route('revista.envios');
+    }
+
+    /** Retira el código de la sesión cuando el autor confirma que ya lo guardó. */
+    public function forgetCode(): RedirectResponse
+    {
+        session()->forget('envio_codigo_reciente');
+
+        return to_route('revista.envios');
     }
 
     public function correction(Request $request, RevistaSubmissionService $submissions): RedirectResponse
