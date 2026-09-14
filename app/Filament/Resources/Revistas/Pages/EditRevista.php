@@ -41,8 +41,20 @@ class EditRevista extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        Setting::set('revista_recepcion_abierta', ! empty($data['recepcion_abierta']) ? '1' : '0');
-        unset($data['recepcion_abierta']);
+        /*
+         * Solo se escribe si el campo vino de verdad en el formulario.
+         *
+         * Filament no envía los campos deshabilitados al guardar, y este lo
+         * está mientras el servidor no pueda guardar manuscritos. Sin esta
+         * comprobación, el valor ausente se leía como «desactivado» y guardar
+         * cualquier otro cambio de la ficha —el nombre corto, una red social—
+         * cerraba la recepción sin que nadie lo pidiera. Lo peor es que no
+         * dejaba rastro: el panel simplemente amanecía cerrado.
+         */
+        if (array_key_exists('recepcion_abierta', $data)) {
+            Setting::set('revista_recepcion_abierta', empty($data['recepcion_abierta']) ? '0' : '1');
+            unset($data['recepcion_abierta']);
+        }
 
         return $data;
     }

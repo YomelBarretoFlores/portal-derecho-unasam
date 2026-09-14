@@ -107,9 +107,14 @@
                 {{ $home['home_hero_subtitulo'] }}
             </p>
 
-            <div class="reveal mt-8 flex flex-wrap gap-3" data-reveal-delay="0.24">
-                <x-button :href="route('presentacion')" variant="light">{{ $home['home_hero_cta1'] }}</x-button>
-                <x-button :href="route('plan-2023')" variant="ghost-light">{{ $home['home_hero_cta2'] }}</x-button>
+            {{-- En móvil los dos botones ocupan todo el ancho y quedan
+                 iguales. Apilados y midiendo cada uno lo que mide su texto se
+                 veían desparejos, y el más corto parecía menos importante que
+                 el otro sin serlo. Desde sm vuelven a ir en fila, cada uno a su
+                 ancho natural. --}}
+            <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal-delay="0.24">
+                <x-button :href="route('presentacion')" variant="light" class="w-full sm:w-auto">{{ $home['home_hero_cta1'] }}</x-button>
+                <x-button :href="route('plan-2023')" variant="ghost-light" class="w-full sm:w-auto">{{ $home['home_hero_cta2'] }}</x-button>
             </div>
 
             <div class="reveal mt-12 grid max-w-md grid-cols-2 divide-x divide-white/15 border-t border-white/15 pt-7" data-reveal-delay="0.32">

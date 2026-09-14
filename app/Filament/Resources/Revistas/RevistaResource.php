@@ -120,7 +120,9 @@ class RevistaResource extends Resource
                     EditorialStatusSelect::make()->columnSpan(2),
                     UrlDeRespaldo::imagen('logo_url_respaldo', 'URL pública de respaldo del logo'),
                     Toggle::make('recepcion_abierta')
-                        ->label('Recibir manuscritos ahora')
+                        ->label(fn (RevistaSubmissionService $envios): string => $envios->motivosTecnicosPendientes() === []
+                            ? 'Recibir manuscritos ahora'
+                            : 'Recibir manuscritos ahora — bloqueado por el servidor')
                         ->helperText(fn (RevistaSubmissionService $envios): string => $envios->motivosTecnicosPendientes() === []
                             ? 'Actívelo cuando la convocatoria esté abierta; desactívelo para dejar de recibir trabajos. El formulario público aparece o desaparece al instante.'
                             : 'No se puede abrir todavía: el servidor aún no puede guardar manuscritos de forma segura. '
