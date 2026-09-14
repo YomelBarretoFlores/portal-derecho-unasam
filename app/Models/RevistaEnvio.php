@@ -17,6 +17,30 @@ class RevistaEnvio extends Model
      *
      * @var array<int, string>
      */
+    /**
+     * Fases que se enseñan al público, y qué estados internos cubre cada una.
+     *
+     * La tira del flujo editorial salía de una lista escrita a mano que no
+     * coincidía con los estados reales: anunciaba «Respuesta por correo», que
+     * no es una fase sino algo que ocurre entre fases, y se dejaba fuera
+     * «Revisión editorial», que sí lo es. Un autor cuyo manuscrito estuviera en
+     * revisión editorial consultaba su envío, leía esa fase, y no la encontraba
+     * en el diagrama.
+     *
+     * Derivarlo de aquí obliga a que el diagrama y la consulta digan lo mismo
+     * siempre, y un estado nuevo sin fase asignada rompe el test.
+     *
+     * @var array<string, array<int, string>>
+     */
+    public const FASES_PUBLICAS = [
+        'Recepción' => ['recibido'],
+        'Verificación documental' => ['verificacion_documental'],
+        'Corrección' => ['observado', 'correccion_recibida'],
+        'Revisión editorial' => ['revision_editorial'],
+        'Revisión por pares' => ['revision_pares'],
+        'Decisión' => ['aceptado', 'rechazado', 'publicado'],
+    ];
+
     public const ESTADOS_ADMITEN_CORRECCION = ['observado'];
 
     public const TIPOS = ['articulo_original' => 'Artículo original', 'revision' => 'Revisión', 'ensayo' => 'Ensayo', 'resena' => 'Reseña'];

@@ -5,8 +5,16 @@
 <section class="mx-auto max-w-7xl px-6 py-16 md:py-20">
     @if($revista->introduccion_envios)<div class="prose-editorial max-w-3xl">{{ \Filament\Forms\Components\RichEditor\RichContentRenderer::make($revista->introduccion_envios) }}</div>@endif
     <ol class="mt-12 grid gap-px border border-stone-200 bg-stone-200 sm:grid-cols-3 lg:grid-cols-6" aria-label="Flujo editorial">
-        @foreach(['Envío','Verificación editorial','Respuesta por correo','Corrección','Revisión por pares','Decisión'] as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<x-ui-icon name="arrow-right" class="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 bg-white text-navy-500 lg:block" />@endunless</li>@endforeach
+        @foreach(array_keys(\App\Models\RevistaEnvio::FASES_PUBLICAS) as $step)<li class="relative bg-white p-5"><span class="eyebrow">{{ str_pad((string)$loop->iteration,2,'0',STR_PAD_LEFT) }}</span><p class="mt-2 font-semibold text-navy-900">{{ $step }}</p>@unless($loop->last)<x-ui-icon name="arrow-right" class="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 bg-white text-navy-500 lg:block" />@endunless</li>@endforeach
     </ol>
+    {{-- El portal no manda avisos automáticos: las respuestas las escribe el
+         equipo editorial desde su propio correo. Decirlo evita que un autor se
+         quede esperando un mensaje que quizá tarde, y le señala el único canal
+         que siempre responde, que es la consulta con el código. --}}
+    <p class="mt-5 max-w-3xl text-sm leading-relaxed text-stone-600">
+        El equipo editorial responde por correo institucional. El portal no envía avisos automáticos,
+        así que puedes consultar tu envío con el código de seguimiento siempre que quieras saber en qué fase está.
+    </p>
     <div class="mt-12 flex flex-wrap gap-3"><a class="btn btn-primary" href="{{ route('revista.normas') }}">Normas para autores</a><a class="btn btn-ghost" href="{{ route('revista.formatos') }}">Formatos y plantillas</a><a class="btn btn-ghost" href="{{ route('revista.envios.consulta') }}">Consultar mi envío</a></div>
     @if(session('envio_codigo_reciente'))
         <div class="mt-10 border-2 border-navy-900 bg-white" role="status" x-data="{ copiado: false, sinPortapapeles: false }">
