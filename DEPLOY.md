@@ -69,7 +69,7 @@ La elige quien despliega y se pasa en `ADMIN_PASSWORD`. Debe tener **12 caracter
 | DB_SSLMODE | `require` si el proveedor exige TLS |
 | DB_PERSISTENT | `false` en producción |
 | ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD | Cuenta de administrador inicial |
-| TRUSTED_PROXIES | IP o CIDR real del proxy, separadas por comas. **Nunca `*`**: Laravel lo rechaza en producción |
+| TRUSTED_PROXIES | IP o CIDR real del proxy, separadas por comas. Vacío es válido solo si no hay proxy delante. **Nunca `*`**: se ignora y queda anotado en el registro |
 | SESSION_SECURE_COOKIE | `true` |
 
 ### Variables de archivos
@@ -111,6 +111,40 @@ La siembra crea la **base institucional**: textos del sitio, historia, misión y
 **No** crea contenido editorial: comunicados, entradas de blog, perfiles docentes, números ni artículos. Eso se carga desde `/admin`, que es su única fuente de verdad. Véase `docs/CARGA_INICIAL_CMS.md`.
 
 La siembra se repite en cada despliegue y es inofensiva: cada bloque solo actúa si su tabla está vacía, y los ajustes solo crean las claves que falten. **Nunca pisa lo editado desde el panel.**
+
+## Actualizar una instalación ya publicada
+
+Para un servidor que ya está sirviendo el portal y solo necesita la versión nueva
+del código. No es lo mismo que la primera publicación: aquí **la base de datos no
+se toca** y el contenido cargado desde el panel no corre riesgo.
+
+Antes de empezar, dos avisos que ahorran una tarde:
+
+- **Si editó algún archivo del proyecto a mano en el servidor, `git pull` se va a
+  parar en conflicto.** Compruébelo con `git status` antes de nada. Los parches
+  hechos en la UNASAM ya están incorporados al repositorio, así que lo correcto
+  es descartar la copia local (`git checkout -- <archivo>`), no conservarla.
+- **`public/build` no viaja en el repositorio** (está en `.gitignore`). Sin
+  `npm run build` la página se sirve con los estilos de la versión anterior.
+
+```bash
+git status                    # debe estar limpio; si no, ver el aviso de arriba
+git pull
+
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+
+php artisan migrate --force   # sin migraciones nuevas no hace nada
+php artisan storage:link      # inofensivo si el enlace ya existe
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan content:cache:warm
+```
+
+Después, comprobar: la portada carga, `/admin` deja entrar, y un archivo subido
+antes del cambio sigue viéndose.
 
 ## Si el sitio sale en blanco
 
