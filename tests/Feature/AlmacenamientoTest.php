@@ -42,6 +42,14 @@ class AlmacenamientoTest extends TestCase
     {
         config()->set('submissions.disk', 'local');
 
+        // Este test va de los discos, y el comando comprueba además que PHP
+        // admita archivos tan grandes como el panel promete. El PHP con el que
+        // corren los tests trae los 2 MB de fábrica, así que sin esto el
+        // comando falla por un motivo cierto pero ajeno a lo que se prueba
+        // aquí. Lo cubre test_the_check_refuses_to_pass_when_php_accepts_less.
+        config()->set('media.max_image_kb', 1);
+        config()->set('media.max_pdf_kb', 1);
+
         $this->artisan('almacenamiento:verificar')
             ->expectsOutputToContain('Medios públicos')
             ->expectsOutputToContain('Manuscritos recibidos')

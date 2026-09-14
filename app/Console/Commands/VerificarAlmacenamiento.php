@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Services\RevistaSubmissionService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Image\Image;
@@ -55,6 +57,15 @@ class VerificarAlmacenamiento extends Command
 
         $this->newLine();
         $ok = $this->verificarProcesadoDeImagenes() && $ok;
+
+        $this->newLine();
+        $ok = $this->verificarRegistroDeMedios() && $ok;
+
+        $this->newLine();
+        $ok = $this->verificarCarpetasIntermedias() && $ok;
+
+        $this->newLine();
+        $ok = $this->informarDelEntorno() && $ok;
 
         $this->newLine();
         $this->line('<options=bold>Recepción pública de manuscritos</>');
@@ -301,5 +312,286 @@ class VerificarAlmacenamiento extends Command
             @unlink($origen);
             @unlink($destino);
         }
+    }
+
+    /**
+     * Comprueba que la tabla «media» acepte una fila.
+     *
+     * Esta comprobación nació de un error 500 que solo aparecía en el servidor
+     * de la UNASAM, al guardar cualquier registro con archivo adjunto —imagen o
+     * PDF, daba igual—, mientras los registros de solo texto se guardaban bien.
+     *
+     * El primer diagnóstico fue «permisos en storage», y era falso: si el disco
+     * no deja escribir, la biblioteca de medios se lo traga y devuelve false,
+     * sin excepción y sin 500 (Filesystem::add captura DiskCannotBeAccessed).
+     * Un 500 significa que reventó algo que NO está capturado, y lo primero de
+     * esa lista es el INSERT en la tabla «media»: es el único paso del camino
+     * que un registro de solo texto no recorre.
+     *
+     * La fila se inserta de verdad y se deshace con un ROLLBACK, así que no
+     * queda nada en la base.
+     */
+    private function verificarRegistroDeMedios(): bool
+    {
+        $this->line('<options=bold>Tabla de archivos adjuntos</> (se escribe una fila por cada archivo)');
+
+        try {
+            if (! Schema::hasTable('media')) {
+                $this->line('  <fg=red>✘</> La tabla «media» no existe en esta base de datos.');
+                $this->line('      Toda carga de archivo va a dar error 500. Ejecuta «php artisan migrate --force».');
+
+                return false;
+            }
+        } catch (\Throwable $e) {
+            $this->line('  <fg=red>✘</> No se pudo consultar la base de datos: '.$e->getMessage());
+
+            return false;
+        }
+
+        $requeridas = [
+            'id', 'model_type', 'model_id', 'uuid', 'collection_name', 'name',
+            'file_name', 'mime_type', 'disk', 'conversions_disk', 'size',
+            'manipulations', 'custom_properties', 'generated_conversions',
+            'responsive_images', 'order_column',
+        ];
+
+        $faltantes = array_values(array_filter(
+            $requeridas,
+            fn (string $columna) => ! Schema::hasColumn('media', $columna),
+        ));
+
+        if ($faltantes !== []) {
+            $this->line('  <fg=red>✘</> A la tabla «media» le faltan columnas: '.implode(', ', $faltantes));
+            $this->line('      La migración quedó a medias. Ejecuta «php artisan migrate --force».');
+
+            return false;
+        }
+
+        $this->line('  <fg=green>✔</> La tabla «media» existe y tiene todas sus columnas.');
+
+        // Insertar de verdad. Una tabla puede existir, tener las columnas
+        // correctas y aun así rechazar el INSERT: permisos del usuario de base
+        // de datos, una secuencia de id desincronizada, o el plan de consulta
+        // que PostgreSQL guarda de antes de migrar.
+        try {
+            DB::beginTransaction();
+
+            DB::table('media')->insert([
+                'model_type' => 'verificacion',
+                'model_id' => 0,
+                'uuid' => (string) Str::uuid(),
+                'collection_name' => 'verificacion',
+                'name' => 'verificacion',
+                'file_name' => 'verificacion.txt',
+                'mime_type' => 'text/plain',
+                'disk' => (string) config('media-library.disk_name'),
+                'conversions_disk' => (string) config('media-library.disk_name'),
+                'size' => 1,
+                'manipulations' => '{}',
+                'custom_properties' => '{}',
+                'generated_conversions' => '{}',
+                'responsive_images' => '{}',
+                'order_column' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::rollBack();
+
+            $this->line('  <fg=green>✔</> Acepta una fila nueva (la prueba se deshizo, no queda nada).');
+
+            return true;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            $this->line('  <fg=red>✘</> La tabla existe pero rechaza el INSERT:');
+            $this->line('      '.$e->getMessage());
+            $this->line('      ESTO es lo que devuelve el error 500 al subir un archivo desde el panel.');
+
+            return false;
+        }
+    }
+
+    /**
+     * Las dos carpetas por las que pasa un archivo antes de llegar a su sitio.
+     *
+     * Ninguna de las dos está dentro de storage/app, que es la que todo el
+     * mundo arregla cuando hay un problema de permisos:
+     *
+     *   - livewire-tmp   donde el navegador deja el archivo mientras el
+     *                    formulario sigue abierto.
+     *   - media-library/temp  donde se genera la miniatura antes de moverla.
+     *
+     * Van aparte porque fallan en momentos distintos y se parecen mucho desde
+     * fuera: la primera rompe la carga antes de guardar, la segunda al guardar.
+     */
+    private function verificarCarpetasIntermedias(): bool
+    {
+        $this->line('<options=bold>Carpetas intermedias</> (por aquí pasa el archivo antes de su destino)');
+
+        $ok = true;
+
+        $temporalDeMiniaturas = config('media-library.temporary_directory_path') ?? storage_path('media-library/temp');
+        $ok = $this->comprobarCarpetaEscribible('Miniaturas', (string) $temporalDeMiniaturas) && $ok;
+
+        $discoTemporal = (string) (config('livewire.temporary_file_upload.disk') ?: config('filesystems.default'));
+        $carpetaTemporal = (string) (config('livewire.temporary_file_upload.directory') ?: 'livewire-tmp');
+        $raiz = (string) config("filesystems.disks.{$discoTemporal}.root", '');
+
+        if ($raiz !== '') {
+            $ok = $this->comprobarCarpetaEscribible('Carga en curso', rtrim($raiz, '/').'/'.$carpetaTemporal) && $ok;
+        } else {
+            $this->line("  <fg=yellow>●</> Carga en curso: disco «{$discoTemporal}», no es una carpeta local.");
+        }
+
+        return $ok;
+    }
+
+    private function comprobarCarpetaEscribible(string $titulo, string $ruta): bool
+    {
+        if (! is_dir($ruta) && ! @mkdir($ruta, 0o775, true) && ! is_dir($ruta)) {
+            $this->line("  <fg=red>✘</> {$titulo}: no existe y no se puede crear «{$ruta}».");
+
+            return false;
+        }
+
+        $prueba = rtrim($ruta, '/').'/verificacion-'.Str::uuid().'.tmp';
+
+        if (@file_put_contents($prueba, 'x') === false) {
+            $this->line("  <fg=red>✘</> {$titulo}: existe pero no se puede escribir en «{$ruta}».");
+            $this->line('      Dueño actual: '.$this->duenoDe($ruta));
+
+            return false;
+        }
+
+        @unlink($prueba);
+        $this->line("  <fg=green>✔</> {$titulo}: escribible ({$ruta})");
+
+        return true;
+    }
+
+    /**
+     * Con qué usuario del sistema se está ejecutando esto.
+     *
+     * Importa más de lo que parece: este comando suele lanzarse desde una
+     * sesión de administración, y el panel corre con el usuario del servidor
+     * web. Si no coinciden, el comando puede dar todo correcto y las cargas
+     * seguir fallando. Para descartarlo, ejecútalo con el usuario del servidor
+     * web, por ejemplo «sudo -u www-data php artisan almacenamiento:verificar».
+     */
+    private function informarDelEntorno(): bool
+    {
+        $this->line('<options=bold>Entorno</> (para comparar con el del servidor web)');
+
+        $usuario = function_exists('posix_getpwuid') && function_exists('posix_geteuid')
+            ? (posix_getpwuid(posix_geteuid())['name'] ?? '?')
+            : get_current_user();
+
+        $this->line("  Usuario del sistema : {$usuario}");
+        $this->line('  PHP                 : '.PHP_VERSION);
+        $this->line('  storage/            : '.$this->duenoDe(storage_path()));
+        $this->line('  storage/app/public  : '.$this->duenoDe(storage_path('app/public')));
+        $this->line('  Memoria disponible  : '.ini_get('memory_limit'));
+
+        $this->newLine();
+        $ok = $this->comprobarLimitesDeSubida();
+
+        $this->newLine();
+        $this->line('  <fg=yellow>●</> Si el panel sigue fallando con todo esto en verde, repite el');
+        $this->line('      comando con el usuario del servidor web. Ejemplo:');
+        $this->line('      sudo -u www-data php artisan almacenamiento:verificar');
+
+        return $ok;
+    }
+
+    private function duenoDe(string $ruta): string
+    {
+        if (! file_exists($ruta)) {
+            return 'no existe';
+        }
+
+        $usuario = function_exists('posix_getpwuid')
+            ? (posix_getpwuid(fileowner($ruta))['name'] ?? (string) fileowner($ruta))
+            : (string) fileowner($ruta);
+
+        $grupo = function_exists('posix_getgrgid')
+            ? (posix_getgrgid(filegroup($ruta))['name'] ?? (string) filegroup($ruta))
+            : (string) filegroup($ruta);
+
+        return sprintf('%s:%s %s', $usuario, $grupo, substr(sprintf('%o', fileperms($ruta)), -4));
+    }
+
+    /**
+     * Contrasta lo que el portal promete con lo que PHP deja pasar.
+     *
+     * El panel dice que admite imágenes de 5 MB y PDF de 20 MB, pero PHP viene
+     * de fábrica con 2 MB por archivo y 8 MB por envío. En un servidor recién
+     * instalado, nadie toca eso. El resultado es que el formulario acepta el
+     * archivo, la barra llega al final, y al guardar el envío llega vacío al
+     * servidor porque PHP lo descartó entero antes de que Laravel lo viera.
+     *
+     * Se comprueba aquí porque es la clase de fallo que no deja rastro útil:
+     * el registro no dice «archivo demasiado grande», dice que faltan campos
+     * que el formulario sí mandó.
+     */
+    private function comprobarLimitesDeSubida(): bool
+    {
+        $porArchivo = $this->aBytes((string) ini_get('upload_max_filesize'));
+        $porEnvio = $this->aBytes((string) ini_get('post_max_size'));
+
+        $prometidoImagen = ((int) config('media.max_image_kb')) * 1024;
+        $prometidoPdf = ((int) config('media.max_pdf_kb')) * 1024;
+        $prometido = max($prometidoImagen, $prometidoPdf);
+
+        $this->line('  Tamaño máximo por archivo (PHP) : '.ini_get('upload_max_filesize'));
+        $this->line('  Tamaño máximo del envío   (PHP) : '.ini_get('post_max_size'));
+        $this->line('  Lo que el panel promete admitir : '.$this->enMegas($prometido)
+            .' ('.$this->enMegas($prometidoImagen).' imagen, '.$this->enMegas($prometidoPdf).' PDF)');
+
+        if ($porArchivo >= $prometido && $porEnvio > $prometido) {
+            $this->line('  <fg=green>✔</> PHP admite todo lo que el panel promete.');
+
+            return true;
+        }
+
+        $this->line('  <fg=red>✘</> PHP admite MENOS de lo que el panel promete.');
+        $this->line('      Un archivo por encima del límite de PHP se descarta antes de que');
+        $this->line('      Laravel lo vea: el formulario parece funcionar y al guardar falla.');
+        $this->line('      En el php.ini del servidor (y reiniciar PHP-FPM):');
+        $this->line('        upload_max_filesize = '.$this->enMegas($prometido, redondeoAlza: true));
+        $this->line('        post_max_size = '.$this->enMegas($prometido * 2, redondeoAlza: true));
+        $this->line('      Si hay nginx delante, además: client_max_body_size '
+            .$this->enMegas($prometido * 2, redondeoAlza: true).';');
+
+        return false;
+    }
+
+    private function aBytes(string $valor): int
+    {
+        $valor = trim($valor);
+
+        if ($valor === '' || $valor === '-1') {
+            return PHP_INT_MAX;
+        }
+
+        $numero = (int) $valor;
+
+        return match (strtolower(substr($valor, -1))) {
+            'g' => $numero * 1024 * 1024 * 1024,
+            'm' => $numero * 1024 * 1024,
+            'k' => $numero * 1024,
+            default => $numero,
+        };
+    }
+
+    private function enMegas(int $bytes, bool $redondeoAlza = false): string
+    {
+        if ($bytes === PHP_INT_MAX) {
+            return 'sin límite';
+        }
+
+        $megas = $bytes / 1024 / 1024;
+
+        return ($redondeoAlza ? (int) ceil($megas) : round($megas, 1)).'M';
     }
 }
