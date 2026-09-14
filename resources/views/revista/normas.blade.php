@@ -21,7 +21,22 @@
         </div>
         <aside class="h-fit border-t-2 border-navy-900 bg-paper p-6 lg:sticky lg:top-6"><p class="eyebrow">Documento completo</p><p class="mt-4 text-sm leading-relaxed">Consulta el texto oficial aprobado. Ante cualquier diferencia con otro archivo, prevalece este PDF.</p>@if($documento?->download_url)<a class="btn btn-primary mt-6 w-full" href="{{ $documento->download_url }}" target="_blank" rel="noopener">Abrir PDF</a><a class="btn btn-ghost mt-3 w-full" href="{{ $documento->download_url }}" download>Descargar PDF</a>@endif<a class="mt-5 block text-center text-sm font-semibold text-navy-700 underline" href="{{ route('revista.formatos') }}">Formatos y plantillas</a></aside>
     </div>
-    @if($documento?->download_url)<div class="mt-14 border border-stone-200"><iframe title="Normas de publicación completas" src="{{ $documento->download_url }}#view=FitH" class="h-[70vh] min-h-[34rem] w-full"></iframe></div>@endif
+    {{-- Visor del PDF, solo en pantallas grandes.
+
+         Los navegadores de móvil no dibujan un PDF dentro de un iframe: Chrome
+         en Android y Safari en iPhone dejan el recuadro vacío, y lo que ve el
+         visitante es medio metro de gris con un icono de archivo roto. Parece
+         que la página falló, cuando en realidad el navegador nunca iba a poder
+         mostrarlo.
+
+         Ahí sobra, además: «Abrir PDF» y «Descargar PDF» están justo encima y
+         entregan el mismo documento al lector de PDF del teléfono, que sí sabe
+         mostrarlo. Nada del contenido se pierde por ocultar el visor. --}}
+    @if($documento?->download_url)
+        <div class="mt-14 hidden border border-stone-200 lg:block">
+            <iframe title="Normas de publicación completas" src="{{ $documento->download_url }}#view=FitH" class="h-[70vh] min-h-[34rem] w-full"></iframe>
+        </div>
+    @endif
 </section>
 
 @include('revista.partials.continuar')
