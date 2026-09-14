@@ -6,6 +6,7 @@ use App\Services\RevistaSubmissionService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\Image\Image;
 
 /**
  * Comprueba que los dos almacenamientos del portal estén bien configurados
@@ -51,6 +52,9 @@ class VerificarAlmacenamiento extends Command
             habilitado: (bool) config('submissions.enabled'),
             variableInterruptor: 'SUBMISSIONS_ENABLED',
         ) && $ok;
+
+        $this->newLine();
+        $ok = $this->verificarProcesadoDeImagenes() && $ok;
 
         $this->newLine();
         $this->line('<options=bold>Recepción pública de manuscritos</>');
@@ -218,5 +222,84 @@ class VerificarAlmacenamiento extends Command
         $publicRoot = rtrim(str_replace('\\', '/', public_path()), '/').'/';
 
         return str_starts_with($root, $publicRoot);
+    }
+
+    /**
+     * Comprueba que el portal pueda GENERAR una miniatura, no solo escribir.
+     *
+     * Esta parte faltaba, y era justo la que fallaba. El comando escribía un
+     * fichero de texto en el disco, veía que se escribía y leía bien, y decía
+     * que todo estaba correcto —mientras cada carga desde el panel devolvía un
+     * error 500—. Escribir un .txt no toca la biblioteca de imágenes; subir un
+     * retrato sí, porque de cada imagen se genera una versión reducida.
+     *
+     * Sin GD (o Imagick) esa generación revienta y el archivo no llega a
+     * guardarse. El registro se crea igual, así que desde el panel parece que
+     * funcionó y la imagen simplemente no está. Es el fallo más difícil de ver
+     * de los que ha tenido este portal.
+     */
+    private function verificarProcesadoDeImagenes(): bool
+    {
+        $this->line('<options=bold>Procesado de imágenes</> (hace falta para cada foto que se suba)');
+
+        $motor = match (true) {
+            extension_loaded('imagick') => 'imagick',
+            extension_loaded('gd') => 'gd',
+            default => null,
+        };
+
+        if ($motor === null) {
+            $this->line('  <fg=red>✘</> PHP no tiene ni GD ni Imagick.');
+            $this->line('      Toda carga de imagen va a fallar con error 500, en docentes,');
+            $this->line('      comunicados, blog y portadas de la revista.');
+            $this->line('      Instálalas y reinicia PHP. Ejemplo en Debian/Ubuntu con PHP 8.4:');
+            $this->line('      sudo apt install php8.4-gd php8.4-intl php8.4-zip php8.4-bcmath');
+
+            return false;
+        }
+
+        $this->line("  <fg=green>✔</> Extensión disponible: {$motor}");
+
+        if (config('media-library.image_driver') !== $motor && ! extension_loaded((string) config('media-library.image_driver'))) {
+            $this->line(sprintf('  <fg=red>✘</> IMAGE_DRIVER está en «%s», que no está instalada. Póngala en «%s».',
+                (string) config('media-library.image_driver'), $motor));
+
+            return false;
+        }
+
+        // Generación real: se crea una imagen, se reduce y se comprueba que la
+        // reducción tenga el tamaño pedido. Es la misma operación que hace la
+        // biblioteca de medios al guardar cada carga.
+        $origen = tempnam(sys_get_temp_dir(), 'verif').'.jpg';
+        $destino = tempnam(sys_get_temp_dir(), 'verif').'.jpg';
+
+        try {
+            $lienzo = imagecreatetruecolor(120, 90);
+            imagefilledrectangle($lienzo, 0, 0, 119, 89, imagecolorallocate($lienzo, 20, 40, 80));
+            imagejpeg($lienzo, $origen);
+            imagedestroy($lienzo);
+
+            Image::load($origen)->width(40)->save($destino);
+
+            [$ancho] = getimagesize($destino);
+
+            if ($ancho !== 40) {
+                $this->line("  <fg=red>✘</> La miniatura salió de {$ancho} px en vez de 40.");
+
+                return false;
+            }
+
+            $this->line('  <fg=green>✔</> Miniatura generada correctamente.');
+
+            return true;
+        } catch (\Throwable $e) {
+            $this->line('  <fg=red>✘</> No se pudo generar la miniatura: '.$e->getMessage());
+            $this->line('      Esto es exactamente lo que rompe las cargas desde el panel.');
+
+            return false;
+        } finally {
+            @unlink($origen);
+            @unlink($destino);
+        }
     }
 }
