@@ -543,6 +543,7 @@ class VerificarAlmacenamiento extends Command
         $prometidoPdf = ((int) config('media.max_pdf_kb')) * 1024;
         $prometido = max($prometidoImagen, $prometidoPdf);
 
+        $this->line('  Medido en                       : PHP '.PHP_SAPI.', '.(php_ini_loaded_file() ?: 'sin php.ini'));
         $this->line('  Tamaño máximo por archivo (PHP) : '.ini_get('upload_max_filesize'));
         $this->line('  Tamaño máximo del envío   (PHP) : '.ini_get('post_max_size'));
         $this->line('  Lo que el panel promete admitir : '.$this->enMegas($prometido)
@@ -563,7 +564,37 @@ class VerificarAlmacenamiento extends Command
         $this->line('      Si hay nginx delante, además: client_max_body_size '
             .$this->enMegas($prometido * 2, redondeoAlza: true).';');
 
+        $this->avisarDeQueEstoNoEsElPhpDelPanel();
+
         return false;
+    }
+
+    /**
+     * Estos números son los del PHP de consola, y el panel no usa ese.
+     *
+     * En Debian y Ubuntu hay dos ficheros de configuración separados —uno en
+     * cli/php.ini y otro en fpm/php.ini— y casi nunca dicen lo mismo, porque
+     * los límites de subida no significan nada en la línea de comandos y ahí
+     * nadie los toca. Así que este comando puede dar la alarma por un valor que
+     * al panel no le afecta, o callarse con uno que sí.
+     *
+     * No se puede leer el otro fichero desde aquí con garantías, así que al
+     * menos se dice en voz alta qué se ha medido y cómo mirar el que importa.
+     */
+    private function avisarDeQueEstoNoEsElPhpDelPanel(): void
+    {
+        if (PHP_SAPI !== 'cli') {
+            return;
+        }
+
+        $this->newLine();
+        $this->line('      <fg=yellow>●</> Ojo: estos dos números son los del PHP de consola.');
+        $this->line('          El panel no usa ese, usa el de PHP-FPM, y en Debian y Ubuntu');
+        $this->line('          son ficheros distintos. Comprueba el que de verdad importa:');
+        $this->line('            php-fpm -i | grep -E "upload_max_filesize|post_max_size"');
+        $this->line('          o, si eso no está a mano, busca los dos ficheros:');
+        $this->line('            ls /etc/php/*/cli/php.ini /etc/php/*/fpm/php.ini');
+        $this->line('          Hay que cambiarlo en el de fpm, y reiniciar: systemctl restart php*-fpm');
     }
 
     private function aBytes(string $valor): int
