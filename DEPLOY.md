@@ -336,4 +336,28 @@ Recomendación: antes de poner los interruptores en `true`, subir un archivo de 
 
 ## Recuperación administrativa
 
-No hay recuperación por correo mientras no exista SMTP. Si se pierde el acceso, otro superadministrador puede restablecer la contraseña; nunca se deben introducir contraseñas en logs o commits.
+No hay recuperación por correo mientras no exista SMTP. Si queda otro
+superadministrador con acceso, lo más rápido es que restablezca la contraseña
+desde el panel.
+
+Cuando no queda ninguno —la cuenta existe y nadie recuerda su contraseña—, el
+panel se cierra para siempre con el contenido dentro. **Cambiar `ADMIN_PASSWORD`
+en el `.env` y volver a desplegar no lo arregla**: la siembra crea la cuenta
+inicial una sola vez y, si el usuario ya existe, no le toca la contraseña.
+
+Para eso está este comando, en el servidor:
+
+```bash
+php artisan admin:restablecer correo@de-la-cuenta
+```
+
+Pide la contraseña por teclado, dos veces, y no la muestra. Si la cuenta no
+existe, la crea; si existe, le cambia la contraseña y se asegura de dejarla como
+superadministrador, porque una cuenta sin rol pasa el login y después no ve
+nada, que desde fuera parece que el panel está roto. Cuando el correo no
+coincide con ninguna cuenta, lista las que hay antes de crear nada.
+
+La contraseña **no se acepta como argumento** a propósito: un argumento queda
+escrito en el historial del intérprete de órdenes y, en muchos servidores, es
+visible en la lista de procesos para cualquier otro usuario mientras el comando
+corre. Nunca se deben introducir contraseñas en registros ni en commits.
