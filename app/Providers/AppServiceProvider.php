@@ -31,6 +31,7 @@ use App\Models\User;
 use App\Policies\ContentAuditPolicy;
 use App\Policies\ContentPolicy;
 use App\Policies\UserPolicy;
+use App\Support\LimiteDeCargaTemporal;
 use App\Support\ProxiesDeConfianza;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -84,6 +85,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         ProxiesDeConfianza::aplicar();
+        LimiteDeCargaTemporal::aplicar();
 
         $contentPolicyModels = array_merge(self::CONTENT_MODELS, [Setting::class, RevistaEnvio::class, RevistaEnvioVersion::class]);
         foreach ($contentPolicyModels as $model) {
