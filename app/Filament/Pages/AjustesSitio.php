@@ -105,7 +105,7 @@ class AjustesSitio extends Page
                         TextInput::make('presentacion_titulo')->label('Título'),
                         Textarea::make('presentacion_cuerpo')->label('Cuerpo (puedes usar varios párrafos)')->rows(6),
                         Textarea::make('datos_programa')->label('Datos del programa')->rows(6)
-                            ->placeholder('Una línea por dato. Ej.: Duración | 5 años (10 ciclos)')
+                            ->placeholder('Una línea por dato. Ej.: Duración | 6 años (12 ciclos)')
                             ->helperText('Una línea por dato, con el formato «Etiqueta | Valor».'),
                     ]),
 
