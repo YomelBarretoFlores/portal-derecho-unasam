@@ -334,6 +334,78 @@ Comprueba, para cada disco: que existe, su driver y raíz, si es alcanzable por 
 
 Recomendación: antes de poner los interruptores en `true`, subir un archivo de prueba, **forzar un redespliegue** y comprobar que el archivo sigue ahí.
 
+## Si hay un WAF delante (ModSecurity / OWASP CRS)
+
+El área de sistemas de la UNASAM tiene ModSecurity con el juego de reglas OWASP
+CRS, y da falsos positivos sobre el panel. Conviene saberlo antes de instalar
+esto detrás de un cortafuegos de aplicación.
+
+**El síntoma.** Una acción del panel deja de responder: la carga de un archivo
+falla, o el cuadro que pide confirmación para borrar no llega a abrirse. A veces
+aparece una página «Forbidden — You don't have permission to access this
+resource». Y cuando ocurre, el JavaScript de la página se queda a medias: el
+recuadro de «arrastra tu archivo» se degrada a un campo básico que no sube nada.
+Es intermitente, porque depende de lo que lleve dentro cada petición.
+
+**La causa.** Todo el panel se comunica por una sola dirección, `POST
+/livewire-xxxxxxxx/update`, y el cuerpo va en JSON con cadenas en base64. A
+libinjection —el detector de inyección SQL del CRS— esas cadenas le parecen a
+veces un ataque. En el registro se ve así:
+
+```
+[id "980170"] [msg "Anomaly Scores: (Inbound Scores: blocking=5, detection=5,
+per_pl=5-0-0-0, threshold=5) ... (SQLI=5, XSS=0, ...)"]
+[uri "/livewire-51ce454c/update"]
+```
+
+La regla 980170 solo **informa** del total; no es la que bloqueó. Los 5 puntos
+los puso una regla de la familia 942xxx, y como el umbral son 5, una sola
+coincidencia crítica basta para cortar la petición. Para ver cuál fue, hay que
+buscar en el registro las demás líneas de esa misma transacción:
+
+```bash
+grep "aql10qvx4BmAPkAdfHSHuwAAAAo" /var/log/modsec_audit.log   # el unique_id
+```
+
+**Por qué excluir esa ruta no abre un agujero.** El endpoint no queda
+desprotegido: exige una URL firmada con la `APP_KEY` (sin firma, 401), el token
+CSRF (sin él, 419), sesión iniciada con permiso sobre el panel, y tiene un
+límite de 60 peticiones por minuto. Las consultas a la base van por Eloquent con
+parámetros ligados, así que una cadena del cuerpo no puede convertirse en SQL.
+La regla estaba duplicando —peor— una protección que ya existe.
+
+**La exclusión.** En `REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf`, quitando
+solo la regla que salte, y solo en esa ruta:
+
+```apache
+SecRule REQUEST_URI "@rx ^/livewire-[0-9a-f]{8}/(update|upload-file)" \
+    "id:1000100,phase:1,pass,nolog,t:none,\
+     ctl:ruleRemoveById=942100"
+```
+
+Si después salta otra regla de la misma familia, es preferible excluir la
+categoría entera pero **solo en esas dos rutas**, en vez de desactivarla en todo
+el sitio:
+
+```apache
+SecRule REQUEST_URI "@rx ^/livewire-[0-9a-f]{8}/(update|upload-file)" \
+    "id:1000101,phase:1,pass,nolog,t:none,\
+     ctl:ruleRemoveByTag=attack-sqli"
+```
+
+**El detalle que rompe esto meses después.** Ese `livewire-xxxxxxxx` no es fijo:
+sale de la `APP_KEY`, en concreto de los ocho primeros caracteres de
+`sha256(APP_KEY.'livewire-endpoint')`. Si algún día se regenera la clave, la
+ruta cambia y una exclusión escrita con el valor literal deja de aplicarse, sin
+avisar: el panel vuelve a fallar a ratos y nada apunta al WAF. Por eso los
+ejemplos de arriba usan `[0-9a-f]{8}` y no el valor concreto.
+
+Para ver las rutas reales de una instalación:
+
+```bash
+php artisan route:list --path=livewire
+```
+
 ## Recuperación administrativa
 
 No hay recuperación por correo mientras no exista SMTP. Si queda otro
