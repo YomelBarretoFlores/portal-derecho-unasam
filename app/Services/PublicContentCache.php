@@ -296,6 +296,7 @@ class PublicContentCache
                     'normas_publicacion' => $revista->normas_publicacion,
                     '_resolucion_url' => $revista->resolution_url,
                     '_logo_url' => $revista->logo_url,
+                    '_logo_miniatura_url' => $revista->logo_miniatura_url,
                 ] : null,
                 'numeros' => $numeros,
             ];

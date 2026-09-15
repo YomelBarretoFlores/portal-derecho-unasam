@@ -53,8 +53,12 @@
                              repositorio, así que el campo «Logo» de la ficha de la
                              revista existía y no servía para nada: se podía subir
                              uno nuevo y el sitio seguía enseñando el viejo. --}}
-                        <img src="{{ $revista->_logo_url ?: asset(\App\Models\Revista::LOGO_PUBLIC_PATH) }}"
+                        {{-- Se pinta a 80x80, así que se pide la versión
+                             reducida. El logo grande sigue existiendo y es el
+                             que viaja como og:image al compartir la revista. --}}
+                        <img src="{{ $revista->_logo_miniatura_url ?: asset(\App\Models\Revista::LOGO_MINIATURA_PUBLIC_PATH) }}"
                              alt="Logo oficial de {{ $revista->nombre_corto ?: 'Derecho y Cultura' }}"
+                             width="80" height="80" loading="lazy" decoding="async"
                              class="h-20 w-20 shrink-0 border border-stone-200 object-cover">
                         <div>
                             <p class="eyebrow">Presentación</p>

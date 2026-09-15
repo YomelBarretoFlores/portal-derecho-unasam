@@ -88,14 +88,18 @@ class MediosAdministrablesTest extends TestCase
             ->assertSee($logo)
             // El archivo del repositorio deja de imponerse. Sigue existiendo
             // como red de seguridad, pero ya no tapa lo que se administre.
-            ->assertDontSee(Revista::LOGO_PUBLIC_PATH);
+            ->assertDontSee(Revista::LOGO_PUBLIC_PATH)
+            ->assertDontSee(Revista::LOGO_MINIATURA_PUBLIC_PATH);
     }
 
     public function test_the_repository_logo_is_still_the_safety_net(): void
     {
         $this->revista();
 
-        $this->get(route('revista'))->assertOk()->assertSee(Revista::LOGO_PUBLIC_PATH);
+        // La portada pinta el logo en 80x80, así que enseña la versión
+        // reducida. El archivo grande sigue siendo la red de seguridad de la
+        // que sale, y sigue viajando como og:image al compartir la revista.
+        $this->get(route('revista'))->assertOk()->assertSee(Revista::LOGO_MINIATURA_PUBLIC_PATH);
     }
 
     public function test_the_creation_resolution_can_be_replaced_from_the_panel(): void

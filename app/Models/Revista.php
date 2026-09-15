@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Revista extends Model implements HasMedia
 {
@@ -22,6 +23,15 @@ class Revista extends Model implements HasMedia
      * fuente: manda lo que haya en el panel.
      */
     public const LOGO_PUBLIC_PATH = 'img/revista/logo-derecho-y-cultura.jpg';
+
+    /**
+     * El mismo logo, reducido, para donde se pinta pequeño.
+     *
+     * El original mide 1254x1254 y pesa 159 KB, y la portada de la revista lo
+     * enseña en un cuadro de 80x80: el navegador se descargaba ciento cincuenta
+     * kilobytes de más para no usarlos. Esta versión ocupa 6 KB.
+     */
+    public const LOGO_MINIATURA_PUBLIC_PATH = 'img/revista/logo-derecho-y-cultura-160.jpg';
 
     protected $fillable = [
         'nombre', 'nombre_corto', 'presentacion', 'enfoque_alcance', 'unidad_responsable',
@@ -113,6 +123,41 @@ class Revista extends Model implements HasMedia
             (string) $this->logo_url_respaldo,
             self::rutaDelRepositorio(self::LOGO_PUBLIC_PATH),
         );
+    }
+
+    /**
+     * El logo en pequeño: la conversión si se subió uno, y si no el reducido.
+     *
+     * Va aparte de getLogoUrlAttribute porque el logo grande sigue haciendo
+     * falta: es el que se manda como og:image cuando alguien comparte la
+     * revista, y ahí una miniatura de 160 px se ve mal.
+     */
+    public function getLogoMiniaturaUrlAttribute(): string
+    {
+        if ($this->archivoSubidoDisponible('logo') && $this->getFirstMedia('logo')?->hasGeneratedConversion('thumb')) {
+            return $this->getFirstMediaUrl('logo', 'thumb');
+        }
+
+        // Con un logo puesto por URL externa no hay nada que reducir: se
+        // devuelve tal cual, que es mejor que enseñar el del repositorio.
+        if (filled($this->logo_url_respaldo)) {
+            return (string) $this->logo_url_respaldo;
+        }
+
+        if ($this->archivoSubidoDisponible('logo')) {
+            return $this->getFirstMediaUrl('logo');
+        }
+
+        return self::rutaDelRepositorio(self::LOGO_MINIATURA_PUBLIC_PATH);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(160)
+            ->height(160)
+            ->performOnCollections('logo')
+            ->nonQueued();
     }
 
     /**

@@ -44,12 +44,15 @@ class TodasLasCargasTest extends TestCase
             'Blog · imagen' => [BlogPost::class, 'imagen', true, true],
             'Docentes · foto' => [Docente::class, 'foto', true, true],
 
-            // Estas tres son imágenes y NO declaran miniatura. Está recogido
-            // aquí porque es el estado real y no un descuido silencioso: el
-            // navegador se descarga la imagen entera para pintarla pequeña.
-            // Si alguien añade la conversión, este test se lo dirá.
+            'Revista · logo' => [Revista::class, 'logo', true, true],
+
+            // Estas dos son imágenes y NO declaran miniatura, a propósito:
+            //   - el organigrama se pinta al ancho completo, porque es un
+            //     diagrama que hay que poder leer;
+            //   - la portada de un número viaja como og:image al compartirla, y
+            //     una miniatura se vería mal en la tarjeta de la red social.
+            // Queda escrito para que se vea que es una decisión, no un olvido.
             'Organigrama · imagen' => [Organigrama::class, 'imagen', true, false],
-            'Revista · logo' => [Revista::class, 'logo', true, false],
             'Número · portada' => [RevistaNumero::class, 'portada', true, false],
 
             'Normativa · archivo' => [Documento::class, 'archivo', false, false],
