@@ -21,7 +21,8 @@ class CursoForm
                     ->required(),
                 Select::make('ciclo')
                     ->label('Ciclo')
-                    ->options(array_combine(range(1, 10), range(1, 10)))
+                    // Doce, no diez: la malla de Derecho son seis años.
+                    ->options(array_combine(range(1, Curso::CICLOS), range(1, Curso::CICLOS)))
                     ->required(),
                 TextInput::make('nombre')
                     ->label('Nombre del curso')
