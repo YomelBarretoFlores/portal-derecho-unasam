@@ -141,10 +141,78 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan content:cache:warm
+
+sudo systemctl reload php8.4-fpm   # el nombre exacto varía; ver abajo
 ```
+
+Esa última línea es la que más se olvida, y la que peor engaña. **OPcache guarda
+en memoria los ficheros PHP ya compilados y no vuelve a mirar el disco**, así que
+sin recargar PHP-FPM el sitio sigue ejecutando el código anterior mientras
+`git log` afirma que la versión nueva está puesta.
 
 Después, comprobar: la portada carga, `/admin` deja entrar, y un archivo subido
 antes del cambio sigue viéndose.
+
+### Hacerlo con un solo comando
+
+Todo lo anterior está en `deploy.sh`, en la raíz del proyecto:
+
+```bash
+./deploy.sh              # actualiza solo si hay algo nuevo
+./deploy.sh --revisar    # dice si hay algo nuevo, sin tocar nada
+./deploy.sh --forzar     # rehace el despliegue aunque no haya cambios
+```
+
+Hace las mismas órdenes en el mismo orden, y además:
+
+- **No arranca si hay cambios sin guardar en el servidor.** Se detiene y los
+  lista, en vez de reventar a mitad del `git pull` con el sitio a medio
+  actualizar.
+- **Se para en el primer fallo**, dejando el sitio con la versión que ya tenía.
+- **Un despliegue a la vez**, con un cerrojo, para que dos ejecuciones de cron
+  no se pisen.
+- **Busca y recarga PHP-FPM solo**; si no lo consigue, lo dice en vez de
+  callarse.
+- Deja el registro en `storage/logs/despliegue.log`.
+
+Con `DEPLOY_URL` puesta, al terminar comprueba que la portada responda 200:
+
+```bash
+DEPLOY_URL=https://derecho.unasam.edu.pe ./deploy.sh
+```
+
+### Que se actualice solo
+
+Lo anterior sigue siendo una orden que alguien tiene que escribir. Para que el
+servidor se mantenga al día sin que nadie entre, basta una línea de cron con el
+usuario dueño del proyecto:
+
+```cron
+*/10 * * * * cd /ruta/al/portal && DEPLOY_URL=https://derecho.unasam.edu.pe ./deploy.sh >> storage/logs/despliegue-cron.log 2>&1
+```
+
+Cada diez minutos mira si el repositorio se movió. Si no, termina sin hacer
+nada y sin escribir nada. Si se movió, despliega.
+
+Se prefiere esto a que GitHub avise al servidor (un *webhook*, o una acción que
+entre por SSH) por dos motivos concretos de esta instalación: **no hace falta
+abrir ningún puerto de entrada** —el servidor está detrás de Cloudflare y solo
+sale hacia fuera—, y **no hay que guardar credenciales del servidor en GitHub**,
+que es un repositorio público. El precio es esperar hasta diez minutos, que para
+un portal institucional no es precio.
+
+Si más adelante hiciera falta que fuese inmediato, la pieza que hay que añadir
+es una acción de GitHub con una clave SSH de despliegue y el puerto 22 abierto
+para las IP de GitHub. No antes de que alguien lo pida.
+
+**Para que `sudo systemctl reload` funcione desde cron sin contraseña**, hay que
+autorizar esa orden concreta, y solo esa (`sudo visudo -f /etc/sudoers.d/portal`):
+
+```
+www-data ALL=(root) NOPASSWD: /bin/systemctl reload php8.4-fpm
+```
+
+Sin eso el despliegue funciona igual, pero avisa de que hay que recargar a mano.
 
 ## Si el sitio sale en blanco
 
